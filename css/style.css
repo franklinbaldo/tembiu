@@ -37,13 +37,33 @@ main {
     padding: 0;
 }
 
+/* Modified rule for better layout with button */
 #menu-container li {
-    padding: 0.5rem 0;
+    display: flex; /* Use flexbox for alignment */
+    justify-content: space-between; /* Pushes button to the right */
+    align-items: center; /* Vertically aligns text and button */
+    padding: 0.75rem 0.5rem; /* Adjust padding */
     border-bottom: 1px #eee solid;
 }
 
 #menu-container li:last-child {
     border-bottom: none;
+}
+
+/* Styling for the add to cart button (can be an alternative to dynamic JS styling) */
+.add-to-cart-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 0.8rem; /* Slightly larger padding */
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap; /* Prevents button text from wrapping */
+}
+
+.add-to-cart-btn:hover {
+    background-color: #0056b3;
 }
 
 footer {
@@ -52,4 +72,53 @@ footer {
     margin-top: 2rem;
     background: #333;
     color: #fff;
+}
+
+/* Cart Styling */
+#cart-container {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #e9ecef;
+    border-radius: 5px;
+}
+
+#cart-container h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+#cart-items p {
+    font-style: italic;
+}
+
+#cart-items .cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ccc;
+}
+
+#cart-items .cart-item:last-child {
+    border-bottom: none;
+}
+
+#cart-total {
+    font-weight: bold;
+}
+
+#checkout-button {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+#checkout-button:hover {
+    background-color: #218838;
 }
