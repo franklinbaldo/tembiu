@@ -5,8 +5,8 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
 ## Phase 1: Implement Core v1.0 Functionality (from README)
 
 - [~] **Task:** Basic responsive template and menu loading.
-    - **Details:** HTML structure, CSS styling, JavaScript for fetching, parsing, and displaying `menu.csv`. Interactive menu items with "add to cart" functionality. Basic cart display (items and total with quantity).
-    - **Status:** Initial structure and functionality implemented. Cart quantity handling added. Further refinements for responsiveness and UI needed.
+    - **Details:** HTML structure, CSS styling, JavaScript for fetching, parsing, and displaying `menu.csv`. Interactive menu items with "add to cart" functionality. Basic cart display (items and total with quantity). Functional item removal from cart.
+    - **Status:** Initial structure and functionality implemented. Cart quantity handling and item removal added. Further refinements for responsiveness and UI needed.
     - **Rationale:** Foundation for all other v1.0 features.
 - [x] **Task:** PIX Integration (Placeholder/Conceptual). 
     - **Details:** UI elements for PIX display are in place. `handleCheckout` now uses `qrcode.js` to generate a real client-side QR code from simulated PIX data (including item quantities). "Copia e Cola" also uses this data string.
@@ -31,8 +31,8 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
 
 ## Phase 2: Roadmap Implementation (Next Steps from README)
 
-- [ ] **Task:** Begin v1.1 - Google Apps Script Integration (Backend).
-    - **Sub-Task:** Design basic Google Apps Script structure for backend logic (e.g., handling orders, analytics).
+- [~] **Task:** Begin v1.1 - Google Apps Script Integration (Backend).
+    - **Sub-Task:** Design basic Google Apps Script structure for backend logic (e.g., handling orders, analytics). **[Placeholder `backend/google_apps_script_backend.gs.js` file created with conceptual structure and comments.]**
     - **Sub-Task:** Implement a function to log new orders to a Google Sheet.
     - **Sub-Task:** Document how to set up and deploy this GAS backend.
     - **Rationale:** This is the first unchecked major item in the `README.md` roadmap (v1.1) and adds significant value through data persistence and automation.
@@ -43,8 +43,8 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Details:** Check if the `docs/` directory and key files like `docs/configuration.md` (mentioned in `README.md`) exist. If they exist, review for clarity, accuracy, and completeness. If not, create them with basic setup and configuration guides.
     - **Rationale:** Comprehensive and clear documentation is key for user adoption, self-service setup, and attracting contributions.
 
-- [~] **Task:** Refine UI/UX for Core Features.
-    - **Details:** Improve visual hierarchy and spacing of menu, cart, PIX display, and order history. Ensure better responsiveness. Add loading indicators. Design user-friendly quantity management in cart. **[Cart quantity handling implemented. CSS active styles for button feedback added. Placeholder 'Remover' buttons added to cart items.]**
+- [x] **Task:** Refine UI/UX for Core Features. 
+    - **Details:** Improve visual hierarchy and spacing of menu, cart, PIX display, and order history. Ensure better responsiveness. Add loading indicators. Design user-friendly quantity management in cart. **[Cart quantity handling implemented. CSS active styles for button feedback added. Placeholder 'Remover' buttons added to cart items, now fully functional.]**
     - **Rationale:** Enhance usability and align with the "premium experience" goal from `README.md`.
 - [x] **Task:** Implement Real PIX QR Code Generation (Client-Side). 
     - **Details:** Integrated `qrcode.js` library (via CDN). `handleCheckout` now generates a real QR code image/canvas using a structured PIX data string (simulated BR Code: Phone, Order ID, Items, Location placeholder). CSS for QR display updated.

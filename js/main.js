@@ -137,7 +137,7 @@ function updateCartDisplay() {
     cartItemsContainer.innerHTML = ''; 
     let total = 0;
 
-    cart.forEach((item, index) => { // Added index for potential use with removal
+    cart.forEach(item => { // item is from cart array, has quantity
         const div = document.createElement('div');
         div.classList.add('cart-item');
         
@@ -149,10 +149,8 @@ function updateCartDisplay() {
         const removeButton = document.createElement('button');
         removeButton.classList.add('remove-from-cart-btn');
         removeButton.textContent = 'Remover';
-        removeButton.setAttribute('data-item-name', item.nome); // Store item name for future removal logic
-        // removeButton.setAttribute('data-item-index', index); // Alternative: store index
-        // For now, the button does nothing:
-        // removeButton.addEventListener('click', () => handleRemoveItemFromCart(item.nome)); 
+        removeButton.setAttribute('data-item-name', item.nome); 
+        removeButton.addEventListener('click', () => handleRemoveItemFromCart(item.nome)); // Attach event listener
         div.appendChild(removeButton);
         
         cartItemsContainer.appendChild(div);
@@ -161,6 +159,24 @@ function updateCartDisplay() {
 
     cartTotalElement.textContent = total.toFixed(2);
     checkoutButton.style.display = 'block';
+}
+
+function handleRemoveItemFromCart(itemName) {
+    console.log("Attempting to remove/decrement:", itemName);
+    const itemIndex = cart.findIndex(cartItem => cartItem.nome === itemName);
+
+    if (itemIndex > -1) {
+        if (cart[itemIndex].quantity > 1) {
+            cart[itemIndex].quantity -= 1;
+        } else {
+            // If quantity is 1, remove the item from cart array
+            cart.splice(itemIndex, 1);
+        }
+    } else {
+        console.warn("Item to remove not found in cart:", itemName);
+    }
+    
+    updateCartDisplay(); // Refresh the cart display
 }
 
 function formatCartForWhatsApp(cartArray) {
