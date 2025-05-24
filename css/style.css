@@ -91,16 +91,43 @@ footer {
     font-style: italic;
 }
 
-#cart-items .cart-item {
+/* Cart Item Styling to accommodate remove button */
+.cart-item {
     display: flex;
     justify-content: space-between;
+    align-items: center; /* Vertically align text and button */
     padding: 0.5rem 0;
     border-bottom: 1px solid #ccc;
 }
 
-#cart-items .cart-item:last-child {
+.cart-item:last-child {
     border-bottom: none;
 }
+
+.cart-item span { /* To allow text to not stretch if button is large */
+    flex-grow: 1; /* Allow text to take available space */
+}
+
+.remove-from-cart-btn {
+    background-color: #dc3545; /* Red for removal */
+    color: white;
+    border: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem; /* Slightly smaller */
+    margin-left: 10px; /* Space from item text */
+    white-space: nowrap;
+}
+
+.remove-from-cart-btn:hover {
+    background-color: #c82333;
+}
+
+.remove-from-cart-btn:active {
+    filter: brightness(85%);
+}
+
 
 #cart-total {
     font-weight: bold;
@@ -140,15 +167,28 @@ footer {
 
 #pix-qr-code {
     margin: 1rem auto;
-    padding: 1rem;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    width: 200px; /* Example fixed width */
-    height: 200px; /* Example fixed height */
-    line-height: 180px; /* Vertically center placeholder text if needed */
-    text-align: center;
-    font-style: italic;
-    color: #777;
+    /* Padding can create a border effect around the QR code. 
+       Adjust or remove as desired. For now, let's reduce it or make it 0 
+       if the QR code itself should be exactly 200x200.
+       If the QR code library adds its own margin/padding, this might need further adjustment.
+       Let's keep a minimal padding to act as a small border. */
+    padding: 5px; 
+    background-color: #fff; /* Background for the container, if QR is smaller or has transparency */
+    border: 1px solid #ccc; /* Border for the container */
+    width: 210px;  /* Container width: 200px for QR + 2*5px padding */
+    height: 210px; /* Container height: 200px for QR + 2*5px padding */
+    /* line-height, text-align, font-style, color are no longer needed for placeholder text */
+    display: flex; /* To help center the img/canvas if it's smaller than container */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Optional: If qrcode.js generates an img or canvas, you might want to style it directly */
+#pix-qr-code img, 
+#pix-qr-code canvas {
+    /* The library sets the width and height on the element directly.
+       This ensures it's displayed as a block and respects its own dimensions. */
+    display: block; 
 }
 
 #pix-copy-paste-code {
@@ -246,4 +286,43 @@ footer {
 
 .order-again-btn:hover {
     background-color: #e0a800;
+}
+
+/* Button Active States for Visual Feedback */
+
+.add-to-cart-btn:active,
+#checkout-button:active,
+#confirm-payment-button:active,
+#whatsapp-share-button:active,
+.order-again-btn:active {
+    /* Darken background slightly or use a transform for a "pressed" effect */
+    /* Option 1: Darken background (adjust filter or use specific darker colors) */
+    filter: brightness(85%);
+    
+    /* Option 2: Transform (can sometimes affect layout if not careful) */
+    /* transform: translateY(1px); */
+    /* box-shadow: inset 0 0 5px rgba(0,0,0,0.2); */
+}
+
+/* Ensure :hover styles are defined for a good experience too */
+/* (Most already have hover styles, but adding for completeness if any were missed) */
+
+.add-to-cart-btn:hover {
+    background-color: #0056b3; /* Already defined */
+}
+
+#checkout-button:hover {
+    background-color: #218838; /* Already defined */
+}
+
+#confirm-payment-button:hover {
+    background-color: #138496; /* Already defined */
+}
+
+#whatsapp-share-button:hover {
+    background-color: #1EBE57; /* Already defined */
+}
+
+.order-again-btn:hover {
+    background-color: #e0a800; /* Already defined */
 }

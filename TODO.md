@@ -8,9 +8,9 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Details:** HTML structure, CSS styling, JavaScript for fetching, parsing, and displaying `menu.csv`. Interactive menu items with "add to cart" functionality. Basic cart display (items and total with quantity).
     - **Status:** Initial structure and functionality implemented. Cart quantity handling added. Further refinements for responsiveness and UI needed.
     - **Rationale:** Foundation for all other v1.0 features.
-- [~] **Task:** PIX Integration (Placeholder/Conceptual).
-    - **Details:** UI elements for PIX display are in place. `handleCheckout` simulates PIX data generation (now including item quantities in placeholder) and shows this section. Next step: real QR code generation.
-    - **Status:** Placeholder UI and basic JS logic implemented.
+- [x] **Task:** PIX Integration (Placeholder/Conceptual). 
+    - **Details:** UI elements for PIX display are in place. `handleCheckout` now uses `qrcode.js` to generate a real client-side QR code from simulated PIX data (including item quantities). "Copia e Cola" also uses this data string.
+    - **Status:** Client-side QR code generation implemented. Next step could be refining PIX data structure if needed or server-side validation (future).
     - **Rationale:** Core payment method for the app.
 - [~] **Task:** WhatsApp Integration (Placeholder/Conceptual). 
     - **Details:** WhatsApp share button UI is in place. `handleWhatsAppShare` formats cart data (including quantities) and opens a `wa.me` link.
@@ -44,10 +44,10 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Rationale:** Comprehensive and clear documentation is key for user adoption, self-service setup, and attracting contributions.
 
 - [~] **Task:** Refine UI/UX for Core Features.
-    - **Details:** Improve visual hierarchy and spacing of menu, cart, PIX display, and order history. Ensure better responsiveness. Add loading indicators. Design user-friendly quantity management in cart. **[Cart quantity handling implemented.]**
+    - **Details:** Improve visual hierarchy and spacing of menu, cart, PIX display, and order history. Ensure better responsiveness. Add loading indicators. Design user-friendly quantity management in cart. **[Cart quantity handling implemented. CSS active styles for button feedback added. Placeholder 'Remover' buttons added to cart items.]**
     - **Rationale:** Enhance usability and align with the "premium experience" goal from `README.md`.
-- [ ] **Task:** Implement Real PIX QR Code Generation (Client-Side).
-    - **Details:** Integrate a JS library for QR code generation. Update `handleCheckout` to generate a real QR code image/canvas based on structured PIX payload (BR Code: Phone, Order ID, Items, Location placeholder).
+- [x] **Task:** Implement Real PIX QR Code Generation (Client-Side). 
+    - **Details:** Integrated `qrcode.js` library (via CDN). `handleCheckout` now generates a real QR code image/canvas using a structured PIX data string (simulated BR Code: Phone, Order ID, Items, Location placeholder). CSS for QR display updated.
     - **Rationale:** Move PIX feature from placeholder to a functional (client-side) state.
 - [x] **Task:** Develop WhatsApp Web Intent Integration. 
     - **Details:** `handleWhatsAppShare` constructs and opens a `https://wa.me/` URL with the pre-filled order message (including quantities) for sharing.

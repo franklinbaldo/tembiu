@@ -137,12 +137,24 @@ function updateCartDisplay() {
     cartItemsContainer.innerHTML = ''; 
     let total = 0;
 
-    cart.forEach(item => { // item here is an object from the cart array, with quantity
+    cart.forEach((item, index) => { // Added index for potential use with removal
         const div = document.createElement('div');
         div.classList.add('cart-item');
+        
+        const itemDetails = document.createElement('span');
         const itemSubtotal = item.preco * item.quantity;
-        div.textContent = `${item.quantity}x ${item.nome} - R$ ${itemSubtotal.toFixed(2)}`; 
-        // TODO: Add +/- buttons here in a future step for quantity adjustment
+        itemDetails.textContent = `${item.quantity}x ${item.nome} - R$ ${itemSubtotal.toFixed(2)}`;
+        div.appendChild(itemDetails);
+
+        const removeButton = document.createElement('button');
+        removeButton.classList.add('remove-from-cart-btn');
+        removeButton.textContent = 'Remover';
+        removeButton.setAttribute('data-item-name', item.nome); // Store item name for future removal logic
+        // removeButton.setAttribute('data-item-index', index); // Alternative: store index
+        // For now, the button does nothing:
+        // removeButton.addEventListener('click', () => handleRemoveItemFromCart(item.nome)); 
+        div.appendChild(removeButton);
+        
         cartItemsContainer.appendChild(div);
         total += itemSubtotal;
     });
@@ -296,21 +308,44 @@ function handleCheckout() {
 
     const orderId = "TEMBIU-" + Date.now();
     const totalAmount = cart.reduce((sum, item) => sum + (item.preco * item.quantity), 0);
-    
     const itemsStringForPix = cart.map(item => `${item.quantity}x${item.nome.replace(/\s+/g, '')}`).join(',');
 
-    const placeholderPixQRCode = `QRCODE_PLACEHOLDER_FOR_ORDER_${orderId}_AMOUNT_${totalAmount.toFixed(2)}_ITEMS_${itemsStringForPix}`;
-    const placeholderPixCopyPaste = `PIX_COPIA_COLA_PLACEHOLDER_FOR_ORDER_${orderId}_AMOUNT_${totalAmount.toFixed(2)}_ITEMS_${itemsStringForPix}`;
+    // This string will be the data for the QR code
+    const pixDataString = `PIX_COPIA_COLA_PLACEHOLDER_FOR_ORDER_${orderId}_AMOUNT_${totalAmount.toFixed(2)}_ITEMS_${itemsStringForPix}`;
 
     const pixQrCodeElement = document.getElementById('pix-qr-code');
     const pixCopyPasteElement = document.getElementById('pix-copy-paste-code');
-    if (pixQrCodeElement) pixQrCodeElement.textContent = placeholderPixQRCode;
-    if (pixCopyPasteElement) pixCopyPasteElement.textContent = placeholderPixCopyPaste;
+    
+    if (pixQrCodeElement) {
+        // Clear previous QR code (if any) or placeholder text
+        pixQrCodeElement.innerHTML = ''; 
+        
+        // Generate new QR code
+        try {
+            new QRCode(pixQrCodeElement, {
+                text: pixDataString,
+                width: 200, // Desired width in pixels
+                height: 200, // Desired height in pixels
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H // High correction level
+            });
+            pixQrCodeElement.title = pixDataString; // Set title for hover/accessibility
+        } catch (e) {
+            console.error("Error generating QR Code:", e);
+            pixQrCodeElement.textContent = "[Erro ao gerar QR Code]";
+        }
+    }
+    
+    if (pixCopyPasteElement) {
+        pixCopyPasteElement.textContent = pixDataString; // Display the same data string
+    }
 
     const pixDisplayContainer = document.getElementById('pix-display-container');
     const cartContainer = document.getElementById('cart-container');
     if (pixDisplayContainer) pixDisplayContainer.style.display = 'block';
     if (cartContainer) cartContainer.style.display = 'none'; 
     
-    console.log("Displaying placeholder PIX information for order:", orderId);
+    console.log("Displaying PIX information with QR Code for order:", orderId);
+    console.log("PIX Data String:", pixDataString);
 }
