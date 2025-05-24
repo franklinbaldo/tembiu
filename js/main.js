@@ -86,14 +86,16 @@ function renderMenuItems(menuItems) {
         menuContainer.innerHTML = ''; 
         const ul = document.createElement('ul');
         menuItems.forEach(item => {
-            if (item.disponivel && item.disponivel.toLowerCase() === 'true') { 
+            // Ensure item.disponivel is a string from CSV before toLowerCase()
+            const isAvailable = typeof item.disponivel === 'string' && item.disponivel.toLowerCase() === 'true';
+            if (isAvailable) { 
                 const li = document.createElement('li');
                 li.innerHTML = `
                     <span>${item.emoji || '🍽️'} ${item.nome} (${item.categoria}) - R$ ${item.preco.toFixed(2)}</span>
                     <button class="add-to-cart-btn">Adicionar</button>
                 `;
                 li.querySelector('.add-to-cart-btn').addEventListener('click', () => {
-                    addItemToCart(item);
+                    addItemToCart(item); // item here is the original from menuItems
                 });
                 ul.appendChild(li);
             }
@@ -104,10 +106,17 @@ function renderMenuItems(menuItems) {
     }
 }
 
-function addItemToCart(item) {
-    const cartItem = { ...item, cartItemId: Date.now() }; 
-    cart.push(cartItem);
-    console.log(`${item.nome} added to cart:`, cart);
+function addItemToCart(itemFromMenu) { // itemFromMenu is an object from the menu.csv
+    const existingItem = cart.find(cartItem => cartItem.nome === itemFromMenu.nome);
+
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        // Add new item to cart with quantity 1
+        // Create a copy to avoid modifying the original menu item object if it was passed directly
+        cart.push({ ...itemFromMenu, quantity: 1 });
+    }
+    console.log(`${itemFromMenu.nome} processed for cart:`, cart);
     updateCartDisplay();
 }
 
@@ -128,58 +137,31 @@ function updateCartDisplay() {
     cartItemsContainer.innerHTML = ''; 
     let total = 0;
 
-    cart.forEach(item => {
+    cart.forEach(item => { // item here is an object from the cart array, with quantity
         const div = document.createElement('div');
         div.classList.add('cart-item');
-        div.textContent = `${item.nome} - R$ ${item.preco.toFixed(2)}`; 
+        const itemSubtotal = item.preco * item.quantity;
+        div.textContent = `${item.quantity}x ${item.nome} - R$ ${itemSubtotal.toFixed(2)}`; 
+        // TODO: Add +/- buttons here in a future step for quantity adjustment
         cartItemsContainer.appendChild(div);
-        total += item.preco;
+        total += itemSubtotal;
     });
 
     cartTotalElement.textContent = total.toFixed(2);
     checkoutButton.style.display = 'block';
 }
 
-function handleCheckout() {
-    console.log("Checkout initiated. Cart contents:", cart);
-
-    if (cart.length === 0) {
-        alert("Seu carrinho está vazio. Adicione itens antes de finalizar o pedido.");
-        return;
-    }
-
-    const orderId = "TEMBIU-" + Date.now();
-    const totalAmount = cart.reduce((sum, item) => sum + item.preco, 0);
-    const placeholderPixQRCode = `QRCODE_PLACEHOLDER_FOR_ORDER_${orderId}_AMOUNT_${totalAmount.toFixed(2)}`;
-    const placeholderPixCopyPaste = `PIX_COPIA_COLA_PLACEHOLDER_FOR_ORDER_${orderId}_AMOUNT_${totalAmount.toFixed(2)}`;
-
-    const pixQrCodeElement = document.getElementById('pix-qr-code');
-    const pixCopyPasteElement = document.getElementById('pix-copy-paste-code');
-    if (pixQrCodeElement) pixQrCodeElement.textContent = placeholderPixQRCode;
-    if (pixCopyPasteElement) pixCopyPasteElement.textContent = placeholderPixCopyPaste;
-
-    const pixDisplayContainer = document.getElementById('pix-display-container');
-    const cartContainer = document.getElementById('cart-container');
-
-    if (pixDisplayContainer) pixDisplayContainer.style.display = 'block';
-    if (cartContainer) cartContainer.style.display = 'none'; 
-    
-    console.log("Displaying placeholder PIX information for order:", orderId);
-}
-
 function formatCartForWhatsApp(cartArray) {
     if (!cartArray || cartArray.length === 0) {
         return "Seu carrinho está vazio!";
     }
-
     let message = "Olá! Gostaria de fazer o seguinte pedido:\n";
     let total = 0;
-
-    cartArray.forEach(item => {
-        message += `- ${item.nome} (R$ ${item.preco.toFixed(2)})\n`;
-        total += item.preco;
+    cartArray.forEach(item => { // item has quantity here
+        const itemSubtotal = item.preco * item.quantity;
+        message += `- ${item.quantity}x ${item.nome} (R$ ${itemSubtotal.toFixed(2)})\n`;
+        total += itemSubtotal;
     });
-
     message += `\nTotal do Pedido: R$ ${total.toFixed(2)}`;
     return message;
 }
@@ -190,21 +172,20 @@ function handleWhatsAppShare() {
         return;
     }
 
-    const orderMessage = formatCartForWhatsApp(cart);
+    const orderMessage = formatCartForWhatsApp(cart); // This function already exists
     console.log("Formatted WhatsApp Message:", orderMessage);
     
-    alert("Simulando compartilhamento no WhatsApp:\n\n" + orderMessage);
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(orderMessage)}`;
+    window.open(whatsappUrl, '_blank');
 }
 
 function handleConfirmPayment() {
     if (cart.length === 0) {
         alert("Nenhum item no carrinho para confirmar o pagamento.");
-        // Though checkout button should ideally not be visible if cart is empty
         return;
     }
     console.log("Payment confirmed (simulated). Order details:", cart);
     
-    // Save order to history
     saveOrderToHistory(cart);
 
     alert("Pagamento confirmado (simulação)! Obrigado pelo seu pedido.");
@@ -212,37 +193,31 @@ function handleConfirmPayment() {
     const pixDisplayContainer = document.getElementById('pix-display-container');
     if (pixDisplayContainer) pixDisplayContainer.style.display = 'none';
     
-    // Clear the current cart
     cart = [];
-    updateCartDisplay(); // Update UI to show empty cart
-    loadOrderHistory(); // Refresh the displayed order history
+    updateCartDisplay(); 
+    loadOrderHistory(); 
 
-    // Show menu and cart container again
     const cartContainer = document.getElementById('cart-container');
     if (cartContainer) cartContainer.style.display = 'block';
-    // const menuContainer = document.getElementById('menu-container'); // if it was hidden
-    // if (menuContainer) menuContainer.style.display = 'block';
 }
 
-function saveOrderToHistory(orderItems) {
-    const MAX_HISTORY_ITEMS = 5; // Keep only the last 5 orders, for example
+function saveOrderToHistory(currentCartItems) { // currentCartItems have quantity
+    const MAX_HISTORY_ITEMS = 5; 
     let history = JSON.parse(localStorage.getItem('tembiuOrderHistory')) || [];
     
-    // Add new order with a timestamp/ID
     const newOrder = {
         id: "ORD-" + Date.now(),
         timestamp: new Date().toLocaleString('pt-BR'),
-        items: [...orderItems] // Create a copy of items
+        items: currentCartItems.map(item => ({ ...item })) // Store copies with quantity
     };
-    history.unshift(newOrder); // Add to the beginning
+    history.unshift(newOrder); 
 
-    // Trim history if it exceeds max items
     if (history.length > MAX_HISTORY_ITEMS) {
         history = history.slice(0, MAX_HISTORY_ITEMS);
     }
 
     localStorage.setItem('tembiuOrderHistory', JSON.stringify(history));
-    console.log("Order saved to history:", newOrder);
+    console.log("Order saved to history (with quantities):", newOrder);
 }
 
 function loadOrderHistory() {
@@ -256,8 +231,8 @@ function loadOrderHistory() {
         return;
     }
 
-    pastOrdersList.innerHTML = ''; // Clear existing content
-    history.forEach(order => {
+    pastOrdersList.innerHTML = ''; 
+    history.forEach(order => { // order.items here have quantity
         const orderDiv = document.createElement('div');
         orderDiv.classList.add('past-order');
 
@@ -266,28 +241,76 @@ function loadOrderHistory() {
         orderDiv.appendChild(title);
 
         const ul = document.createElement('ul');
+        let orderTotal = 0;
         order.items.forEach(item => {
             const li = document.createElement('li');
-            li.textContent = `${item.nome} - R$ ${item.preco.toFixed(2)}`;
+            const itemSubtotal = item.preco * item.quantity;
+            li.textContent = `${item.quantity}x ${item.nome} - R$ ${itemSubtotal.toFixed(2)}`;
             ul.appendChild(li);
+            orderTotal += itemSubtotal;
         });
         orderDiv.appendChild(ul);
+        
+        const totalP = document.createElement('p');
+        totalP.innerHTML = `<strong>Total do Pedido: R$ ${orderTotal.toFixed(2)}</strong>`;
+        orderDiv.appendChild(totalP);
 
         const orderAgainButton = document.createElement('button');
         orderAgainButton.classList.add('order-again-btn');
         orderAgainButton.textContent = 'Pedir Novamente';
-        orderAgainButton.addEventListener('click', () => handleOrderAgain(order.items));
+        orderAgainButton.addEventListener('click', () => handleOrderAgain(order.items)); 
         orderDiv.appendChild(orderAgainButton);
         
         pastOrdersList.appendChild(orderDiv);
     });
 }
 
-function handleOrderAgain(orderItems) {
-    console.log("Order Again clicked. Items to re-order:", orderItems);
-    // For now, just log. Future implementation could repopulate the cart:
-    // cart = [...orderItems]; // Or merge/add based on desired logic
-    // updateCartDisplay();
-    // alert("Itens do pedido anterior foram adicionados ao seu carrinho!");
-    alert("Funcionalidade 'Pedir Novamente' ainda em desenvolvimento. Detalhes do pedido no console.");
+function handleOrderAgain(orderItemsFromHistory) { 
+    console.log("Order Again clicked. Items to re-populate:", orderItemsFromHistory);
+    cart = []; 
+
+    orderItemsFromHistory.forEach(itemFromHistory => {
+        const quantity = itemFromHistory.quantity || 1; 
+        for (let i = 0; i < quantity; i++) {
+            const baseItem = { ...itemFromHistory };
+            delete baseItem.quantity; 
+            addItemToCart(baseItem);
+        }
+    });
+    updateCartDisplay(); 
+
+    alert("Itens do seu pedido anterior foram adicionados ao seu carrinho!");
+    const cartContainer = document.getElementById('cart-container');
+    if (cartContainer) {
+        cartContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function handleCheckout() {
+    console.log("Checkout initiated. Cart contents (with quantities):", cart);
+
+    if (cart.length === 0) {
+        alert("Seu carrinho está vazio. Adicione itens antes de finalizar o pedido.");
+        return;
+    }
+
+    const orderId = "TEMBIU-" + Date.now();
+    const totalAmount = cart.reduce((sum, item) => sum + (item.preco * item.quantity), 0);
+    
+    const itemsStringForPix = cart.map(item => `${item.quantity}x${item.nome.replace(/\s+/g, '')}`).join(',');
+
+    const placeholderPixQRCode = `QRCODE_PLACEHOLDER_FOR_ORDER_${orderId}_AMOUNT_${totalAmount.toFixed(2)}_ITEMS_${itemsStringForPix}`;
+    const placeholderPixCopyPaste = `PIX_COPIA_COLA_PLACEHOLDER_FOR_ORDER_${orderId}_AMOUNT_${totalAmount.toFixed(2)}_ITEMS_${itemsStringForPix}`;
+
+    const pixQrCodeElement = document.getElementById('pix-qr-code');
+    const pixCopyPasteElement = document.getElementById('pix-copy-paste-code');
+    if (pixQrCodeElement) pixQrCodeElement.textContent = placeholderPixQRCode;
+    if (pixCopyPasteElement) pixCopyPasteElement.textContent = placeholderPixCopyPaste;
+
+    const pixDisplayContainer = document.getElementById('pix-display-container');
+    const cartContainer = document.getElementById('cart-container');
+    if (pixDisplayContainer) pixDisplayContainer.style.display = 'block';
+    if (cartContainer) cartContainer.style.display = 'none'; 
+    
+    console.log("Displaying placeholder PIX information for order:", orderId);
 }
