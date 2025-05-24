@@ -5,8 +5,8 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
 ## Phase 1: Implement Core v1.0 Functionality (from README)
 
 - [~] **Task:** Basic responsive template and menu loading.
-    - **Details:** HTML structure, CSS styling, JavaScript for fetching, parsing, and displaying `menu.csv`. Interactive menu items with "add to cart" functionality. Basic cart display (items and total with quantity). Functional item removal from cart.
-    - **Status:** Initial structure and functionality implemented. Cart quantity handling and item removal added. Further refinements for responsiveness and UI needed.
+    - **Details:** HTML structure, CSS styling, JavaScript for fetching, parsing, and displaying `menu.csv`. Interactive menu items with "add to cart" functionality. Basic cart display (items and total with quantity). Functional item removal from cart. **CSS media queries added for improved responsiveness across screen sizes.**
+    - **Status:** Initial structure and functionality implemented. Cart quantity handling and item removal added. Responsiveness improved. Further UI refinements may be needed.
     - **Rationale:** Foundation for all other v1.0 features.
 - [x] **Task:** PIX Integration (Placeholder/Conceptual). 
     - **Details:** UI elements for PIX display are in place. `handleCheckout` now uses `qrcode.js` to generate a real client-side QR code from simulated PIX data (including item quantities). "Copia e Cola" also uses this data string.
@@ -32,8 +32,8 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
 ## Phase 2: Roadmap Implementation (Next Steps from README)
 
 - [~] **Task:** Begin v1.1 - Google Apps Script Integration (Backend).
-    - **Sub-Task:** Design basic Google Apps Script structure for backend logic (e.g., handling orders, analytics). **[Placeholder `backend/google_apps_script_backend.gs.js` file created with conceptual structure and comments.]**
-    - **Sub-Task:** Implement a function to log new orders to a Google Sheet.
+    - **Sub-Task:** Design basic Google Apps Script structure for backend logic (e.g., handling orders, analytics). **[Placeholder `backend/google_apps_script_backend.gs.js` file created. Client-side `js/main.js` now includes `sendOrderToBackend` function to POST order data to a placeholder GAS URL.]**
+    - **Sub-Task:** Implement a function in GAS to log new orders to a Google Sheet.
     - **Sub-Task:** Document how to set up and deploy this GAS backend.
     - **Rationale:** This is the first unchecked major item in the `README.md` roadmap (v1.1) and adds significant value through data persistence and automation.
 - [ ] **Task:** Refine `menu.csv` and `menu.json` examples and documentation.

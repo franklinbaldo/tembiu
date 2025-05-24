@@ -207,6 +207,57 @@ function handleWhatsAppShare() {
     window.open(whatsappUrl, '_blank');
 }
 
+// New function to send order data to the backend
+async function sendOrderToBackend(orderData) {
+    const backendUrl = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"; // Placeholder
+    console.log("Attempting to send order to backend:", orderData);
+
+    // Reminder: The actual GAS backend (doPost function) will need to be deployed
+    // and this URL replaced with the correct script web app URL.
+    if (backendUrl === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+        console.warn("Placeholder backend URL is being used. Order will not be sent to a live backend.");
+        // For demonstration, log what would be sent:
+        // alert(`Simulating send to backend: ${JSON.stringify(orderData)}`); 
+        // To prevent actual fetch errors with placeholder, we can return early or mock success for now.
+        // Let's simulate a successful log for now for client-side flow.
+        return Promise.resolve({ 
+            status: "simulated_success", 
+            message: "Order logged for backend (simulation).",
+            receivedData: orderData 
+        });
+    }
+
+    try {
+        const response = await fetch(backendUrl, {
+            method: 'POST',
+            // GAS doPost typically expects 'application/x-www-form-urlencoded' by default from forms,
+            // but can handle 'application/json' if parsed correctly from e.postData.contents.
+            // Or, mode 'no-cors' might be needed if GAS is not set up for CORS, but then response is opaque.
+            // For a JSON payload, text/plain is often easier with e.postData.contents.
+            headers: {
+                'Content-Type': 'text/plain', // Sending as text/plain to be parsed from e.postData.contents
+            },
+            body: JSON.stringify(orderData) 
+        });
+
+        if (!response.ok) {
+            // For opaque responses (mode: 'no-cors'), response.ok might not be accurate.
+            // However, with 'Content-Type': 'text/plain', we expect a normal response.
+            throw new Error(`Backend responded with status: ${response.status} ${response.statusText}`);
+        }
+
+        const responseData = await response.json(); // Assuming GAS returns JSON
+        console.log("Response from backend:", responseData);
+        // alert(`Order sent to backend: ${responseData.message}`); // Optional user feedback
+        return responseData;
+
+    } catch (error) {
+        console.error("Error sending order to backend:", error);
+        // alert(`Error sending order to backend: ${error.message}`); // Optional user feedback
+        return Promise.reject(error);
+    }
+}
+
 function handleConfirmPayment() {
     if (cart.length === 0) {
         alert("Nenhum item no carrinho para confirmar o pagamento.");
@@ -214,14 +265,28 @@ function handleConfirmPayment() {
     }
     console.log("Payment confirmed (simulated). Order details:", cart);
     
-    saveOrderToHistory(cart);
+    // Create a copy of the cart at this moment for saving and sending
+    const confirmedOrderItems = cart.map(item => ({ ...item })); 
 
-    alert("Pagamento confirmado (simulação)! Obrigado pelo seu pedido.");
+    saveOrderToHistory(confirmedOrderItems); // Save the confirmed order (with quantities)
+
+    // After saving, attempt to send to backend
+    sendOrderToBackend(confirmedOrderItems)
+        .then(backendResponse => {
+            console.log("sendOrderToBackend success:", backendResponse.message);
+            // Potentially show a more specific success message to user based on backendResponse
+        })
+        .catch(error => {
+            console.error("sendOrderToBackend failed:", error.message);
+            // Potentially inform user that backend sync might have failed but order is saved locally
+        });
+
+    alert("Pagamento confirmado (simulação)! Obrigado pelo seu pedido. Seu pedido foi salvo localmente.");
 
     const pixDisplayContainer = document.getElementById('pix-display-container');
     if (pixDisplayContainer) pixDisplayContainer.style.display = 'none';
     
-    cart = [];
+    cart = []; // Clear the current cart
     updateCartDisplay(); 
     loadOrderHistory(); 
 
