@@ -1,5 +1,14 @@
 console.log("Tembiu main.js loaded.");
 
+// Client-side Restaurant Configuration (Placeholders)
+const restaurantConfig = {
+    name: "Tembiu Lanchonete Virtual", // Placeholder restaurant name
+    phone: "5511999999999",           // Placeholder phone number (for wa.me link)
+    // Future items: currency, deliveryFee, etc.
+    // Example for PIX Tel field (if different from WhatsApp or needs specific format)
+    // pixTel: "11999999999" 
+};
+
 let cart = []; // Initialize cart
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -179,34 +188,6 @@ function handleRemoveItemFromCart(itemName) {
     updateCartDisplay(); // Refresh the cart display
 }
 
-function formatCartForWhatsApp(cartArray) {
-    if (!cartArray || cartArray.length === 0) {
-        return "Seu carrinho está vazio!";
-    }
-    let message = "Olá! Gostaria de fazer o seguinte pedido:\n";
-    let total = 0;
-    cartArray.forEach(item => { // item has quantity here
-        const itemSubtotal = item.preco * item.quantity;
-        message += `- ${item.quantity}x ${item.nome} (R$ ${itemSubtotal.toFixed(2)})\n`;
-        total += itemSubtotal;
-    });
-    message += `\nTotal do Pedido: R$ ${total.toFixed(2)}`;
-    return message;
-}
-
-function handleWhatsAppShare() {
-    if (cart.length === 0) {
-        alert("Seu carrinho está vazio. Adicione itens antes de compartilhar.");
-        return;
-    }
-
-    const orderMessage = formatCartForWhatsApp(cart); // This function already exists
-    console.log("Formatted WhatsApp Message:", orderMessage);
-    
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(orderMessage)}`;
-    window.open(whatsappUrl, '_blank');
-}
-
 // New function to send order data to the backend
 async function sendOrderToBackend(orderData) {
     const backendUrl = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"; // Placeholder
@@ -379,6 +360,37 @@ function handleOrderAgain(orderItemsFromHistory) {
     }
 }
 
+function formatCartForWhatsApp(cartArray) {
+    if (!cartArray || cartArray.length === 0) {
+        return "Seu carrinho está vazio!";
+    }
+    // Prepend restaurant name to the message
+    let message = `Olá ${restaurantConfig.name}! Gostaria de fazer o seguinte pedido:\n`; // Corrected newline
+    let total = 0;
+    cartArray.forEach(item => { 
+        const itemSubtotal = item.preco * item.quantity;
+        message += `- ${item.quantity}x ${item.nome} (R$ ${itemSubtotal.toFixed(2)})\n`; // Corrected newline
+        total += itemSubtotal;
+    });
+    message += `\nTotal do Pedido: R$ ${total.toFixed(2)}`; // Corrected newline
+    return message;
+}
+
+function handleWhatsAppShare() {
+    if (cart.length === 0) {
+        alert("Seu carrinho está vazio. Adicione itens antes de compartilhar.");
+        return;
+    }
+
+    const orderMessage = formatCartForWhatsApp(cart); 
+    console.log("Formatted WhatsApp Message:", orderMessage);
+    
+    // Construct the WhatsApp Web Intent URL using configured phone number
+    const whatsappUrl = `https://wa.me/${restaurantConfig.phone}?text=${encodeURIComponent(orderMessage)}`;
+
+    window.open(whatsappUrl, '_blank');
+}
+
 function handleCheckout() {
     console.log("Checkout initiated. Cart contents (with quantities):", cart);
 
@@ -387,31 +399,30 @@ function handleCheckout() {
         return;
     }
 
-    const orderId = "TEMBIU-" + Date.now();
-    const totalAmount = cart.reduce((sum, item) => sum + (item.preco * item.quantity), 0);
-    const itemsStringForPix = cart.map(item => `${item.quantity}x${item.nome.replace(/\s+/g, '')}`).join(',');
+    const orderId = "TEMBIU-" + Date.now(); 
+    const itemsStringForData = cart.map(item => `${item.quantity}x${item.nome.replace(/\s+/g, '')}`).join(',');
+    
+    // Use configured phone for the "Tel" part of the PIX data string
+    const configuredTel = `Tel:${restaurantConfig.phone}`; 
+    const placeholderLoc = "Loc:LOCATION_PLUS_CODE_PLACEHOLDER"; 
 
-    // This string will be the data for the QR code
-    const pixDataString = `PIX_COPIA_COLA_PLACEHOLDER_FOR_ORDER_${orderId}_AMOUNT_${totalAmount.toFixed(2)}_ITEMS_${itemsStringForPix}`;
+    const pixDataString = `${configuredTel} ID:${orderId} Items:${itemsStringForData} ${placeholderLoc}`;
 
     const pixQrCodeElement = document.getElementById('pix-qr-code');
     const pixCopyPasteElement = document.getElementById('pix-copy-paste-code');
     
     if (pixQrCodeElement) {
-        // Clear previous QR code (if any) or placeholder text
         pixQrCodeElement.innerHTML = ''; 
-        
-        // Generate new QR code
         try {
             new QRCode(pixQrCodeElement, {
                 text: pixDataString,
-                width: 200, // Desired width in pixels
-                height: 200, // Desired height in pixels
+                width: 200,
+                height: 200,
                 colorDark : "#000000",
                 colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H // High correction level
+                correctLevel : QRCode.CorrectLevel.H
             });
-            pixQrCodeElement.title = pixDataString; // Set title for hover/accessibility
+            pixQrCodeElement.title = pixDataString; 
         } catch (e) {
             console.error("Error generating QR Code:", e);
             pixQrCodeElement.textContent = "[Erro ao gerar QR Code]";
@@ -419,7 +430,7 @@ function handleCheckout() {
     }
     
     if (pixCopyPasteElement) {
-        pixCopyPasteElement.textContent = pixDataString; // Display the same data string
+        pixCopyPasteElement.textContent = pixDataString;
     }
 
     const pixDisplayContainer = document.getElementById('pix-display-container');
@@ -427,6 +438,6 @@ function handleCheckout() {
     if (pixDisplayContainer) pixDisplayContainer.style.display = 'block';
     if (cartContainer) cartContainer.style.display = 'none'; 
     
-    console.log("Displaying PIX information with QR Code for order:", orderId);
-    console.log("PIX Data String:", pixDataString);
+    console.log("Displaying PIX information with refined QR Code data for order:", orderId);
+    console.log("Refined PIX Data String for QR Code:", pixDataString);
 }

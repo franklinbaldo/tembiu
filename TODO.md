@@ -9,12 +9,12 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Status:** Initial structure and functionality implemented. Cart quantity handling and item removal added. Responsiveness improved. Further UI refinements may be needed.
     - **Rationale:** Foundation for all other v1.0 features.
 - [x] **Task:** PIX Integration (Placeholder/Conceptual). 
-    - **Details:** UI elements for PIX display are in place. `handleCheckout` now uses `qrcode.js` to generate a real client-side QR code from simulated PIX data (including item quantities). "Copia e Cola" also uses this data string.
-    - **Status:** Client-side QR code generation implemented. Next step could be refining PIX data structure if needed or server-side validation (future).
+    - **Details:** UI elements for PIX display are in place. `handleCheckout` now uses `qrcode.js` to generate a real client-side QR code. **PIX data string structure refined to follow custom format from README.md (using configured phone for 'Tel').**
+    - **Status:** Client-side QR code generation implemented with refined data structure.
     - **Rationale:** Core payment method for the app.
 - [~] **Task:** WhatsApp Integration (Placeholder/Conceptual). 
-    - **Details:** WhatsApp share button UI is in place. `handleWhatsAppShare` formats cart data (including quantities) and opens a `wa.me` link.
-    - **Status:** Placeholder UI and JS logic for `wa.me` link implemented. (Marking as [~] as full integration might involve phone number config, etc.)
+    - **Details:** WhatsApp share button UI is in place. `handleWhatsAppShare` formats cart data and opens a `wa.me` link. **Client-side `restaurantConfig` (name, phone) added and used in message and `wa.me` link.**
+    - **Status:** JS logic for `wa.me` link and basic config implemented. Further enhancements could include UI for config.
     - **Rationale:** Core communication method for orders.
 - [x] **Task:** Basic PWA Features.
     - **Sub-Task:** [x] Create and link `manifest.json`.
@@ -37,10 +37,10 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Sub-Task:** Document how to set up and deploy this GAS backend.
     - **Rationale:** This is the first unchecked major item in the `README.md` roadmap (v1.1) and adds significant value through data persistence and automation.
 - [ ] **Task:** Refine `menu.csv` and `menu.json` examples and documentation.
-    - **Details:** Ensure the examples in `README.md` for `menu.csv` and `menu.json` are fully functional and cover common use cases. Provide sample `menu.csv` and `menu.json` files in the repository if they don't already exist. Update documentation on how to use them.
+    - **Details:** Ensure the examples in `README.md` for `menu.csv` and `menu.json` are fully functional and cover common use cases. Provide sample `menu.csv` and `menu.json` files in the repository if they don't already exist. Update documentation on how to use them. **(This task can now link to the new `docs/README.md` for menu configuration details).**
     - **Rationale:** Crucial for new users to quickly understand how to configure their menus.
-- [ ] **Task:** Review and Enhance Documentation (`docs/`).
-    - **Details:** Check if the `docs/` directory and key files like `docs/configuration.md` (mentioned in `README.md`) exist. If they exist, review for clarity, accuracy, and completeness. If not, create them with basic setup and configuration guides.
+- [~] **Task:** Review and Enhance Documentation (`docs/`).
+    - **Details:** Check if the `docs/` directory and key files like `docs/configuration.md` (mentioned in `README.md`) exist. If they exist, review for clarity, accuracy, and completeness. If not, create them with basic setup and configuration guides. **[Initial `docs/README.md` created with placeholder structure.]**
     - **Rationale:** Comprehensive and clear documentation is key for user adoption, self-service setup, and attracting contributions.
 
 - [x] **Task:** Refine UI/UX for Core Features. 
