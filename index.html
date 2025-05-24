@@ -28,6 +28,22 @@
             <p>Total: R$ <span id="cart-total">0.00</span></p>
             <button id="checkout-button" style="display:none;">Finalizar Pedido</button>
         </section>
+
+        <section id="pix-display-container" style="display:none;">
+            <h2>Pagamento PIX</h2>
+            <p>Escaneie o QR Code abaixo ou copie o código para pagar:</p>
+            <div id="pix-qr-code">[Placeholder para QR Code PIX]</div>
+            <p><strong>Copia e Cola:</strong> <code id="pix-copy-paste-code">[Placeholder para Código PIX Copia e Cola]</code></p>
+            <button id="confirm-payment-button">Confirmar Pagamento (Simulado)</button>
+            <button id="whatsapp-share-button" style="margin-top: 10px;">Compartilhar Pedido no WhatsApp</button> 
+        </section>
+
+        <section id="order-history-container">
+            <h2>Seus Últimos Pedidos</h2>
+            <div id="past-orders-list">
+                <p>Nenhum pedido encontrado no seu histórico.</p>
+            </div>
+        </section>
     </main>
 
     <footer>

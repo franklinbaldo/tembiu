@@ -8,18 +8,21 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Details:** HTML structure, CSS styling, JavaScript for fetching, parsing, and displaying `menu.csv`. Interactive menu items with "add to cart" functionality. Basic cart display (items and total).
     - **Status:** Initial structure and functionality implemented. Further refinements for responsiveness and UI needed.
     - **Rationale:** Foundation for all other v1.0 features.
-- [ ] **Task:** PIX Integration (Placeholder/Conceptual).
-    - **Details:** Design how PIX QR codes and copyable codes will be generated and displayed. Implement placeholder UI elements. (Note: Basic cart data is now available in `js/main.js`'s `cart` array).
+- [~] **Task:** PIX Integration (Placeholder/Conceptual).
+    - **Details:** UI elements for PIX display are in place. `handleCheckout` simulates PIX data generation and shows this section. Next step: real QR code generation.
+    - **Status:** Placeholder UI and basic JS logic implemented.
     - **Rationale:** Core payment method for the app.
-- [ ] **Task:** WhatsApp Integration (Placeholder/Conceptual).
-    - **Details:** Design how order information will be formatted for WhatsApp messages. Implement placeholder UI elements for sending orders/proof of payment. (Note: Basic cart data is now available in `js/main.js`'s `cart` array).
+- [~] **Task:** WhatsApp Integration (Placeholder/Conceptual).
+    - **Details:** WhatsApp share button UI is in place. `handleWhatsAppShare` formats cart data and simulates sharing. Next step: `wa.me` link integration.
+    - **Status:** Placeholder UI and basic JS logic implemented.
     - **Rationale:** Core communication method for orders.
 - [x] **Task:** Basic PWA Features.
     - **Sub-Task:** [x] Create and link `manifest.json`.
     - **Sub-Task:** [x] Implement basic service worker for offline caching of static assets.
     - **Rationale:** Improves user experience with app-like features and offline access, as per v1.0.
-- [ ] **Task:** Smart History (Conceptual).
-    - **Details:** Plan how order history will be stored (LocalStorage) and how the "order again" functionality will work. Implement placeholder UI.
+- [~] **Task:** Smart History (Conceptual).
+    - **Details:** Orders are saved to LocalStorage after simulated payment. Past orders are displayed with a placeholder "Order Again" button. Cart is cleared after checkout. Next step: functional "Order Again".
+    - **Status:** Basic LocalStorage save/load and UI implemented.
     - **Rationale:** Key usability feature for repeat customers.
 
 - [ ] **Task:** Set up Local Development Environment.
@@ -39,6 +42,19 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
 - [ ] **Task:** Review and Enhance Documentation (`docs/`).
     - **Details:** Check if the `docs/` directory and key files like `docs/configuration.md` (mentioned in `README.md`) exist. If they exist, review for clarity, accuracy, and completeness. If not, create them with basic setup and configuration guides.
     - **Rationale:** Comprehensive and clear documentation is key for user adoption, self-service setup, and attracting contributions.
+
+- [ ] **Task:** Refine UI/UX for Core Features.
+    - **Details:** Improve visual hierarchy and spacing of menu, cart, PIX display, and order history. Ensure better responsiveness. Add loading indicators. Design user-friendly quantity management in cart.
+    - **Rationale:** Enhance usability and align with the "premium experience" goal from `README.md`.
+- [ ] **Task:** Implement Real PIX QR Code Generation (Client-Side).
+    - **Details:** Integrate a JS library for QR code generation. Update `handleCheckout` to generate a real QR code image/canvas based on structured PIX payload (BR Code: Phone, Order ID, Items, Location placeholder).
+    - **Rationale:** Move PIX feature from placeholder to a functional (client-side) state.
+- [ ] **Task:** Develop WhatsApp Web Intent Integration.
+    - **Details:** Modify `handleWhatsAppShare` to construct and open a `https://wa.me/` URL with the pre-filled order message for sharing.
+    - **Rationale:** Make WhatsApp sharing functional, improving restaurant communication.
+- [ ] **Task:** Enhance "Order Again" Functionality.
+    - **Details:** Modify `handleOrderAgain` to repopulate the current cart with items from a selected past order. Provide user feedback.
+    - **Rationale:** Make the "Smart History" feature more useful for re-ordering.
 
 ## Future Phases (High-Level from README Roadmap)
 

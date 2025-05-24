@@ -13,7 +13,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Service Worker registration failed:', error);
             });
     }
-    loadMenu();
+    loadMenu(); // Call loadMenu to render items
+    loadOrderHistory(); // Load order history on page load
+
+    const checkoutButton = document.getElementById('checkout-button');
+    if (checkoutButton) {
+        checkoutButton.addEventListener('click', handleCheckout);
+    }
+
+    const confirmPaymentButton = document.getElementById('confirm-payment-button');
+    if (confirmPaymentButton) {
+        confirmPaymentButton.addEventListener('click', handleConfirmPayment);
+    }
+
+    const whatsappShareButton = document.getElementById('whatsapp-share-button');
+    if (whatsappShareButton) {
+        whatsappShareButton.addEventListener('click', handleWhatsAppShare);
+    }
 });
 
 async function loadMenu() {
@@ -28,7 +44,7 @@ async function loadMenu() {
         const menuItems = parseCSV(csvData);
         
         console.log("Menu Items Loaded:", menuItems);
-        renderMenuItems(menuItems); // Changed to a new rendering function
+        renderMenuItems(menuItems);
 
     } catch (error) {
         console.error('Error fetching or parsing menu.csv:', error);
@@ -53,7 +69,6 @@ function parseCSV(csvText) {
             headers.forEach((header, index) => {
                 item[header.trim()] = values[index].trim();
             });
-            // Ensure price is a number for calculations
             item.preco = parseFloat(item.preco); 
             items.push(item);
         } else {
@@ -68,10 +83,10 @@ function renderMenuItems(menuItems) {
     if (!menuContainer) return;
 
     if (menuItems.length > 0) {
-        menuContainer.innerHTML = ''; // Clear "Carregando..." or old items
+        menuContainer.innerHTML = ''; 
         const ul = document.createElement('ul');
         menuItems.forEach(item => {
-            if (item.disponivel && item.disponivel.toLowerCase() === 'true') { // Check availability
+            if (item.disponivel && item.disponivel.toLowerCase() === 'true') { 
                 const li = document.createElement('li');
                 li.innerHTML = `
                     <span>${item.emoji || '🍽️'} ${item.nome} (${item.categoria}) - R$ ${item.preco.toFixed(2)}</span>
@@ -90,9 +105,7 @@ function renderMenuItems(menuItems) {
 }
 
 function addItemToCart(item) {
-    // For simplicity, we add items directly. For quantity, we'd check if item exists and increment.
-    // This simple version just adds a new entry for each click.
-    const cartItem = { ...item, cartItemId: Date.now() }; // Add a unique ID for cart management if needed later
+    const cartItem = { ...item, cartItemId: Date.now() }; 
     cart.push(cartItem);
     console.log(`${item.nome} added to cart:`, cart);
     updateCartDisplay();
@@ -112,13 +125,12 @@ function updateCartDisplay() {
         return;
     }
 
-    cartItemsContainer.innerHTML = ''; // Clear previous items
+    cartItemsContainer.innerHTML = ''; 
     let total = 0;
 
     cart.forEach(item => {
         const div = document.createElement('div');
         div.classList.add('cart-item');
-        // Note: item.preco should be a number here due to parseFloat in parseCSV
         div.textContent = `${item.nome} - R$ ${item.preco.toFixed(2)}`; 
         cartItemsContainer.appendChild(div);
         total += item.preco;
@@ -128,28 +140,154 @@ function updateCartDisplay() {
     checkoutButton.style.display = 'block';
 }
 
-// Add some styling for the "Add to Cart" button if not already present
-// This can also go into style.css
-const styleSheet = document.styleSheets[0];
-try {
-    styleSheet.insertRule(`
-        .add-to-cart-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 0.3rem 0.6rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-left: 10px;
-        }
-    `, styleSheet.cssRules.length);
-    styleSheet.insertRule(`
-        .add-to-cart-btn:hover {
-            background-color: #0056b3;
-        }
-    `, styleSheet.cssRules.length);
-} catch (e) {
-    console.warn("Could not insert CSS rules for .add-to-cart-btn dynamically: ", e);
-    // Fallback: Or ensure these styles are in your style.css
+function handleCheckout() {
+    console.log("Checkout initiated. Cart contents:", cart);
+
+    if (cart.length === 0) {
+        alert("Seu carrinho está vazio. Adicione itens antes de finalizar o pedido.");
+        return;
+    }
+
+    const orderId = "TEMBIU-" + Date.now();
+    const totalAmount = cart.reduce((sum, item) => sum + item.preco, 0);
+    const placeholderPixQRCode = `QRCODE_PLACEHOLDER_FOR_ORDER_${orderId}_AMOUNT_${totalAmount.toFixed(2)}`;
+    const placeholderPixCopyPaste = `PIX_COPIA_COLA_PLACEHOLDER_FOR_ORDER_${orderId}_AMOUNT_${totalAmount.toFixed(2)}`;
+
+    const pixQrCodeElement = document.getElementById('pix-qr-code');
+    const pixCopyPasteElement = document.getElementById('pix-copy-paste-code');
+    if (pixQrCodeElement) pixQrCodeElement.textContent = placeholderPixQRCode;
+    if (pixCopyPasteElement) pixCopyPasteElement.textContent = placeholderPixCopyPaste;
+
+    const pixDisplayContainer = document.getElementById('pix-display-container');
+    const cartContainer = document.getElementById('cart-container');
+
+    if (pixDisplayContainer) pixDisplayContainer.style.display = 'block';
+    if (cartContainer) cartContainer.style.display = 'none'; 
+    
+    console.log("Displaying placeholder PIX information for order:", orderId);
+}
+
+function formatCartForWhatsApp(cartArray) {
+    if (!cartArray || cartArray.length === 0) {
+        return "Seu carrinho está vazio!";
+    }
+
+    let message = "Olá! Gostaria de fazer o seguinte pedido:\n";
+    let total = 0;
+
+    cartArray.forEach(item => {
+        message += `- ${item.nome} (R$ ${item.preco.toFixed(2)})\n`;
+        total += item.preco;
+    });
+
+    message += `\nTotal do Pedido: R$ ${total.toFixed(2)}`;
+    return message;
+}
+
+function handleWhatsAppShare() {
+    if (cart.length === 0) {
+        alert("Seu carrinho está vazio. Adicione itens antes de compartilhar.");
+        return;
+    }
+
+    const orderMessage = formatCartForWhatsApp(cart);
+    console.log("Formatted WhatsApp Message:", orderMessage);
+    
+    alert("Simulando compartilhamento no WhatsApp:\n\n" + orderMessage);
+}
+
+function handleConfirmPayment() {
+    if (cart.length === 0) {
+        alert("Nenhum item no carrinho para confirmar o pagamento.");
+        // Though checkout button should ideally not be visible if cart is empty
+        return;
+    }
+    console.log("Payment confirmed (simulated). Order details:", cart);
+    
+    // Save order to history
+    saveOrderToHistory(cart);
+
+    alert("Pagamento confirmado (simulação)! Obrigado pelo seu pedido.");
+
+    const pixDisplayContainer = document.getElementById('pix-display-container');
+    if (pixDisplayContainer) pixDisplayContainer.style.display = 'none';
+    
+    // Clear the current cart
+    cart = [];
+    updateCartDisplay(); // Update UI to show empty cart
+    loadOrderHistory(); // Refresh the displayed order history
+
+    // Show menu and cart container again
+    const cartContainer = document.getElementById('cart-container');
+    if (cartContainer) cartContainer.style.display = 'block';
+    // const menuContainer = document.getElementById('menu-container'); // if it was hidden
+    // if (menuContainer) menuContainer.style.display = 'block';
+}
+
+function saveOrderToHistory(orderItems) {
+    const MAX_HISTORY_ITEMS = 5; // Keep only the last 5 orders, for example
+    let history = JSON.parse(localStorage.getItem('tembiuOrderHistory')) || [];
+    
+    // Add new order with a timestamp/ID
+    const newOrder = {
+        id: "ORD-" + Date.now(),
+        timestamp: new Date().toLocaleString('pt-BR'),
+        items: [...orderItems] // Create a copy of items
+    };
+    history.unshift(newOrder); // Add to the beginning
+
+    // Trim history if it exceeds max items
+    if (history.length > MAX_HISTORY_ITEMS) {
+        history = history.slice(0, MAX_HISTORY_ITEMS);
+    }
+
+    localStorage.setItem('tembiuOrderHistory', JSON.stringify(history));
+    console.log("Order saved to history:", newOrder);
+}
+
+function loadOrderHistory() {
+    const history = JSON.parse(localStorage.getItem('tembiuOrderHistory')) || [];
+    const pastOrdersList = document.getElementById('past-orders-list');
+
+    if (!pastOrdersList) return;
+
+    if (history.length === 0) {
+        pastOrdersList.innerHTML = '<p>Nenhum pedido encontrado no seu histórico.</p>';
+        return;
+    }
+
+    pastOrdersList.innerHTML = ''; // Clear existing content
+    history.forEach(order => {
+        const orderDiv = document.createElement('div');
+        orderDiv.classList.add('past-order');
+
+        const title = document.createElement('h3');
+        title.textContent = `Pedido de ${order.timestamp} (ID: ${order.id})`;
+        orderDiv.appendChild(title);
+
+        const ul = document.createElement('ul');
+        order.items.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.nome} - R$ ${item.preco.toFixed(2)}`;
+            ul.appendChild(li);
+        });
+        orderDiv.appendChild(ul);
+
+        const orderAgainButton = document.createElement('button');
+        orderAgainButton.classList.add('order-again-btn');
+        orderAgainButton.textContent = 'Pedir Novamente';
+        orderAgainButton.addEventListener('click', () => handleOrderAgain(order.items));
+        orderDiv.appendChild(orderAgainButton);
+        
+        pastOrdersList.appendChild(orderDiv);
+    });
+}
+
+function handleOrderAgain(orderItems) {
+    console.log("Order Again clicked. Items to re-order:", orderItems);
+    // For now, just log. Future implementation could repopulate the cart:
+    // cart = [...orderItems]; // Or merge/add based on desired logic
+    // updateCartDisplay();
+    // alert("Itens do pedido anterior foram adicionados ao seu carrinho!");
+    alert("Funcionalidade 'Pedir Novamente' ainda em desenvolvimento. Detalhes do pedido no console.");
 }

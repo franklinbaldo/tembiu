@@ -122,3 +122,128 @@ footer {
 #checkout-button:hover {
     background-color: #218838;
 }
+
+/* PIX Display Styling */
+#pix-display-container {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    text-align: center; /* Center align content */
+}
+
+#pix-display-container h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+#pix-qr-code {
+    margin: 1rem auto;
+    padding: 1rem;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    width: 200px; /* Example fixed width */
+    height: 200px; /* Example fixed height */
+    line-height: 180px; /* Vertically center placeholder text if needed */
+    text-align: center;
+    font-style: italic;
+    color: #777;
+}
+
+#pix-copy-paste-code {
+    display: inline-block; /* Or block with text-align:center on parent */
+    padding: 0.5rem;
+    background-color: #e9ecef;
+    border: 1px dashed #ccc;
+    word-break: break-all; /* Ensure long codes wrap */
+}
+
+#confirm-payment-button {
+    display: inline-block; /* Or block with margin auto for centering */
+    padding: 0.75rem 1.5rem;
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1.5rem;
+}
+
+#confirm-payment-button:hover {
+    background-color: #138496;
+}
+
+/* WhatsApp Share Button Styling */
+#whatsapp-share-button {
+    display: block; /* Make it a block element to take full width or center with margin auto */
+    width: fit-content; /* Adjust width to content or set a specific width */
+    margin: 10px auto 0 auto; /* Top margin, auto for left/right to center */
+    padding: 0.75rem 1.5rem;
+    background-color: #25D366; /* WhatsApp Green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none; /* If it were an <a> tag */
+}
+
+#whatsapp-share-button:hover {
+    background-color: #1EBE57;
+}
+
+/* Order History Styling */
+#order-history-container {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f0f0f0; /* Slightly different background */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#order-history-container h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.past-order {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.past-order h3 { /* For Order ID or Date */
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: #555;
+}
+
+.past-order ul {
+    list-style: disc;
+    margin-left: 20px;
+    padding-left: 0;
+}
+
+.past-order li {
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.order-again-btn {
+    background-color: #ffc107; /* A warning/amber color */
+    color: #212529;
+    border: none;
+    padding: 0.5rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.order-again-btn:hover {
+    background-color: #e0a800;
+}
