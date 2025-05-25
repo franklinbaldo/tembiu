@@ -21,14 +21,54 @@ This documentation will guide you through setting up, configuring, using, and co
 This section will detail how to configure your Tembiu instance.
 
 ### Restaurant Settings
-*(Placeholder for how to edit `js/main.js` for `restaurantConfig` - name, phone, etc. In the future, this might move to a dedicated config file or UI.)*
+
+Currently, basic restaurant settings (like the name displayed in the header and the WhatsApp contact number) are configured directly within the `js/main.js` file, at the top, in an object named `restaurantConfig`.
+
+Example in `js/main.js`:
+```javascript
+const restaurantConfig = {
+    name: "Seu Restaurante Aqui", // Used in page header and WhatsApp messages
+    phone: "5511999999999",       // Used for WhatsApp "wa.me" links
+};
+```
+*(Future versions may move this to a dedicated configuration file or a user interface.)*
 
 ### Menu Setup (`menu.csv`)
-*(Placeholder for detailed instructions on creating and structuring the `menu.csv` file, including columns like `nome`, `categoria`, `preco`, `descricao`, `emoji`, `disponivel`.)*
-- CSV Structure
-- Field Descriptions
-- Examples
-- Tips for managing your menu
+
+The primary way to define your menu is by creating and maintaining a `menu.csv` file in the root directory of the project. This file can be easily edited with spreadsheet software like Microsoft Excel, Google Sheets, LibreOffice Calc, or even a plain text editor.
+
+**File Structure:**
+
+The `menu.csv` file must be a Comma Separated Values (CSV) file with the first line defining the headers. The following headers are required, in this order:
+
+1.  `nome`: Text - The name of the dish or item as it will be displayed on the menu.
+    *   Example: `Pizza Margherita`
+2.  `categoria`: Text - The category this item belongs to (e.g., pizzas, massas, bebidas, sobremesas). Items will be grouped by category on the menu (future feature, currently items are listed together).
+    *   Example: `pizzas`
+3.  `preco`: Number - The price of the item. Use a period (`.`) as the decimal separator. Do not include currency symbols.
+    *   Example: `26.90`
+4.  `descricao`: Text - A brief description of the item. This will be displayed to customers.
+    *   Example: `Molho de tomate fresco, mussarela de búfala, manjericão.`
+5.  `emoji`: Text (Optional) - An emoji to visually represent the item. If omitted, a default emoji might be used.
+    *   Example: `🍕`
+6.  `disponivel`: Boolean - Indicates if the item is currently available. Set to `true` if available, or `false` if temporarily unavailable (e.g., out of stock). Items marked as `false` will not be shown on the menu.
+    *   Example: `true`
+
+**CSV Example:**
+
+```csv
+nome,categoria,preco,descricao,emoji,disponivel
+Pizza Margherita,pizzas,26.90,Molho de tomate fresco, mussarela de búfala, manjericão.,🍕,true
+Spaghetti Carbonara,massas,32.50,Massa fresca com ovos, pancetta, queijo Pecorino Romano e pimenta preta.,🍝,true
+Coca-Cola,bebidas,5.00,Lata 350ml.,🥤,true
+Suco de Laranja Natural,bebidas,8.00,Feito com laranjas frescas, 500ml.,🍊,true
+Brownie com Sorvete,sobremesas,18.00,Brownie de chocolate meio amargo com uma bola de sorvete de creme.,🍰,false
+```
+
+**Important Notes:**
+- Ensure the file is saved with UTF-8 encoding, especially if using special characters or emojis.
+- The header row must be exactly as specified (`nome,categoria,preco,descricao,emoji,disponivel`).
+- Do not use commas within a field's text (e.g., in `descricao`), as this will break the CSV parsing. If you need commas, you would typically enclose the field in double quotes, but the current simple parser might not support this robustly. It's safer to avoid internal commas for now.
 
 ### Advanced Configuration (`menu.json`)
 *(Placeholder for details on using `menu.json` for more complex menu structures, if this feature is fully developed beyond the mention in the main README.)*

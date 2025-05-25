@@ -12,7 +12,19 @@ const restaurantConfig = {
 let cart = []; // Initialize cart
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Register Service Worker
+    // Display Restaurant Name in Header
+    try {
+        const headerTitle = document.querySelector('header h1');
+        if (headerTitle && restaurantConfig && restaurantConfig.name) {
+            headerTitle.textContent = restaurantConfig.name;
+        } else {
+            console.warn("Header title element or restaurant name in config not found.");
+        }
+    } catch (e) {
+        console.error("Error setting restaurant name in header:", e);
+    }
+
+    // Register Service Worker (existing code)
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js')
             .then(registration => {
@@ -22,9 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Service Worker registration failed:', error);
             });
     }
-    loadMenu(); // Call loadMenu to render items
-    loadOrderHistory(); // Load order history on page load
 
+    loadMenu(); 
+    loadOrderHistory(); 
+
+    // Button Event Listeners (existing code)
     const checkoutButton = document.getElementById('checkout-button');
     if (checkoutButton) {
         checkoutButton.addEventListener('click', handleCheckout);

@@ -5,8 +5,8 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
 ## Phase 1: Implement Core v1.0 Functionality (from README)
 
 - [~] **Task:** Basic responsive template and menu loading.
-    - **Details:** HTML structure, CSS styling, JavaScript for fetching, parsing, and displaying `menu.csv`. Interactive menu items with "add to cart" functionality. Basic cart display (items and total with quantity). Functional item removal from cart. **CSS media queries added for improved responsiveness across screen sizes.**
-    - **Status:** Initial structure and functionality implemented. Cart quantity handling and item removal added. Responsiveness improved. Further UI refinements may be needed.
+    - **Details:** HTML structure, CSS styling, JavaScript for fetching, parsing, and displaying `menu.csv`. Interactive menu items with "add to cart" functionality. Basic cart display (items and total with quantity). Functional item removal from cart. CSS media queries added for improved responsiveness across screen sizes. **Header now dynamically displays `restaurantConfig.name`.**
+    - **Status:** Initial structure and functionality implemented. Cart quantity handling and item removal added. Responsiveness improved. Dynamic restaurant name in header. Further UI refinements may be needed.
     - **Rationale:** Foundation for all other v1.0 features.
 - [x] **Task:** PIX Integration (Placeholder/Conceptual). 
     - **Details:** UI elements for PIX display are in place. `handleCheckout` now uses `qrcode.js` to generate a real client-side QR code. **PIX data string structure refined to follow custom format from README.md (using configured phone for 'Tel').**
@@ -36,15 +36,15 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Sub-Task:** Implement a function in GAS to log new orders to a Google Sheet.
     - **Sub-Task:** Document how to set up and deploy this GAS backend.
     - **Rationale:** This is the first unchecked major item in the `README.md` roadmap (v1.1) and adds significant value through data persistence and automation.
-- [ ] **Task:** Refine `menu.csv` and `menu.json` examples and documentation.
-    - **Details:** Ensure the examples in `README.md` for `menu.csv` and `menu.json` are fully functional and cover common use cases. Provide sample `menu.csv` and `menu.json` files in the repository if they don't already exist. Update documentation on how to use them. **(This task can now link to the new `docs/README.md` for menu configuration details).**
+- [~] **Task:** Refine `menu.csv` and `menu.json` examples and documentation.
+    - **Details:** Ensure the examples in `README.md` for `menu.csv` and `menu.json` are fully functional and cover common use cases. Provide sample `menu.csv` and `menu.json` files in the repository if they don't already exist. Update documentation on how to use them. **[Main `README.md`'s `menu.csv` example refined and linked to detailed guide in `docs/README.md#configuration`.]**
     - **Rationale:** Crucial for new users to quickly understand how to configure their menus.
 - [~] **Task:** Review and Enhance Documentation (`docs/`).
-    - **Details:** Check if the `docs/` directory and key files like `docs/configuration.md` (mentioned in `README.md`) exist. If they exist, review for clarity, accuracy, and completeness. If not, create them with basic setup and configuration guides. **[Initial `docs/README.md` created with placeholder structure.]**
+    - **Details:** Check if the `docs/` directory and key files like `docs/configuration.md` (mentioned in `README.md`) exist. If they exist, review for clarity, accuracy, and completeness. If not, create them with basic setup and configuration guides. **[Initial `docs/README.md` created. Menu (`menu.csv`) and basic Restaurant Settings configuration sections populated with details.]**
     - **Rationale:** Comprehensive and clear documentation is key for user adoption, self-service setup, and attracting contributions.
 
 - [x] **Task:** Refine UI/UX for Core Features. 
-    - **Details:** Improve visual hierarchy and spacing of menu, cart, PIX display, and order history. Ensure better responsiveness. Add loading indicators. Design user-friendly quantity management in cart. **[Cart quantity handling implemented. CSS active styles for button feedback added. Placeholder 'Remover' buttons added to cart items, now fully functional.]**
+    - **Details:** Improve visual hierarchy and spacing of menu, cart, PIX display, and order history. Ensure better responsiveness. Add loading indicators. Design user-friendly quantity management in cart. **[Cart quantity handling implemented. CSS active styles for button feedback added. Placeholder 'Remover' buttons added to cart items, now fully functional. Dynamic display of restaurant name in header implemented.]**
     - **Rationale:** Enhance usability and align with the "premium experience" goal from `README.md`.
 - [x] **Task:** Implement Real PIX QR Code Generation (Client-Side). 
     - **Details:** Integrated `qrcode.js` library (via CDN). `handleCheckout` now generates a real QR code image/canvas using a structured PIX data string (simulated BR Code: Phone, Order ID, Items, Location placeholder). CSS for QR display updated.
