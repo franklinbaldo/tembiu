@@ -170,10 +170,13 @@ Crie `menu.csv` editável no Excel/Google Sheets:
 
 ```csv
 nome,categoria,preco,descricao,emoji,disponivel
-Pizza Margherita,pizzas,26.90,Molho de tomate mussarela manjericão,🍕,true
-Spaghetti Carbonara,massas,28.90,Massa fresca com ovos pancetta,🍝,true
-Tiramisu,sobremesas,16.90,Sobremesa italiana tradicional,🍰,true
+Pizza Margherita,pizzas,26.90,Molho de tomate fresco, mussarela de búfala, manjericão.,🍕,true
+Spaghetti Carbonara,massas,32.50,Massa fresca com ovos, pancetta, queijo Pecorino Romano e pimenta preta.,🍝,true
+Coca-Cola,bebidas,5.00,Lata 350ml.,🥤,true
+Suco de Laranja Natural,bebidas,8.00,Feito com laranjas frescas, 500ml.,🍊,true
+Brownie com Sorvete,sobremesas,18.00,Brownie de chocolate meio amargo com uma bola de sorvete de creme.,🍰,false
 ```
+Para informações mais detalhadas sobre a estrutura do `menu.csv` e outras opções de configuração, consulte nosso [Guia de Configuração](docs/README.md#configuration).
 
 ### **JSON Avançado**
 Crie `menu.json` para máxima flexibilidade:
