@@ -53,8 +53,8 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
 - [x] **Task:** Refine UI/UX for Core Features. 
     - **Details:** Improve visual hierarchy and spacing of menu, cart, PIX display, and order history. Ensure better responsiveness. Add loading indicators. Design user-friendly quantity management in cart. **[Cart quantity handling implemented. CSS active styles for button feedback added. Placeholder 'Remover' buttons added to cart items, now fully functional. Dynamic display of restaurant name in header implemented.]**
     - **Rationale:** Enhance usability and align with the "premium experience" goal from `README.md`.
-- [x] **Task:** Implement Real PIX QR Code Generation (Client-Side). 
-    - **Details:** Integrated `qrcode.js` library (via CDN). `handleCheckout` now generates a real QR code image/canvas using a structured PIX data string (simulated BR Code: Phone, Order ID, Items, Location placeholder). CSS for QR display updated.
+- [x] **Task:** Implement Real PIX QR Code Generation (Client-Side).
+    - **Details:** Integrated qrcode.js library. handleCheckout now calls gerarPixCopiaECola to produce a standard BR Code compliant PIX string (including merchant key, name, city, value, TXID, CRC16) and uses this for QR code generation and "Copia e Cola" display.
     - **Rationale:** Move PIX feature from placeholder to a functional (client-side) state.
 - [x] **Task:** Develop WhatsApp Web Intent Integration. 
     - **Details:** `handleWhatsAppShare` constructs and opens a `https://wa.me/` URL with the pre-filled order message (including quantities) for sharing.
@@ -91,6 +91,16 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Sub-Task:** Implement `handleClearHistory()` function in `js/main.js` to remove `tembiuOrderHistory` from localStorage and update the UI.
     - **Sub-Task:** Add a confirmation prompt before clearing.
     - **Rationale:** Fulfills "Direito ao esquecimento" mentioned in README.
+- [x] **Task:** Add customer address input form to HTML.
+    - **Details:** Added form with fields for street, number, complement, neighborhood, city, CEP to `index.html`.
+- [x] **Task:** Implement JavaScript to save customer address to localStorage.
+    - **Details:** `handleSaveAddress` function in `js/main.js` now captures, validates, and saves address to localStorage.
+- [x] **Task:** Integrate customer address into WhatsApp messages.
+    - **Details:** `formatCartForWhatsApp` in `js/main.js` now retrieves address from localStorage and includes it in the message.
+- [x] **Task:** Integrate customer address into backend payload.
+    - **Details:** `handleConfirmPayment` in `js/main.js` now retrieves address from localStorage and includes it in `orderPayload`.
+- [x] **Task:** Ensure PIX generation uses merchant's city.
+    - **Details:** Corrected `handleCheckout` to use `restaurantConfig.cidade` for PIX field 60, not customer's city.
 - [ ] **Task:** Display Basic Client-Side Analytics (v1.x).
     - **Sub-Task:** Create a new section/modal in `index.html` for analytics.
     - **Sub-Task:** In `js/main.js`, add functions to calculate and display simple metrics from `localStorage` order history:

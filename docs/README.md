@@ -31,9 +31,12 @@ Example in `js/main.js`:
 ```javascript
 const restaurantConfig = {
     name: "Seu Restaurante Aqui", // Used in page header and WhatsApp messages
-    phone: "5511999999999",       // Used for WhatsApp "wa.me" links
+    phone: "5511999999999",       // Used for WhatsApp "wa.me" links AND as the default PIX key
+    cidade: "Nome Da Sua Cidade",   // Merchant's city, used in PIX generation (BR Code field 60)
 };
 ```
+**Note:** The `phone` number is also used as the default PIX key (telefone type) for generating PIX codes. The `cidade` is the merchant's city name, which is included in the PIX code as per BR Code specifications (field 60 for Merchant City). Ensure these are correctly configured for proper PIX functionality.
+
 *(Future versions may move this to a dedicated configuration file or a user interface.)*
 
 ### Menu Setup (`menu.csv`)
@@ -123,10 +126,19 @@ Each menu item object in the array should have the following fields:
 *(Placeholder for detailed explanations of each core feature, e.g.:)*
 - Digital Menu Display
 - Shopping Cart & Ordering
-- PIX Payment (Client-Side QR Generation)
+- **PIX Payment (Client-Side QR Generation):** The application generates a standard BR Code compliant PIX QR code and a "Copia e Cola" string directly in the client's browser. This includes all necessary fields like merchant details (name, city, PIX key), transaction value, and a unique transaction ID (TXID), ensuring compatibility with Brazilian banking apps.
 - WhatsApp Integration
 - Order History ("Smart History")
 - Progressive Web App (PWA) Functionality
+
+### Customer Address Input
+
+The application now allows customers to input their delivery address.
+- **Address Form:** Users can enter their street, number, complement, neighborhood, city, and CEP in a form available in the cart/checkout section.
+- **Storage:** The address is saved to the browser's `localStorage` for persistence across sessions.
+- **Integration:**
+    - The saved address is automatically included in the order message when sharing via WhatsApp.
+    - It is also included in the data payload sent to the backend (if configured).
 
 ## Technical Architecture
 

@@ -120,6 +120,7 @@ googlePlaceId: "ChIJN1t_tDeuEmsRUsoyG83frY4"
 - ✅ **Histórico Inteligente** - "pedir novamente" com 1 clique
 - ✅ **Sugestões por IA** - baseadas no comportamento do cliente
 - ✅ **URLs Compartilháveis** - links únicos para cada pedido 🆕
+- ✅ **Coleta de Endereço do Cliente** - para facilitar entregas (endereço incluído na mensagem do WhatsApp e dados do pedido).
 - ✅ **Horários Google Maps** - sincronização automática
 - ✅ **Status em Tempo Real** - aberto/fechado automático
 - ✅ **Dark/Light Mode** - experiência premium
@@ -270,17 +271,15 @@ GitHub Pages (Gratuito)
 
 ## 💳 **Sistema PIX Avançado**
 
-### **Código PIX Estruturado**
-```
-Dados do PIX (máx. 140 chars):
-Tel:11999999999 ID:45789123 Items:1x2,3x1,5x3 Loc:8G7Q+2QR
-
-Contém:
-📱 Telefone do cliente
-🆔 ID único do pedido  
-📦 Lista de itens (idxquantidade)
-📍 Plus Code de localização
-```
+### **Geração de PIX BR Code Padrão**
+O sistema agora gera um código PIX no formato BR Code, o padrão oficial do Banco Central do Brasil. Este código é gerado dinamicamente no lado do cliente e inclui:
+- Chave PIX do recebedor (configurada no sistema).
+- Nome do recebedor.
+- Cidade do recebedor.
+- Valor da transação.
+- Identificador único da transação (TXID).
+- Descrição do pedido.
+O QR Code gerado e o código "PIX Copia e Cola" são compatíveis com todos os aplicativos bancários que suportam PIX.
 
 ### **Fluxo Inteligente**
 1. **Cliente** preenche dados e escolhe PIX
