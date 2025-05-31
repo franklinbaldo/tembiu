@@ -73,8 +73,50 @@ Brownie com Sorvete,sobremesas,18.00,Brownie de chocolate meio amargo com uma bo
 - The header row must be exactly as specified (`nome,categoria,preco,descricao,emoji,disponivel`).
 - Do not use commas within a field's text (e.g., in `descricao`), as this will break the CSV parsing. If you need commas, you would typically enclose the field in double quotes, but the current simple parser might not support this robustly. It's safer to avoid internal commas for now.
 
-### Advanced Configuration (`menu.json`)
-*(Placeholder for details on using `menu.json` for more complex menu structures, if this feature is fully developed beyond the mention in the main README.)*
+### Menu Setup (`menu.json`)
+
+Alternatively, or for more complex menu structures in the future, Tembiu can be configured to load its menu from a `menu.json` file located in the root directory of the project. This file should contain a JSON array of menu item objects.
+
+Each menu item object in the array should have the following fields:
+
+-   `nome`: (String) The name of the dish or item as it will be displayed on the menu.
+    *   Example: `"Pizza Margherita"`
+-   `categoria`: (String) The category this item belongs to (e.g., "pizzas", "massas", "bebidas", "sobremesas").
+    *   Example: `"pizzas"`
+-   `preco`: (Number) The price of the item. Use standard number format.
+    *   Example: `26.90`
+-   `descricao`: (String) A brief description of the item.
+    *   Example: `"Molho de tomate mussarela manjericão"`
+-   `emoji`: (String, Optional) An emoji to visually represent the item.
+    *   Example: `"🍕"`
+-   `disponivel`: (Boolean) Indicates if the item is currently available. Set to `true` if available, or `false` if not.
+    *   Example: `true`
+
+**JSON Example (`menu_example.json`):**
+
+```json
+[
+  {
+    "nome": "Pizza Margherita",
+    "categoria": "pizzas",
+    "preco": 26.90,
+    "descricao": "Molho de tomate mussarela manjericão",
+    "emoji": "🍕",
+    "disponivel": true
+  },
+  {
+    "nome": "Spaghetti Carbonara",
+    "categoria": "massas",
+    "preco": 28.90,
+    "descricao": "Massa fresca com ovos pancetta",
+    "emoji": "🍝",
+    "disponivel": true
+  }
+  // ... other items
+]
+```
+
+**Note:** While `menu.csv` is currently the primary method, the application may include logic to prioritize `menu.json` or allow selection via configuration in future updates. Refer to `js/main.js` for current menu loading behavior.
 
 ## Features
 
