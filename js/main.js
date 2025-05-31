@@ -8,6 +8,7 @@ const restaurantConfig = {
 };
 
 let cart = []; // Initialize cart
+let allMenuItems = []; // Store all menu items globally
 
 // Global variables for views and steps
 let menuView, checkoutView, orderHistoryView;
@@ -58,7 +59,6 @@ function showView(viewIdToShow, checkoutStepIdToShow = null) {
             console.error(`View with ID '${viewIdToShow}' not recognized.`);
             if (menuView) menuView.style.display = 'block'; // Fallback to menu view
             currentView = 'menu-view';
-            // Update nav for fallback
             const navItemsDefault = document.querySelectorAll('#bottom-nav .nav-item');
             navItemsDefault.forEach(navItem => {
                 navItem.classList.remove('active');
@@ -73,22 +73,17 @@ function showView(viewIdToShow, checkoutStepIdToShow = null) {
         viewToDisplay.style.display = 'block';
         currentView = viewIdToShow;
         console.log(`Switched to view: ${viewIdToShow}${checkoutStepIdToShow ? ', step: ' + checkoutStepIdToShow : ''}`);
-
-        // Update active state in bottom navigation
         const bottomNavItems = document.querySelectorAll('#bottom-nav .nav-item');
         bottomNavItems.forEach(navItem => {
             navItem.classList.remove('active');
-            // Check against viewIdToShow because checkout steps are all under 'checkout-view' for nav purposes
             if (navItem.getAttribute('href').substring(1) === viewIdToShow) {
                 navItem.classList.add('active');
             }
         });
-
     } else {
         console.error(`Element for view ID '${viewIdToShow}' not found in DOM.`);
-        if (menuView) menuView.style.display = 'block'; // Fallback safely
+        if (menuView) menuView.style.display = 'block';
         currentView = 'menu-view';
-         // Update nav for fallback
         const navItemsFallback = document.querySelectorAll('#bottom-nav .nav-item');
         navItemsFallback.forEach(navItem => {
             navItem.classList.remove('active');
@@ -99,13 +94,11 @@ function showView(viewIdToShow, checkoutStepIdToShow = null) {
     }
 }
 
-
 function gerarPixCopiaECola({ chave, nome, cidade, valor = null, descricao = '', txid = '***' }) {
   function formatTag(tag, value) {
     const len = String(value.length).padStart(2, '0');
     return `${tag}${len}${value}`;
   }
-
   function crc16(payload) {
     let polinomio = 0x1021;
     let resultado = 0xFFFF;
@@ -118,115 +111,89 @@ function gerarPixCopiaECola({ chave, nome, cidade, valor = null, descricao = '',
     }
     return resultado.toString(16).toUpperCase().padStart(4, '0');
   }
-
   const gui = formatTag('00', 'BR.GOV.BCB.PIX');
   const chavePix = formatTag('01', chave);
   const infoAdicional = descricao ? formatTag('02', descricao) : '';
   const merchantAccountInfo = formatTag('26', gui + chavePix + infoAdicional);
-
   const payloadSemCRC =
     formatTag('00', '01') +
-    formatTag('01', '12') + // Point of Initiation Method: 12 for static QR
+    formatTag('01', '12') +
     merchantAccountInfo +
-    formatTag('52', '0000') + // Merchant Category Code
-    formatTag('53', '986') +  // Currency Code (BRL)
-    (valor ? formatTag('54', String(valor)) : '') + // Transaction Amount - ensure string
-    formatTag('58', 'BR') + // Country Code
-    formatTag('59', nome.substring(0, 25)) + // Merchant Name (max 25 chars)
-    formatTag('60', cidade.substring(0, 15)) + // Merchant City (max 15 chars)
-    formatTag('62', formatTag('05', txid)) + // Transaction ID (txid)
-    '6304'; // CRC16 tag and length placeholder
-
+    formatTag('52', '0000') +
+    formatTag('53', '986') +
+    (valor ? formatTag('54', String(valor)) : '') +
+    formatTag('58', 'BR') +
+    formatTag('59', nome.substring(0, 25)) +
+    formatTag('60', cidade.substring(0, 15)) +
+    formatTag('62', formatTag('05', txid)) +
+    '6304';
   const crc = crc16(payloadSemCRC);
   return payloadSemCRC + crc;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Assign view and step elements
     menuView = document.getElementById('menu-view');
     checkoutView = document.getElementById('checkout-view');
     orderHistoryView = document.getElementById('order-history-view');
-
     orderSummaryStep = document.getElementById('order-summary-step');
     addressStep = document.getElementById('address-step');
     paymentStep = document.getElementById('payment-step');
 
-    // Set initial view
     showView('menu-view');
 
-    // Bottom Navigation Logic
     const bottomNav = document.getElementById('bottom-nav');
     const navItems = bottomNav ? bottomNav.querySelectorAll('.nav-item') : [];
-
     navItems.forEach(item => {
         item.addEventListener('click', (event) => {
-            event.preventDefault(); // Prevent default anchor behavior
+            event.preventDefault();
             const targetViewId = item.getAttribute('href').substring(1);
-
             if (targetViewId === 'checkout-view') {
                 showView('checkout-view', 'order-summary-step');
             } else {
                 showView(targetViewId);
             }
-            // Active class is handled by showView now
         });
     });
 
-    // Display Restaurant Name in Header
     try {
         const headerTitle = document.querySelector('#logo-container h1');
-        if (headerTitle && restaurantConfig && restaurantConfig.name) {
-            headerTitle.textContent = restaurantConfig.name;
-        } else {
-            console.warn("Header title element (#logo-container h1) or restaurant name in config not found.");
-        }
-    } catch (e) {
-        console.error("Error setting restaurant name in header:", e);
-    }
+        if (headerTitle && restaurantConfig.name) headerTitle.textContent = restaurantConfig.name;
+        else console.warn("Header title or config name not found.");
+    } catch (e) { console.error("Error setting restaurant name:", e); }
 
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js')
-            .then(registration => console.log('Service Worker registered with scope:', registration.scope))
-            .catch(error => console.error('Service Worker registration failed:', error));
+            .then(reg => console.log('SW registered:', reg.scope))
+            .catch(err => console.error('SW registration failed:', err));
     }
 
     loadMenu(); 
     loadOrderHistory(); 
-    updateCartDisplay(); // Initial cart display update for badges
+    updateCartDisplay();
 
     const confirmPaymentButton = document.getElementById('confirm-payment-button');
     if (confirmPaymentButton) confirmPaymentButton.addEventListener('click', handleConfirmPayment);
-
     const whatsappShareButton = document.getElementById('whatsapp-share-button');
     if (whatsappShareButton) whatsappShareButton.addEventListener('click', handleWhatsAppShare);
-
     const saveAddressButton = document.getElementById('save-address-button');
     if (saveAddressButton) saveAddressButton.addEventListener('click', handleSaveAddress);
 
-    // Placeholder Event Listener for Menu Search
     const menuSearchInput = document.getElementById('menu-search');
     if (menuSearchInput) {
-        menuSearchInput.addEventListener('input', (event) => {
-            console.log(`Search term: ${event.target.value}`);
-            // Future: Call a function to filter menu items based on event.target.value
+        menuSearchInput.addEventListener('input', () => { // Removed event param as it's not used for now
+            applyFiltersAndRender(); // Call the new filter function
         });
     }
-
-    // Placeholder Event Listeners for Category Filters
     const categoryFilterButtons = document.querySelectorAll('.category-filter');
     if (categoryFilterButtons) {
         categoryFilterButtons.forEach(button => {
             button.addEventListener('click', () => {
                 categoryFilterButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-                console.log(`Category filter selected: ${button.textContent}`);
-                // Future: Call a function to filter menu items based on button.textContent or a data-attribute
+                applyFiltersAndRender(); // Call the new filter function
             });
         });
     }
-
-    // Ensure initial view is set after all essential listeners are potentially set up, though showView itself is robust.
-    // showView('menu-view'); // This is already called earlier, which is fine.
 });
 
 async function loadMenu() {
@@ -235,15 +202,17 @@ async function loadMenu() {
         const response = await fetch('menu.csv');
         if (!response.ok) {
             console.error('Failed to load menu.csv:', response.statusText);
-            if(menuItemsListContainer) menuItemsListContainer.innerHTML = '<p>Erro ao carregar o cardápio. Tente novamente mais tarde.</p>';
+            if(menuItemsListContainer) menuItemsListContainer.innerHTML = '<p class="empty-menu-message">Erro ao carregar o cardápio. Tente novamente mais tarde.</p>';
             return;
         }
         const csvData = await response.text();
-        const menuItems = parseCSV(csvData);
-        renderMenuItems(menuItems);
+        const parsedItems = parseCSV(csvData);
+        allMenuItems = parsedItems;
+        console.log("All Menu Items Loaded:", allMenuItems);
+        applyFiltersAndRender(); // Initial render after loading all items and applying default filters
     } catch (error) {
         console.error('Error fetching or parsing menu.csv:', error);
-        if(menuItemsListContainer) menuItemsListContainer.innerHTML = '<p>Ocorreu um erro inesperado ao carregar o cardápio.</p>';
+        if(menuItemsListContainer) menuItemsListContainer.innerHTML = '<p class="empty-menu-message">Ocorreu um erro inesperado ao carregar o cardápio.</p>';
     }
 }
 
@@ -266,64 +235,86 @@ function parseCSV(csvText) {
     return items;
 }
 
-function renderMenuItems(menuItems) {
+function applyFiltersAndRender() {
+    const searchInput = document.getElementById('menu-search');
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+    const activeCategoryFilter = document.querySelector('.category-filter.active');
+    const activeCategory = activeCategoryFilter ? activeCategoryFilter.textContent.trim() : 'Todos';
+
+    let filteredItems = [...allMenuItems];
+
+    // Filter by Availability first
+    filteredItems = filteredItems.filter(item =>
+        typeof item.disponivel === 'string' && item.disponivel.toLowerCase() === 'true'
+    );
+
+    // Filter by Category
+    if (activeCategory && activeCategory !== 'Todos') {
+        filteredItems = filteredItems.filter(item => item.categoria.toLowerCase() === activeCategory.toLowerCase());
+    }
+
+    // Filter by Search Term (name or description)
+    if (searchTerm) {
+        filteredItems = filteredItems.filter(item =>
+            (item.nome && item.nome.toLowerCase().includes(searchTerm)) ||
+            (item.descricao && item.descricao.toLowerCase().includes(searchTerm))
+        );
+    }
+
+    renderMenuItems(filteredItems);
+}
+
+function renderMenuItems(itemsToRender) { // itemsToRender should be pre-filtered (including by availability)
     const menuItemsListContainer = document.getElementById('menu-items-list');
     if (!menuItemsListContainer) {
         console.error("Menu items list container ('menu-items-list') not found.");
         return;
     }
-    if (menuItems.length > 0) {
-        menuItemsListContainer.innerHTML = '';
-        const ul = document.createElement('ul');
-        ul.classList.add('menu-items-grid'); // Optional: for grid styling if ul is the container
+    menuItemsListContainer.innerHTML = ''; // Clear previous items
 
-        menuItems.forEach(item => {
-            const isAvailable = typeof item.disponivel === 'string' && item.disponivel.toLowerCase() === 'true';
-            if (isAvailable) { 
-                const li = document.createElement('li');
-                li.classList.add('menu-item-card');
-
-                // Optional Image/Emoji Container
-                // const itemImageContainer = document.createElement('div');
-                // itemImageContainer.classList.add('menu-item-image-container');
-                // itemImageContainer.innerHTML = `<span class="menu-item-emoji">${item.emoji || '🍽️'}</span>`;
-                // li.appendChild(itemImageContainer);
-
-                const itemDetails = document.createElement('div');
-                itemDetails.classList.add('menu-item-details');
-                itemDetails.innerHTML = `
-                    <h3 class="menu-item-name">${item.emoji || ''} ${item.nome}</h3>
-                    <p class="menu-item-description">${item.descricao || ''}</p>
-                    <p class="menu-item-category">Categoria: ${item.categoria}</p>
-                    <p class="menu-item-price">R$ ${item.preco.toFixed(2)}</p>
-                `;
-                li.appendChild(itemDetails);
-
-                const itemActions = document.createElement('div');
-                itemActions.classList.add('menu-item-actions');
-                const addButton = document.createElement('button');
-                addButton.classList.add('btn', 'btn-primary', 'add-to-cart-btn');
-                addButton.textContent = 'Adicionar';
-                addButton.addEventListener('click', () => {
-                    addItemToCart(item);
-                });
-                itemActions.appendChild(addButton);
-                li.appendChild(itemActions);
-
-                ul.appendChild(li);
-            }
-        });
-        menuItemsListContainer.appendChild(ul);
-    } else {
-        menuItemsListContainer.innerHTML = '<p>Nenhum item disponível no cardápio.</p>';
+    if (!itemsToRender || itemsToRender.length === 0) {
+        menuItemsListContainer.innerHTML = '<p class="empty-menu-message">Nenhum item encontrado com os critérios selecionados.</p>';
+        return;
     }
+
+    const ul = document.createElement('ul');
+    ul.classList.add('menu-items-grid');
+
+    itemsToRender.forEach(item => {
+        // The 'disponivel' check is now primarily handled in applyFiltersAndRender
+        const li = document.createElement('li');
+        li.classList.add('menu-item-card');
+
+        const itemDetails = document.createElement('div');
+        itemDetails.classList.add('menu-item-details');
+        itemDetails.innerHTML = `
+            <h3 class="menu-item-name">${item.emoji || '🍽️'} ${item.nome}</h3>
+            <p class="menu-item-description">${item.descricao || ''}</p>
+            <p class="menu-item-category">Categoria: ${item.categoria}</p>
+            <p class="menu-item-price">R$ ${item.preco.toFixed(2)}</p>
+        `;
+        li.appendChild(itemDetails);
+
+        const itemActions = document.createElement('div');
+        itemActions.classList.add('menu-item-actions');
+        const addButton = document.createElement('button');
+        addButton.classList.add('btn', 'btn-primary', 'add-to-cart-btn');
+        addButton.textContent = 'Adicionar';
+        addButton.addEventListener('click', () => addItemToCart(item));
+        itemActions.appendChild(addButton);
+        li.appendChild(itemActions);
+
+        ul.appendChild(li);
+    });
+    menuItemsListContainer.appendChild(ul);
 }
+
 
 function addItemToCart(itemFromMenu) {
     const existingItem = cart.find(cartItem => cartItem.nome === itemFromMenu.nome);
     if (existingItem) existingItem.quantity += 1;
     else cart.push({ ...itemFromMenu, quantity: 1 });
-    console.log(`${itemFromMenu.nome} processed for cart:`, cart);
     updateCartDisplay();
 }
 
@@ -334,20 +325,17 @@ function updateCartDisplay() {
     const headerCartBadge = document.querySelector('#header-cart-icon .cart-badge');
     const navCartBadge = document.querySelector('#bottom-nav .cart-badge-nav');
 
-    if (!cartItemsContainer || !cartTotalElement) {
-        console.error("Cart items container or cart total element not found.");
-        return;
-    }
+    if (!cartItemsContainer || !cartTotalElement) return;
 
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
     if (headerCartBadge) {
         headerCartBadge.textContent = totalItems;
-        headerCartBadge.style.display = totalItems > 0 ? 'inline-block' : 'none'; // Use inline-block for better layout
+        headerCartBadge.style.display = totalItems > 0 ? 'inline-block' : 'none';
     }
     if (navCartBadge) {
         navCartBadge.textContent = totalItems;
-        navCartBadge.style.display = totalItems > 0 ? 'inline-block' : 'none'; // Use inline-block
+        navCartBadge.style.display = totalItems > 0 ? 'inline-block' : 'none';
     }
 
     if (cart.length === 0) {
@@ -360,10 +348,7 @@ function updateCartDisplay() {
         cart.forEach(item => {
             const div = document.createElement('div');
             div.classList.add('cart-item');
-            const itemDetails = document.createElement('span');
-            const itemSubtotal = item.preco * item.quantity;
-            itemDetails.textContent = `${item.quantity}x ${item.nome} - R$ ${itemSubtotal.toFixed(2)}`;
-            div.appendChild(itemDetails);
+            div.innerHTML = `<span>${item.quantity}x ${item.nome} - R$ ${(item.preco * item.quantity).toFixed(2)}</span>`;
             const removeButton = document.createElement('button');
             removeButton.classList.add('remove-from-cart-btn');
             removeButton.textContent = 'Remover';
@@ -371,7 +356,7 @@ function updateCartDisplay() {
             removeButton.addEventListener('click', () => handleRemoveItemFromCart(item.nome));
             div.appendChild(removeButton);
             cartItemsContainer.appendChild(div);
-            total += itemSubtotal;
+            total += item.preco * item.quantity;
         });
         cartTotalElement.textContent = total.toFixed(2);
         if (toAddressStepButton) toAddressStepButton.style.display = 'block';
@@ -383,7 +368,7 @@ function handleRemoveItemFromCart(itemName) {
     if (itemIndex > -1) {
         if (cart[itemIndex].quantity > 1) cart[itemIndex].quantity -= 1;
         else cart.splice(itemIndex, 1);
-    } else console.warn("Item to remove not found in cart:", itemName);
+    }
     updateCartDisplay();
 }
 
@@ -397,44 +382,40 @@ function handleSaveAddress(event) {
     const cep = document.getElementById('cep').value.trim();
 
     if (!street || !number || !neighborhood || !city || !cep) {
-        alert('Por favor, preencha todos os campos obrigatórios do endereço (Logradouro, Número, Bairro, Cidade, CEP).');
+        alert('Por favor, preencha todos os campos obrigatórios do endereço.');
         return;
     }
     const address = { street, number, complement, neighborhood, city, cep };
     try {
         localStorage.setItem('customerAddress', JSON.stringify(address));
-        console.log("Address saved to localStorage:", address);
-        alert('Endereço salvo com sucesso! Você pode prosseguir para finalizar o pedido.');
-        // Navigation to payment step will be handled by the "Continuar para Pagamento" button's own listener
+        console.log("Address saved:", address);
+        handleCheckout();
     } catch (e) {
-        console.error("Error saving address to localStorage:", e);
-        alert('Houve um erro ao salvar o endereço. Por favor, tente novamente.');
+        console.error("Error saving address:", e);
+        alert('Houve um erro ao salvar o endereço.');
     }
 }
 
 async function sendOrderToBackend(orderData) {
     const backendUrl = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
     if (backendUrl === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
-        console.warn("Placeholder backend URL. Order not sent.");
-        return Promise.resolve({ status: "simulated_success", message: "Order logged (simulated)." });
+        console.warn("Placeholder backend URL.");
+        return { status: "simulated_success", message: "Order logged (simulated)." };
     }
     try {
         const response = await fetch(backendUrl, {
             method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(orderData)
         });
-        if (!response.ok) throw new Error(`Backend error: ${response.status} ${response.statusText}`);
+        if (!response.ok) throw new Error(`Backend error: ${response.status}`);
         return await response.json();
     } catch (error) {
         console.error("Error sending to backend:", error);
-        throw error; // Re-throw for caller to handle
+        throw error;
     }
 }
 
 function handleConfirmPayment() {
-    if (cart.length === 0) {
-        alert("Nenhum item no carrinho para confirmar o pagamento.");
-        return;
-    }
+    if (cart.length === 0) { alert("Nenhum item no carrinho."); return; }
     const confirmedOrderItems = cart.map(item => ({ ...item })); 
     saveOrderToHistory(confirmedOrderItems);
     let deliveryAddress = null;
@@ -450,7 +431,7 @@ function handleConfirmPayment() {
     sendOrderToBackend(orderPayload)
         .then(res => console.log("Backend response:", res.message))
         .catch(err => console.error("Backend send failed:", err.message));
-    alert("Pagamento confirmado (simulação)! Obrigado pelo seu pedido. Seu pedido foi salvo localmente.");
+    alert("Pagamento confirmado (simulação)! Obrigado pelo seu pedido.");
     showView('menu-view');
     cart = [];
     updateCartDisplay(); 
@@ -481,31 +462,26 @@ function loadOrderHistory() {
     history.forEach(order => {
         const orderDiv = document.createElement('div');
         orderDiv.classList.add('past-order');
-        const title = document.createElement('h3'); // Changed from direct innerHTML
+        const title = document.createElement('h3');
         title.textContent = `Pedido de ${order.timestamp} (ID: ${order.id})`;
         orderDiv.appendChild(title);
-
         const ul = document.createElement('ul');
         let orderTotal = 0;
         order.items.forEach(item => {
             const li = document.createElement('li');
-            const itemSubtotal = item.preco * item.quantity;
-            li.textContent = `${item.quantity}x ${item.nome} - R$ ${itemSubtotal.toFixed(2)}`;
+            li.textContent = `${item.quantity}x ${item.nome} - R$ ${(item.preco * item.quantity).toFixed(2)}`;
             ul.appendChild(li);
-            orderTotal += itemSubtotal;
+            orderTotal += item.preco * item.quantity;
         });
         orderDiv.appendChild(ul);
-        
-        const totalP = document.createElement('p'); // Changed from direct innerHTML
+        const totalP = document.createElement('p');
         totalP.innerHTML = `<strong>Total do Pedido: R$ ${orderTotal.toFixed(2)}</strong>`;
         orderDiv.appendChild(totalP);
-
         const orderAgainButton = document.createElement('button');
-        orderAgainButton.classList.add('btn', 'btn-secondary', 'order-again-btn'); // Already has new classes
+        orderAgainButton.classList.add('btn', 'btn-secondary', 'order-again-btn');
         orderAgainButton.textContent = 'Pedir Novamente';
         orderAgainButton.addEventListener('click', () => handleOrderAgain(order.items)); 
         orderDiv.appendChild(orderAgainButton);
-        
         pastOrdersList.appendChild(orderDiv);
     });
 }
@@ -548,36 +524,19 @@ function formatCartForWhatsApp(cartArray) {
 }
 
 function handleWhatsAppShare() {
-    if (cart.length === 0) {
-        alert("Seu carrinho está vazio. Adicione itens antes de compartilhar."); return;
-    }
+    if (cart.length === 0) { alert("Seu carrinho está vazio."); return; }
     const orderMessage = formatCartForWhatsApp(cart); 
     window.open(`https://wa.me/${restaurantConfig.phone}?text=${encodeURIComponent(orderMessage)}`, '_blank');
 }
 
-function handleCheckout() {
-    const storedAddressJson = localStorage.getItem('customerAddress');
-    let customerAddress = null;
-    if (storedAddressJson) {
-        try { customerAddress = JSON.parse(storedAddressJson); }
-        catch (e) {
-            alert("Erro ao ler o endereço salvo. Por favor, salve-o novamente.");
-            showView('checkout-view', 'address-step'); return;
-        }
-    }
-    if (!customerAddress) {
-        alert("Por favor, confirme seu endereço de entrega antes de finalizar o pedido.");
-        showView('checkout-view', 'address-step'); return;
-    }
-    if (cart.length === 0) {
-        alert("Sua sacola está vazia. Adicione itens antes de finalizar o pedido.");
-        showView('menu-view'); return;
-    }
-    const orderId = "TEMBIU-WEB-" + Date.now();
-    let totalAmount = cart.reduce((sum, item) => sum + (item.preco * item.quantity), 0);
+function generateAndDisplayPix(orderId, totalAmount) {
     const pixParams = {
-        chave: restaurantConfig.phone, nome: restaurantConfig.name, cidade: restaurantConfig.cidade,
-        valor: totalAmount.toFixed(2), txid: orderId, descricao: "Pedido " + orderId
+        chave: restaurantConfig.phone,
+        nome: restaurantConfig.name,
+        cidade: restaurantConfig.cidade,
+        valor: totalAmount.toFixed(2),
+        txid: orderId,
+        descricao: `Pedido ${orderId}`
     };
     const pixDataString = gerarPixCopiaECola(pixParams);
     const pixQrCodeElement = document.getElementById('pix-qr-code');
@@ -593,6 +552,26 @@ function handleCheckout() {
         }
     }
     if (pixCopyPasteElement) pixCopyPasteElement.textContent = pixDataString;
+    console.log("PIX Data String for Order:", orderId, "PIX String:", pixDataString);
+}
+
+function handleCheckout() {
+    const storedAddressJson = localStorage.getItem('customerAddress');
+    if (!storedAddressJson) {
+        alert("Por favor, salve seu endereço de entrega antes de prosseguir para o pagamento.");
+        showView('checkout-view', 'address-step');
+        return;
+    }
+
+    if (cart.length === 0) {
+        alert("Sua sacola está vazia. Adicione itens antes de finalizar o pedido.");
+        showView('menu-view');
+        return;
+    }
+    const orderId = "TEMBIU-WEB-" + Date.now();
+    let totalAmount = cart.reduce((sum, item) => sum + (item.preco * item.quantity), 0);
+
+    console.log("Proceeding to PIX generation for Order ID:", orderId, "Total:", totalAmount.toFixed(2));
+    generateAndDisplayPix(orderId, totalAmount);
     showView('checkout-view', 'payment-step');
-    console.log("Displaying PIX info for order:", orderId, "PIX String:", pixDataString);
 }
