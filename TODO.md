@@ -46,7 +46,7 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Sub-Task:** [x] Initial `docs/README.md` created. Menu (`menu.csv`) and basic Restaurant Settings configuration sections populated with details.
     - **Sub-Task:** [x] Local development setup guide created (`docs/local_development_setup.md`).
     - **Sub-Task:** [x] Google Apps Script setup guide created (`docs/google_apps_script_setup.md`).
-    - **Sub-Task:** [ ] Populate placeholder sections in `docs/README.md`: "Getting Started," "Features" (detailing existing ones like PWA, PIX, WhatsApp, History), "Technical Architecture," "Contributing," and "Troubleshooting."
+    - **Sub-Task:** [x] Populate placeholder sections in `docs/README.md`: "Getting Started," "Features" (detailing existing ones like PWA, PIX, WhatsApp, History), "Technical Architecture," "Contributing," and "Troubleshooting."
     - **Sub-Task:** [x] Ensure all documentation links are correct and working.
     - **Rationale:** Comprehensive and clear documentation is key for user adoption and contributions.
 
