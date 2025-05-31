@@ -95,6 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (whatsappShareButton) {
         whatsappShareButton.addEventListener('click', handleWhatsAppShare);
     }
+
+    const saveAddressButton = document.getElementById('save-address-button');
+    if (saveAddressButton) {
+        saveAddressButton.addEventListener('click', handleSaveAddress);
+    }
 });
 
 async function loadMenu() {
@@ -244,6 +249,42 @@ function handleRemoveItemFromCart(itemName) {
     updateCartDisplay(); // Refresh the cart display
 }
 
+function handleSaveAddress(event) {
+    if (event) event.preventDefault(); // Prevent default if it were a form submit button
+
+    const street = document.getElementById('street').value.trim();
+    const number = document.getElementById('number').value.trim();
+    const complement = document.getElementById('complement').value.trim();
+    const neighborhood = document.getElementById('neighborhood').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const cep = document.getElementById('cep').value.trim();
+
+    if (!street || !number || !neighborhood || !city || !cep) {
+        alert('Por favor, preencha todos os campos obrigatórios do endereço (Logradouro, Número, Bairro, Cidade, CEP).');
+        return;
+    }
+
+    const address = {
+        street,
+        number,
+        complement,
+        neighborhood,
+        city,
+        cep
+    };
+
+    try {
+        const jsonAddress = JSON.stringify(address);
+        localStorage.setItem('customerAddress', jsonAddress);
+        console.log("Address saved to localStorage:", address);
+        alert('Endereço salvo com sucesso! Você pode prosseguir para finalizar o pedido.');
+    } catch (e) {
+        console.error("Error saving address to localStorage:", e);
+        alert('Houve um erro ao salvar o endereço. Por favor, tente novamente.');
+    }
+    // For now, we might store it in a global variable or pass it to the checkout process.
+}
+
 // New function to send order data to the backend
 async function sendOrderToBackend(orderData) {
     const backendUrl = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"; // Placeholder
@@ -307,12 +348,25 @@ function handleConfirmPayment() {
 
     saveOrderToHistory(confirmedOrderItems); // Save the confirmed order (with quantities)
 
+    // Retrieve address for the backend payload
+    const storedAddressJson = localStorage.getItem('customerAddress');
+    let deliveryAddress = null;
+    if (storedAddressJson) {
+        try {
+            deliveryAddress = JSON.parse(storedAddressJson);
+        } catch (e) {
+            console.error("Error parsing stored address for backend payload:", e);
+            // Optional: alert user or proceed with null address if that's acceptable by backend
+        }
+    }
+
     // Create the payload for the backend
     const orderPayload = {
         orderId: "TEMBIU-WEB-" + Date.now(),
         items: confirmedOrderItems, // This is already a copy of cart items with quantities
         customerName: "", // Placeholder as customer name is not collected yet
-        customerPhone: "" // Placeholder as customer phone is not collected yet
+        customerPhone: "", // Placeholder as customer phone is not collected yet
+        deliveryAddress: deliveryAddress // Add the retrieved address here
     };
 
     // After saving, attempt to send to backend
@@ -425,18 +479,41 @@ function handleOrderAgain(orderItemsFromHistory) {
 }
 
 function formatCartForWhatsApp(cartArray) {
+    // Retrieve and format address from localStorage
+    const storedAddressJson = localStorage.getItem('customerAddress');
+    let customerAddress = null;
+    let addressString = "Endereço de entrega não informado."; // Default message
+
+    if (storedAddressJson) {
+        try {
+            customerAddress = JSON.parse(storedAddressJson);
+            // Format the address into a multi-line string
+            addressString = `Logradouro: ${customerAddress.street}, Número: ${customerAddress.number}`;
+            if (customerAddress.complement) {
+                addressString += `, Complemento: ${customerAddress.complement}`;
+            }
+            addressString += `\nBairro: ${customerAddress.neighborhood}`;
+            addressString += `\nCidade: ${customerAddress.city}, CEP: ${customerAddress.cep}`;
+        } catch (e) {
+            console.error("Error parsing stored address for WhatsApp:", e);
+            addressString = "Erro ao ler endereço salvo.";
+        }
+    }
+
     if (!cartArray || cartArray.length === 0) {
         return "Seu carrinho está vazio!";
     }
+
     // Prepend restaurant name to the message
-    let message = `Olá ${restaurantConfig.name}! Gostaria de fazer o seguinte pedido:\n`; // Corrected newline
+    let message = `Olá ${restaurantConfig.name}! Gostaria de fazer o seguinte pedido:\n\n`; // Added extra newline
     let total = 0;
     cartArray.forEach(item => { 
         const itemSubtotal = item.preco * item.quantity;
-        message += `- ${item.quantity}x ${item.nome} (R$ ${itemSubtotal.toFixed(2)})\n`; // Corrected newline
+        message += `- ${item.quantity}x ${item.nome} (R$ ${itemSubtotal.toFixed(2)})\n`;
         total += itemSubtotal;
     });
-    message += `\nTotal do Pedido: R$ ${total.toFixed(2)}`; // Corrected newline
+    message += `\nTotal do Pedido: R$ ${total.toFixed(2)}\n`;
+    message += `\nEndereço de Entrega:\n${addressString}`; // Append formatted address
     return message;
 }
 
@@ -456,6 +533,26 @@ function handleWhatsAppShare() {
 }
 
 function handleCheckout() {
+    // Attempt to retrieve and parse address from localStorage
+    const storedAddressJson = localStorage.getItem('customerAddress');
+    let customerAddress = null;
+    if (storedAddressJson) {
+        try {
+            customerAddress = JSON.parse(storedAddressJson);
+        } catch (e) {
+            console.error("Error parsing stored address:", e);
+            alert("Erro ao ler o endereço salvo. Por favor, salve-o novamente na tela do carrinho.");
+            return; // Stop checkout if address is corrupted
+        }
+    }
+
+    // Check if address is available
+    if (!customerAddress) {
+        alert("Por favor, confirme seu endereço de entrega na tela do carrinho antes de finalizar o pedido.");
+        return; // Stop checkout if no address is found
+    }
+
+    console.log("Customer address for checkout:", customerAddress); // Log retrieved address
     console.log("Checkout initiated. Cart contents (with quantities):", cart);
 
     if (cart.length === 0) {
@@ -475,7 +572,7 @@ function handleCheckout() {
     const pixParams = {
         chave: restaurantConfig.phone, // Assuming this is a valid PIX key
         nome: restaurantConfig.name,
-        cidade: "CIDADE_PLACEHOLDER", // Placeholder for city
+        cidade: restaurantConfig.cidade, // CORRECTED: Always use merchant's city for PIX
         valor: totalAmount.toFixed(2), // Format to two decimal places as a string
         txid: orderId,
         descricao: "Pedido " + orderId // Simple description
