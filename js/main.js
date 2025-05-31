@@ -2,15 +2,103 @@ console.log("Tembiu main.js loaded.");
 
 // Client-side Restaurant Configuration (Placeholders)
 const restaurantConfig = {
-    name: "Tembiu Lanchonete Virtual", // Placeholder restaurant name
-    phone: "5511999999999",           // Placeholder phone number (for wa.me link) // Used as PIX key (telefone). Consider adding a dedicated 'pixKey' if different.
-    cidade: "Porto Velho",            // Placeholder city, configure as needed
-    // Future items: currency, deliveryFee, etc.
-    // Example for PIX Tel field (if different from WhatsApp or needs specific format)
-    // pixTel: "11999999999" 
+    name: "Tembiu Lanchonete Virtual",
+    phone: "5511999999999", // Used as PIX key (telefone). Consider adding a dedicated 'pixKey' if different.
+    cidade: "Porto Velho", // Placeholder city, configure as needed
 };
 
 let cart = []; // Initialize cart
+
+// Global variables for views and steps
+let menuView, checkoutView, orderHistoryView;
+let orderSummaryStep, addressStep, paymentStep;
+let currentView = 'menu-view'; // To keep track of the current visible view, default to menu
+
+function showView(viewIdToShow, checkoutStepIdToShow = null) {
+    // Hide all main views first
+    if (menuView) menuView.style.display = 'none';
+    if (checkoutView) checkoutView.style.display = 'none';
+    if (orderHistoryView) orderHistoryView.style.display = 'none';
+
+    // Manage checkout steps visibility - hide all initially
+    if (orderSummaryStep) orderSummaryStep.style.display = 'none';
+    if (addressStep) addressStep.style.display = 'none';
+    if (paymentStep) paymentStep.style.display = 'none';
+
+    let viewToDisplay = null;
+    switch (viewIdToShow) {
+        case 'menu-view':
+            viewToDisplay = menuView;
+            break;
+        case 'checkout-view':
+            viewToDisplay = checkoutView;
+            if (checkoutView) { // Ensure checkoutView itself is valid
+                // Determine which step to show within checkout
+                switch (checkoutStepIdToShow) {
+                    case 'order-summary-step':
+                        if (orderSummaryStep) orderSummaryStep.style.display = 'block';
+                        break;
+                    case 'address-step':
+                        if (addressStep) addressStep.style.display = 'block';
+                        break;
+                    case 'payment-step':
+                        if (paymentStep) paymentStep.style.display = 'block';
+                        break;
+                    default: // Default to order summary if no specific/valid step
+                        if (orderSummaryStep) orderSummaryStep.style.display = 'block';
+                        checkoutStepIdToShow = 'order-summary-step'; // Update for logging
+                        break;
+                }
+            }
+            break;
+        case 'order-history-view':
+            viewToDisplay = orderHistoryView;
+            break;
+        default:
+            console.error(`View with ID '${viewIdToShow}' not recognized.`);
+            if (menuView) menuView.style.display = 'block'; // Fallback to menu view
+            currentView = 'menu-view';
+            // Update nav for fallback
+            const navItemsDefault = document.querySelectorAll('#bottom-nav .nav-item');
+            navItemsDefault.forEach(navItem => {
+                navItem.classList.remove('active');
+                if (navItem.getAttribute('href').substring(1) === currentView) {
+                    navItem.classList.add('active');
+                }
+            });
+            return;
+    }
+
+    if (viewToDisplay) {
+        viewToDisplay.style.display = 'block';
+        currentView = viewIdToShow;
+        console.log(`Switched to view: ${viewIdToShow}${checkoutStepIdToShow ? ', step: ' + checkoutStepIdToShow : ''}`);
+
+        // Update active state in bottom navigation
+        const bottomNavItems = document.querySelectorAll('#bottom-nav .nav-item');
+        bottomNavItems.forEach(navItem => {
+            navItem.classList.remove('active');
+            // Check against viewIdToShow because checkout steps are all under 'checkout-view' for nav purposes
+            if (navItem.getAttribute('href').substring(1) === viewIdToShow) {
+                navItem.classList.add('active');
+            }
+        });
+
+    } else {
+        console.error(`Element for view ID '${viewIdToShow}' not found in DOM.`);
+        if (menuView) menuView.style.display = 'block'; // Fallback safely
+        currentView = 'menu-view';
+         // Update nav for fallback
+        const navItemsFallback = document.querySelectorAll('#bottom-nav .nav-item');
+        navItemsFallback.forEach(navItem => {
+            navItem.classList.remove('active');
+            if (navItem.getAttribute('href').substring(1) === currentView) {
+                navItem.classList.add('active');
+            }
+        });
+    }
+}
+
 
 function gerarPixCopiaECola({ chave, nome, cidade, valor = null, descricao = '', txid = '***' }) {
   function formatTag(tag, value) {
@@ -54,91 +142,121 @@ function gerarPixCopiaECola({ chave, nome, cidade, valor = null, descricao = '',
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Assign view and step elements
+    menuView = document.getElementById('menu-view');
+    checkoutView = document.getElementById('checkout-view');
+    orderHistoryView = document.getElementById('order-history-view');
+
+    orderSummaryStep = document.getElementById('order-summary-step');
+    addressStep = document.getElementById('address-step');
+    paymentStep = document.getElementById('payment-step');
+
+    // Set initial view
+    showView('menu-view');
+
+    // Bottom Navigation Logic
+    const bottomNav = document.getElementById('bottom-nav');
+    const navItems = bottomNav ? bottomNav.querySelectorAll('.nav-item') : [];
+
+    navItems.forEach(item => {
+        item.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default anchor behavior
+            const targetViewId = item.getAttribute('href').substring(1);
+
+            if (targetViewId === 'checkout-view') {
+                showView('checkout-view', 'order-summary-step');
+            } else {
+                showView(targetViewId);
+            }
+            // Active class is handled by showView now
+        });
+    });
+
     // Display Restaurant Name in Header
     try {
-        const headerTitle = document.querySelector('header h1');
+        const headerTitle = document.querySelector('#logo-container h1');
         if (headerTitle && restaurantConfig && restaurantConfig.name) {
             headerTitle.textContent = restaurantConfig.name;
         } else {
-            console.warn("Header title element or restaurant name in config not found.");
+            console.warn("Header title element (#logo-container h1) or restaurant name in config not found.");
         }
     } catch (e) {
         console.error("Error setting restaurant name in header:", e);
     }
 
-    // Register Service Worker (existing code)
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('Service Worker registered with scope:', registration.scope);
-            })
-            .catch(error => {
-                console.error('Service Worker registration failed:', error);
-            });
+            .then(registration => console.log('Service Worker registered with scope:', registration.scope))
+            .catch(error => console.error('Service Worker registration failed:', error));
     }
 
     loadMenu(); 
     loadOrderHistory(); 
-
-    // Button Event Listeners (existing code)
-    const checkoutButton = document.getElementById('checkout-button');
-    if (checkoutButton) {
-        checkoutButton.addEventListener('click', handleCheckout);
-    }
+    updateCartDisplay(); // Initial cart display update for badges
 
     const confirmPaymentButton = document.getElementById('confirm-payment-button');
-    if (confirmPaymentButton) {
-        confirmPaymentButton.addEventListener('click', handleConfirmPayment);
-    }
+    if (confirmPaymentButton) confirmPaymentButton.addEventListener('click', handleConfirmPayment);
 
     const whatsappShareButton = document.getElementById('whatsapp-share-button');
-    if (whatsappShareButton) {
-        whatsappShareButton.addEventListener('click', handleWhatsAppShare);
-    }
+    if (whatsappShareButton) whatsappShareButton.addEventListener('click', handleWhatsAppShare);
 
     const saveAddressButton = document.getElementById('save-address-button');
-    if (saveAddressButton) {
-        saveAddressButton.addEventListener('click', handleSaveAddress);
+    if (saveAddressButton) saveAddressButton.addEventListener('click', handleSaveAddress);
+
+    // Placeholder Event Listener for Menu Search
+    const menuSearchInput = document.getElementById('menu-search');
+    if (menuSearchInput) {
+        menuSearchInput.addEventListener('input', (event) => {
+            console.log(`Search term: ${event.target.value}`);
+            // Future: Call a function to filter menu items based on event.target.value
+        });
     }
+
+    // Placeholder Event Listeners for Category Filters
+    const categoryFilterButtons = document.querySelectorAll('.category-filter');
+    if (categoryFilterButtons) {
+        categoryFilterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                categoryFilterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                console.log(`Category filter selected: ${button.textContent}`);
+                // Future: Call a function to filter menu items based on button.textContent or a data-attribute
+            });
+        });
+    }
+
+    // Ensure initial view is set after all essential listeners are potentially set up, though showView itself is robust.
+    // showView('menu-view'); // This is already called earlier, which is fine.
 });
 
 async function loadMenu() {
+    const menuItemsListContainer = document.getElementById('menu-items-list');
     try {
         const response = await fetch('menu.csv');
         if (!response.ok) {
             console.error('Failed to load menu.csv:', response.statusText);
-            document.getElementById('menu-container').innerHTML = '<p>Erro ao carregar o cardápio. Tente novamente mais tarde.</p>';
+            if(menuItemsListContainer) menuItemsListContainer.innerHTML = '<p>Erro ao carregar o cardápio. Tente novamente mais tarde.</p>';
             return;
         }
         const csvData = await response.text();
         const menuItems = parseCSV(csvData);
-        
-        console.log("Menu Items Loaded:", menuItems);
         renderMenuItems(menuItems);
-
     } catch (error) {
         console.error('Error fetching or parsing menu.csv:', error);
-        document.getElementById('menu-container').innerHTML = '<p>Ocorreu um erro inesperado ao carregar o cardápio.</p>';
+        if(menuItemsListContainer) menuItemsListContainer.innerHTML = '<p>Ocorreu um erro inesperado ao carregar o cardápio.</p>';
     }
 }
 
 function parseCSV(csvText) {
     const lines = csvText.trim().split('\n');
-    if (lines.length < 2) {
-        console.warn("CSV has no data rows.");
-        return [];
-    }
-    
+    if (lines.length < 2) return [];
     const headers = lines[0].split(',');
     const items = [];
-
     for (let i = 1; i < lines.length; i++) {
         const values = lines[i].split(',');
         if (values.length === headers.length) {
             const item = {};
-            headers.forEach((header, index) => {
-                item[header.trim()] = values[index].trim();
-            });
+            headers.forEach((header, index) => item[header.trim()] = values[index].trim());
             item.preco = parseFloat(item.preco); 
             items.push(item);
         } else {
@@ -149,43 +267,62 @@ function parseCSV(csvText) {
 }
 
 function renderMenuItems(menuItems) {
-    const menuContainer = document.getElementById('menu-container');
-    if (!menuContainer) return;
-
+    const menuItemsListContainer = document.getElementById('menu-items-list');
+    if (!menuItemsListContainer) {
+        console.error("Menu items list container ('menu-items-list') not found.");
+        return;
+    }
     if (menuItems.length > 0) {
-        menuContainer.innerHTML = ''; 
+        menuItemsListContainer.innerHTML = '';
         const ul = document.createElement('ul');
+        ul.classList.add('menu-items-grid'); // Optional: for grid styling if ul is the container
+
         menuItems.forEach(item => {
-            // Ensure item.disponivel is a string from CSV before toLowerCase()
             const isAvailable = typeof item.disponivel === 'string' && item.disponivel.toLowerCase() === 'true';
             if (isAvailable) { 
                 const li = document.createElement('li');
-                li.innerHTML = `
-                    <span>${item.emoji || '🍽️'} ${item.nome} (${item.categoria}) - R$ ${item.preco.toFixed(2)}</span>
-                    <button class="add-to-cart-btn">Adicionar</button>
+                li.classList.add('menu-item-card');
+
+                // Optional Image/Emoji Container
+                // const itemImageContainer = document.createElement('div');
+                // itemImageContainer.classList.add('menu-item-image-container');
+                // itemImageContainer.innerHTML = `<span class="menu-item-emoji">${item.emoji || '🍽️'}</span>`;
+                // li.appendChild(itemImageContainer);
+
+                const itemDetails = document.createElement('div');
+                itemDetails.classList.add('menu-item-details');
+                itemDetails.innerHTML = `
+                    <h3 class="menu-item-name">${item.emoji || ''} ${item.nome}</h3>
+                    <p class="menu-item-description">${item.descricao || ''}</p>
+                    <p class="menu-item-category">Categoria: ${item.categoria}</p>
+                    <p class="menu-item-price">R$ ${item.preco.toFixed(2)}</p>
                 `;
-                li.querySelector('.add-to-cart-btn').addEventListener('click', () => {
-                    addItemToCart(item); // item here is the original from menuItems
+                li.appendChild(itemDetails);
+
+                const itemActions = document.createElement('div');
+                itemActions.classList.add('menu-item-actions');
+                const addButton = document.createElement('button');
+                addButton.classList.add('btn', 'btn-primary', 'add-to-cart-btn');
+                addButton.textContent = 'Adicionar';
+                addButton.addEventListener('click', () => {
+                    addItemToCart(item);
                 });
+                itemActions.appendChild(addButton);
+                li.appendChild(itemActions);
+
                 ul.appendChild(li);
             }
         });
-        menuContainer.appendChild(ul);
+        menuItemsListContainer.appendChild(ul);
     } else {
-        menuContainer.innerHTML = '<p>Nenhum item disponível no cardápio.</p>';
+        menuItemsListContainer.innerHTML = '<p>Nenhum item disponível no cardápio.</p>';
     }
 }
 
-function addItemToCart(itemFromMenu) { // itemFromMenu is an object from the menu.csv
+function addItemToCart(itemFromMenu) {
     const existingItem = cart.find(cartItem => cartItem.nome === itemFromMenu.nome);
-
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        // Add new item to cart with quantity 1
-        // Create a copy to avoid modifying the original menu item object if it was passed directly
-        cart.push({ ...itemFromMenu, quantity: 1 });
-    }
+    if (existingItem) existingItem.quantity += 1;
+    else cart.push({ ...itemFromMenu, quantity: 1 });
     console.log(`${itemFromMenu.nome} processed for cart:`, cart);
     updateCartDisplay();
 }
@@ -193,65 +330,65 @@ function addItemToCart(itemFromMenu) { // itemFromMenu is an object from the men
 function updateCartDisplay() {
     const cartItemsContainer = document.getElementById('cart-items');
     const cartTotalElement = document.getElementById('cart-total');
-    const checkoutButton = document.getElementById('checkout-button');
+    const toAddressStepButton = document.getElementById('to-address-step-button');
+    const headerCartBadge = document.querySelector('#header-cart-icon .cart-badge');
+    const navCartBadge = document.querySelector('#bottom-nav .cart-badge-nav');
 
-    if (!cartItemsContainer || !cartTotalElement || !checkoutButton) return;
-
-    if (cart.length === 0) {
-        cartItemsContainer.innerHTML = '<p>Seu carrinho está vazio.</p>';
-        cartTotalElement.textContent = '0.00';
-        checkoutButton.style.display = 'none';
+    if (!cartItemsContainer || !cartTotalElement) {
+        console.error("Cart items container or cart total element not found.");
         return;
     }
 
-    cartItemsContainer.innerHTML = ''; 
-    let total = 0;
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-    cart.forEach(item => { // item is from cart array, has quantity
-        const div = document.createElement('div');
-        div.classList.add('cart-item');
-        
-        const itemDetails = document.createElement('span');
-        const itemSubtotal = item.preco * item.quantity;
-        itemDetails.textContent = `${item.quantity}x ${item.nome} - R$ ${itemSubtotal.toFixed(2)}`;
-        div.appendChild(itemDetails);
+    if (headerCartBadge) {
+        headerCartBadge.textContent = totalItems;
+        headerCartBadge.style.display = totalItems > 0 ? 'inline-block' : 'none'; // Use inline-block for better layout
+    }
+    if (navCartBadge) {
+        navCartBadge.textContent = totalItems;
+        navCartBadge.style.display = totalItems > 0 ? 'inline-block' : 'none'; // Use inline-block
+    }
 
-        const removeButton = document.createElement('button');
-        removeButton.classList.add('remove-from-cart-btn');
-        removeButton.textContent = 'Remover';
-        removeButton.setAttribute('data-item-name', item.nome); 
-        removeButton.addEventListener('click', () => handleRemoveItemFromCart(item.nome)); // Attach event listener
-        div.appendChild(removeButton);
-        
-        cartItemsContainer.appendChild(div);
-        total += itemSubtotal;
-    });
-
-    cartTotalElement.textContent = total.toFixed(2);
-    checkoutButton.style.display = 'block';
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p>Sua sacola está vazia. Que tal adicionar algo delicioso do cardápio?</p>';
+        cartTotalElement.textContent = '0.00';
+        if (toAddressStepButton) toAddressStepButton.style.display = 'none';
+    } else {
+        cartItemsContainer.innerHTML = '';
+        let total = 0;
+        cart.forEach(item => {
+            const div = document.createElement('div');
+            div.classList.add('cart-item');
+            const itemDetails = document.createElement('span');
+            const itemSubtotal = item.preco * item.quantity;
+            itemDetails.textContent = `${item.quantity}x ${item.nome} - R$ ${itemSubtotal.toFixed(2)}`;
+            div.appendChild(itemDetails);
+            const removeButton = document.createElement('button');
+            removeButton.classList.add('remove-from-cart-btn');
+            removeButton.textContent = 'Remover';
+            removeButton.setAttribute('data-item-name', item.nome);
+            removeButton.addEventListener('click', () => handleRemoveItemFromCart(item.nome));
+            div.appendChild(removeButton);
+            cartItemsContainer.appendChild(div);
+            total += itemSubtotal;
+        });
+        cartTotalElement.textContent = total.toFixed(2);
+        if (toAddressStepButton) toAddressStepButton.style.display = 'block';
+    }
 }
 
 function handleRemoveItemFromCart(itemName) {
-    console.log("Attempting to remove/decrement:", itemName);
     const itemIndex = cart.findIndex(cartItem => cartItem.nome === itemName);
-
     if (itemIndex > -1) {
-        if (cart[itemIndex].quantity > 1) {
-            cart[itemIndex].quantity -= 1;
-        } else {
-            // If quantity is 1, remove the item from cart array
-            cart.splice(itemIndex, 1);
-        }
-    } else {
-        console.warn("Item to remove not found in cart:", itemName);
-    }
-    
-    updateCartDisplay(); // Refresh the cart display
+        if (cart[itemIndex].quantity > 1) cart[itemIndex].quantity -= 1;
+        else cart.splice(itemIndex, 1);
+    } else console.warn("Item to remove not found in cart:", itemName);
+    updateCartDisplay();
 }
 
 function handleSaveAddress(event) {
-    if (event) event.preventDefault(); // Prevent default if it were a form submit button
-
+    if (event) event.preventDefault();
     const street = document.getElementById('street').value.trim();
     const number = document.getElementById('number').value.trim();
     const complement = document.getElementById('complement').value.trim();
@@ -263,76 +400,33 @@ function handleSaveAddress(event) {
         alert('Por favor, preencha todos os campos obrigatórios do endereço (Logradouro, Número, Bairro, Cidade, CEP).');
         return;
     }
-
-    const address = {
-        street,
-        number,
-        complement,
-        neighborhood,
-        city,
-        cep
-    };
-
+    const address = { street, number, complement, neighborhood, city, cep };
     try {
-        const jsonAddress = JSON.stringify(address);
-        localStorage.setItem('customerAddress', jsonAddress);
+        localStorage.setItem('customerAddress', JSON.stringify(address));
         console.log("Address saved to localStorage:", address);
         alert('Endereço salvo com sucesso! Você pode prosseguir para finalizar o pedido.');
+        // Navigation to payment step will be handled by the "Continuar para Pagamento" button's own listener
     } catch (e) {
         console.error("Error saving address to localStorage:", e);
         alert('Houve um erro ao salvar o endereço. Por favor, tente novamente.');
     }
-    // For now, we might store it in a global variable or pass it to the checkout process.
 }
 
-// New function to send order data to the backend
 async function sendOrderToBackend(orderData) {
-    const backendUrl = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"; // Placeholder
-    console.log("Attempting to send order to backend:", orderData);
-
-    // Reminder: The actual GAS backend (doPost function) will need to be deployed
-    // and this URL replaced with the correct script web app URL.
+    const backendUrl = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
     if (backendUrl === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
-        console.warn("Placeholder backend URL is being used. Order will not be sent to a live backend.");
-        // For demonstration, log what would be sent:
-        // alert(`Simulating send to backend: ${JSON.stringify(orderData)}`); 
-        // To prevent actual fetch errors with placeholder, we can return early or mock success for now.
-        // Let's simulate a successful log for now for client-side flow.
-        return Promise.resolve({ 
-            status: "simulated_success", 
-            message: "Order logged for backend (simulation).",
-            receivedData: orderData 
-        });
+        console.warn("Placeholder backend URL. Order not sent.");
+        return Promise.resolve({ status: "simulated_success", message: "Order logged (simulated)." });
     }
-
     try {
         const response = await fetch(backendUrl, {
-            method: 'POST',
-            // GAS doPost typically expects 'application/x-www-form-urlencoded' by default from forms,
-            // but can handle 'application/json' if parsed correctly from e.postData.contents.
-            // Or, mode 'no-cors' might be needed if GAS is not set up for CORS, but then response is opaque.
-            // For a JSON payload, text/plain is often easier with e.postData.contents.
-            headers: {
-                'Content-Type': 'text/plain', // Sending as text/plain to be parsed from e.postData.contents
-            },
-            body: JSON.stringify(orderData) 
+            method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(orderData)
         });
-
-        if (!response.ok) {
-            // For opaque responses (mode: 'no-cors'), response.ok might not be accurate.
-            // However, with 'Content-Type': 'text/plain', we expect a normal response.
-            throw new Error(`Backend responded with status: ${response.status} ${response.statusText}`);
-        }
-
-        const responseData = await response.json(); // Assuming GAS returns JSON
-        console.log("Response from backend:", responseData);
-        // alert(`Order sent to backend: ${responseData.message}`); // Optional user feedback
-        return responseData;
-
+        if (!response.ok) throw new Error(`Backend error: ${response.status} ${response.statusText}`);
+        return await response.json();
     } catch (error) {
-        console.error("Error sending order to backend:", error);
-        // alert(`Error sending order to backend: ${error.message}`); // Optional user feedback
-        return Promise.reject(error);
+        console.error("Error sending to backend:", error);
+        throw error; // Re-throw for caller to handle
     }
 }
 
@@ -341,94 +435,53 @@ function handleConfirmPayment() {
         alert("Nenhum item no carrinho para confirmar o pagamento.");
         return;
     }
-    console.log("Payment confirmed (simulated). Order details:", cart);
-    
-    // Create a copy of the cart at this moment for saving and sending
     const confirmedOrderItems = cart.map(item => ({ ...item })); 
-
-    saveOrderToHistory(confirmedOrderItems); // Save the confirmed order (with quantities)
-
-    // Retrieve address for the backend payload
-    const storedAddressJson = localStorage.getItem('customerAddress');
+    saveOrderToHistory(confirmedOrderItems);
     let deliveryAddress = null;
+    const storedAddressJson = localStorage.getItem('customerAddress');
     if (storedAddressJson) {
-        try {
-            deliveryAddress = JSON.parse(storedAddressJson);
-        } catch (e) {
-            console.error("Error parsing stored address for backend payload:", e);
-            // Optional: alert user or proceed with null address if that's acceptable by backend
-        }
+        try { deliveryAddress = JSON.parse(storedAddressJson); }
+        catch (e) { console.error("Error parsing address for backend:", e); }
     }
-
-    // Create the payload for the backend
     const orderPayload = {
-        orderId: "TEMBIU-WEB-" + Date.now(),
-        items: confirmedOrderItems, // This is already a copy of cart items with quantities
-        customerName: "", // Placeholder as customer name is not collected yet
-        customerPhone: "", // Placeholder as customer phone is not collected yet
-        deliveryAddress: deliveryAddress // Add the retrieved address here
+        orderId: "TEMBIU-WEB-" + Date.now(), items: confirmedOrderItems,
+        customerName: "", customerPhone: "", deliveryAddress: deliveryAddress
     };
-
-    // After saving, attempt to send to backend
     sendOrderToBackend(orderPayload)
-        .then(backendResponse => {
-            console.log("sendOrderToBackend success:", backendResponse.message);
-            // Potentially show a more specific success message to user based on backendResponse
-        })
-        .catch(error => {
-            console.error("sendOrderToBackend failed:", error.message);
-            // Potentially inform user that backend sync might have failed but order is saved locally
-        });
-
+        .then(res => console.log("Backend response:", res.message))
+        .catch(err => console.error("Backend send failed:", err.message));
     alert("Pagamento confirmado (simulação)! Obrigado pelo seu pedido. Seu pedido foi salvo localmente.");
-
-    const pixDisplayContainer = document.getElementById('pix-display-container');
-    if (pixDisplayContainer) pixDisplayContainer.style.display = 'none';
-    
-    cart = []; // Clear the current cart
+    showView('menu-view');
+    cart = [];
     updateCartDisplay(); 
     loadOrderHistory(); 
-
-    const cartContainer = document.getElementById('cart-container');
-    if (cartContainer) cartContainer.style.display = 'block';
 }
 
-function saveOrderToHistory(currentCartItems) { // currentCartItems have quantity
+function saveOrderToHistory(currentCartItems) {
     const MAX_HISTORY_ITEMS = 5; 
     let history = JSON.parse(localStorage.getItem('tembiuOrderHistory')) || [];
-    
     const newOrder = {
-        id: "ORD-" + Date.now(),
-        timestamp: new Date().toLocaleString('pt-BR'),
-        items: currentCartItems.map(item => ({ ...item })) // Store copies with quantity
+        id: "ORD-" + Date.now(), timestamp: new Date().toLocaleString('pt-BR'),
+        items: currentCartItems.map(item => ({ ...item }))
     };
     history.unshift(newOrder); 
-
-    if (history.length > MAX_HISTORY_ITEMS) {
-        history = history.slice(0, MAX_HISTORY_ITEMS);
-    }
-
+    if (history.length > MAX_HISTORY_ITEMS) history = history.slice(0, MAX_HISTORY_ITEMS);
     localStorage.setItem('tembiuOrderHistory', JSON.stringify(history));
-    console.log("Order saved to history (with quantities):", newOrder);
 }
 
 function loadOrderHistory() {
     const history = JSON.parse(localStorage.getItem('tembiuOrderHistory')) || [];
     const pastOrdersList = document.getElementById('past-orders-list');
-
     if (!pastOrdersList) return;
-
     if (history.length === 0) {
-        pastOrdersList.innerHTML = '<p>Nenhum pedido encontrado no seu histórico.</p>';
+        pastOrdersList.innerHTML = '<p>Você ainda não tem pedidos no seu histórico. Faça seu primeiro pedido!</p>';
         return;
     }
-
     pastOrdersList.innerHTML = ''; 
-    history.forEach(order => { // order.items here have quantity
+    history.forEach(order => {
         const orderDiv = document.createElement('div');
         orderDiv.classList.add('past-order');
-
-        const title = document.createElement('h3');
+        const title = document.createElement('h3'); // Changed from direct innerHTML
         title.textContent = `Pedido de ${order.timestamp} (ID: ${order.id})`;
         orderDiv.appendChild(title);
 
@@ -443,12 +496,12 @@ function loadOrderHistory() {
         });
         orderDiv.appendChild(ul);
         
-        const totalP = document.createElement('p');
+        const totalP = document.createElement('p'); // Changed from direct innerHTML
         totalP.innerHTML = `<strong>Total do Pedido: R$ ${orderTotal.toFixed(2)}</strong>`;
         orderDiv.appendChild(totalP);
 
         const orderAgainButton = document.createElement('button');
-        orderAgainButton.classList.add('order-again-btn');
+        orderAgainButton.classList.add('btn', 'btn-secondary', 'order-again-btn'); // Already has new classes
         orderAgainButton.textContent = 'Pedir Novamente';
         orderAgainButton.addEventListener('click', () => handleOrderAgain(order.items)); 
         orderDiv.appendChild(orderAgainButton);
@@ -458,9 +511,7 @@ function loadOrderHistory() {
 }
 
 function handleOrderAgain(orderItemsFromHistory) { 
-    console.log("Order Again clicked. Items to re-populate:", orderItemsFromHistory);
     cart = []; 
-
     orderItemsFromHistory.forEach(itemFromHistory => {
         const quantity = itemFromHistory.quantity || 1; 
         for (let i = 0; i < quantity; i++) {
@@ -470,147 +521,78 @@ function handleOrderAgain(orderItemsFromHistory) {
         }
     });
     updateCartDisplay(); 
-
     alert("Itens do seu pedido anterior foram adicionados ao seu carrinho!");
-    const cartContainer = document.getElementById('cart-container');
-    if (cartContainer) {
-        cartContainer.scrollIntoView({ behavior: 'smooth' });
-    }
+    showView('checkout-view', 'order-summary-step');
 }
 
 function formatCartForWhatsApp(cartArray) {
-    // Retrieve and format address from localStorage
+    let addressString = "Endereço de entrega não informado.";
     const storedAddressJson = localStorage.getItem('customerAddress');
-    let customerAddress = null;
-    let addressString = "Endereço de entrega não informado."; // Default message
-
     if (storedAddressJson) {
         try {
-            customerAddress = JSON.parse(storedAddressJson);
-            // Format the address into a multi-line string
-            addressString = `Logradouro: ${customerAddress.street}, Número: ${customerAddress.number}`;
-            if (customerAddress.complement) {
-                addressString += `, Complemento: ${customerAddress.complement}`;
-            }
-            addressString += `\nBairro: ${customerAddress.neighborhood}`;
-            addressString += `\nCidade: ${customerAddress.city}, CEP: ${customerAddress.cep}`;
-        } catch (e) {
-            console.error("Error parsing stored address for WhatsApp:", e);
-            addressString = "Erro ao ler endereço salvo.";
-        }
+            const ca = JSON.parse(storedAddressJson);
+            addressString = `Logradouro: ${ca.street}, Número: ${ca.number}`;
+            if (ca.complement) addressString += `, Complemento: ${ca.complement}`;
+            addressString += `\nBairro: ${ca.neighborhood}\nCidade: ${ca.city}, CEP: ${ca.cep}`;
+        } catch (e) { addressString = "Erro ao ler endereço salvo."; }
     }
-
-    if (!cartArray || cartArray.length === 0) {
-        return "Seu carrinho está vazio!";
-    }
-
-    // Prepend restaurant name to the message
-    let message = `Olá ${restaurantConfig.name}! Gostaria de fazer o seguinte pedido:\n\n`; // Added extra newline
+    if (!cartArray || cartArray.length === 0) return "Seu carrinho está vazio!";
+    let message = `Olá ${restaurantConfig.name}! Gostaria de fazer o seguinte pedido:\n\n`;
     let total = 0;
     cartArray.forEach(item => { 
-        const itemSubtotal = item.preco * item.quantity;
-        message += `- ${item.quantity}x ${item.nome} (R$ ${itemSubtotal.toFixed(2)})\n`;
-        total += itemSubtotal;
+        message += `- ${item.quantity}x ${item.nome} (R$ ${(item.preco * item.quantity).toFixed(2)})\n`;
+        total += item.preco * item.quantity;
     });
-    message += `\nTotal do Pedido: R$ ${total.toFixed(2)}\n`;
-    message += `\nEndereço de Entrega:\n${addressString}`; // Append formatted address
+    message += `\nTotal do Pedido: R$ ${total.toFixed(2)}\n\nEndereço de Entrega:\n${addressString}`;
     return message;
 }
 
 function handleWhatsAppShare() {
     if (cart.length === 0) {
-        alert("Seu carrinho está vazio. Adicione itens antes de compartilhar.");
-        return;
+        alert("Seu carrinho está vazio. Adicione itens antes de compartilhar."); return;
     }
-
     const orderMessage = formatCartForWhatsApp(cart); 
-    console.log("Formatted WhatsApp Message:", orderMessage);
-    
-    // Construct the WhatsApp Web Intent URL using configured phone number
-    const whatsappUrl = `https://wa.me/${restaurantConfig.phone}?text=${encodeURIComponent(orderMessage)}`;
-
-    window.open(whatsappUrl, '_blank');
+    window.open(`https://wa.me/${restaurantConfig.phone}?text=${encodeURIComponent(orderMessage)}`, '_blank');
 }
 
 function handleCheckout() {
-    // Attempt to retrieve and parse address from localStorage
     const storedAddressJson = localStorage.getItem('customerAddress');
     let customerAddress = null;
     if (storedAddressJson) {
-        try {
-            customerAddress = JSON.parse(storedAddressJson);
-        } catch (e) {
-            console.error("Error parsing stored address:", e);
-            alert("Erro ao ler o endereço salvo. Por favor, salve-o novamente na tela do carrinho.");
-            return; // Stop checkout if address is corrupted
+        try { customerAddress = JSON.parse(storedAddressJson); }
+        catch (e) {
+            alert("Erro ao ler o endereço salvo. Por favor, salve-o novamente.");
+            showView('checkout-view', 'address-step'); return;
         }
     }
-
-    // Check if address is available
     if (!customerAddress) {
-        alert("Por favor, confirme seu endereço de entrega na tela do carrinho antes de finalizar o pedido.");
-        return; // Stop checkout if no address is found
+        alert("Por favor, confirme seu endereço de entrega antes de finalizar o pedido.");
+        showView('checkout-view', 'address-step'); return;
     }
-
-    console.log("Customer address for checkout:", customerAddress); // Log retrieved address
-    console.log("Checkout initiated. Cart contents (with quantities):", cart);
-
     if (cart.length === 0) {
-        alert("Seu carrinho está vazio. Adicione itens antes de finalizar o pedido.");
-        return;
+        alert("Sua sacola está vazia. Adicione itens antes de finalizar o pedido.");
+        showView('menu-view'); return;
     }
-
-    const orderId = "TEMBIU-" + Date.now(); 
-
-    // Calculate totalAmount from the cart
-    let totalAmount = 0;
-    cart.forEach(item => {
-        totalAmount += item.preco * item.quantity;
-    });
-
-    // Define pixParams
+    const orderId = "TEMBIU-WEB-" + Date.now();
+    let totalAmount = cart.reduce((sum, item) => sum + (item.preco * item.quantity), 0);
     const pixParams = {
-        chave: restaurantConfig.phone, // Assuming this is a valid PIX key
-        nome: restaurantConfig.name,
-        cidade: restaurantConfig.cidade, // CORRECTED: Always use merchant's city for PIX
-        valor: totalAmount.toFixed(2), // Format to two decimal places as a string
-        txid: orderId,
-        descricao: "Pedido " + orderId // Simple description
+        chave: restaurantConfig.phone, nome: restaurantConfig.name, cidade: restaurantConfig.cidade,
+        valor: totalAmount.toFixed(2), txid: orderId, descricao: "Pedido " + orderId
     };
-
-    // Call gerarPixCopiaECola to get the PIX string
     const pixDataString = gerarPixCopiaECola(pixParams);
-
     const pixQrCodeElement = document.getElementById('pix-qr-code');
     const pixCopyPasteElement = document.getElementById('pix-copy-paste-code');
-    
     if (pixQrCodeElement) {
         pixQrCodeElement.innerHTML = ''; 
         try {
-            new QRCode(pixQrCodeElement, {
-                text: pixDataString,
-                width: 200,
-                height: 200,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
+            new QRCode(pixQrCodeElement, { text: pixDataString, width: 200, height: 200, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
             pixQrCodeElement.title = pixDataString; 
         } catch (e) {
-            console.error("Error generating QR Code:", e);
             pixQrCodeElement.textContent = "[Erro ao gerar QR Code]";
+            console.error("Error generating QR Code:", e);
         }
     }
-    
-    if (pixCopyPasteElement) {
-        pixCopyPasteElement.textContent = pixDataString;
-    }
-
-    const pixDisplayContainer = document.getElementById('pix-display-container');
-    const cartContainer = document.getElementById('cart-container');
-    if (pixDisplayContainer) pixDisplayContainer.style.display = 'block';
-    if (cartContainer) cartContainer.style.display = 'none'; 
-    
-    console.log("Displaying PIX information for order:", orderId);
-    console.log("PIX Data String (Copia e Cola):", pixDataString);
+    if (pixCopyPasteElement) pixCopyPasteElement.textContent = pixDataString;
+    showView('checkout-view', 'payment-step');
+    console.log("Displaying PIX info for order:", orderId, "PIX String:", pixDataString);
 }
