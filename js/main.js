@@ -57,21 +57,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadMenu() {
     try {
-        const response = await fetch('menu.csv');
-        if (!response.ok) {
-            console.error('Failed to load menu.csv:', response.statusText);
-            document.getElementById('menu-container').innerHTML = '<p>Erro ao carregar o cardápio. Tente novamente mais tarde.</p>';
+        // Attempt to load menu.json first
+        const jsonResponse = await fetch('menu.json');
+        if (jsonResponse.ok) {
+            const menuItems = await jsonResponse.json();
+            console.log("menu.json loaded successfully:", menuItems);
+            // Assuming menu.json provides 'preco' as number and 'disponivel' as boolean
+            // If not, additional processing would be needed here like in parseCSV
+            renderMenuItems(menuItems);
+            return; // Exit if menu.json loaded successfully
+        } else {
+            console.warn(`Failed to load menu.json (status: ${jsonResponse.status}), falling back to menu.csv.`);
+        }
+    } catch (jsonError) {
+        console.warn(`Error fetching or parsing menu.json: ${jsonError}. Falling back to menu.csv.`);
+    }
+
+    // Fallback to menu.csv if menu.json is not found or fails to load
+    try {
+        console.log("Attempting to load menu.csv...");
+        const csvResponse = await fetch('menu.csv');
+        if (!csvResponse.ok) {
+            console.error('Failed to load menu.csv:', csvResponse.statusText);
+            document.getElementById('menu-container').innerHTML = '<p>Erro ao carregar o cardápio (CSV). Tente novamente mais tarde.</p>';
             return;
         }
-        const csvData = await response.text();
+        const csvData = await csvResponse.text();
         const menuItems = parseCSV(csvData);
         
-        console.log("Menu Items Loaded:", menuItems);
+        console.log("menu.csv loaded and parsed:", menuItems);
         renderMenuItems(menuItems);
 
-    } catch (error) {
-        console.error('Error fetching or parsing menu.csv:', error);
-        document.getElementById('menu-container').innerHTML = '<p>Ocorreu um erro inesperado ao carregar o cardápio.</p>';
+    } catch (csvError) {
+        console.error('Error fetching or parsing menu.csv:', csvError);
+        document.getElementById('menu-container').innerHTML = '<p>Ocorreu um erro inesperado ao carregar o cardápio (CSV).</p>';
     }
 }
 
@@ -82,17 +101,32 @@ function parseCSV(csvText) {
         return [];
     }
     
-    const headers = lines[0].split(',');
+    const headers = lines[0].split(',').map(header => header.trim());
     const items = [];
+    const disponivelHeaderIndex = headers.indexOf('disponivel');
 
     for (let i = 1; i < lines.length; i++) {
         const values = lines[i].split(',');
         if (values.length === headers.length) {
             const item = {};
             headers.forEach((header, index) => {
-                item[header.trim()] = values[index].trim();
+                const value = values[index] ? values[index].trim() : '';
+                if (header === 'preco') {
+                    item[header] = parseFloat(value);
+                } else if (header === 'disponivel') {
+                    item[header] = (value.toLowerCase() === 'true');
+                } else {
+                    item[header] = value;
+                }
             });
-            item.preco = parseFloat(item.preco); 
+            // Ensure 'preco' is a number if not already converted (e.g. if header was different)
+            if (typeof item.preco !== 'number') {
+                item.preco = parseFloat(item.preco) || 0;
+            }
+            // Ensure 'disponivel' is a boolean if not already converted
+            if (typeof item.disponivel !== 'boolean') {
+                item.disponivel = (String(item.disponivel).toLowerCase() === 'true');
+            }
             items.push(item);
         } else {
             console.warn(`Skipping malformed CSV line: ${lines[i]}`);
@@ -103,18 +137,22 @@ function parseCSV(csvText) {
 
 function renderMenuItems(menuItems) {
     const menuContainer = document.getElementById('menu-container');
-    if (!menuContainer) return;
+    if (!menuContainer) {
+        console.error("Menu container not found!");
+        return;
+    }
 
-    if (menuItems.length > 0) {
+    if (menuItems && menuItems.length > 0) {
         menuContainer.innerHTML = ''; 
         const ul = document.createElement('ul');
         menuItems.forEach(item => {
-            // Ensure item.disponivel is a string from CSV before toLowerCase()
-            const isAvailable = typeof item.disponivel === 'string' && item.disponivel.toLowerCase() === 'true';
-            if (isAvailable) { 
+            // item.disponivel is now expected to be a boolean
+            if (item.disponivel) {
                 const li = document.createElement('li');
+                // Ensure item.preco is a number before calling toFixed
+                const price = typeof item.preco === 'number' ? item.preco.toFixed(2) : 'N/A';
                 li.innerHTML = `
-                    <span>${item.emoji || '🍽️'} ${item.nome} (${item.categoria}) - R$ ${item.preco.toFixed(2)}</span>
+                    <span>${item.emoji || '🍽️'} ${item.nome} (${item.categoria}) - R$ ${price}</span>
                     <button class="add-to-cart-btn">Adicionar</button>
                 `;
                 li.querySelector('.add-to-cart-btn').addEventListener('click', () => {
