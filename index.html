@@ -8,78 +8,119 @@
     <link rel="manifest" href="/manifest.json">
 </head>
 <body>
-    <header>
-        <h1>Tembiu</h1>
-        <p>Seu cardápio digital open source!</p>
-        <!-- Status (Aberto/Fechado) will go here -->
-    </header>
-
-    <main>
-        <!-- Product categories and items will be rendered here -->
-        <section id="menu-container">
-            <p>Carregando cardápio...</p>
-        </section>
-
-        <section id="cart-container">
-            <h2>Seu Pedido</h2>
-            <div id="cart-items">
-                <p>Seu carrinho está vazio.</p>
+    <div id="app-container">
+        <header class="app-header">
+            <div id="logo-container">
+                <h1>Tembiu</h1>
             </div>
-            <p>Total: R$ <span id="cart-total">0.00</span></p>
-
-            <div id="address-form-container">
-                <h3>Endereço de Entrega</h3>
-                <div>
-                    <label for="street">Logradouro:</label>
-                    <input type="text" id="street" name="street" required>
-                </div>
-                <div>
-                    <label for="number">Número:</label>
-                    <input type="text" id="number" name="number" required>
-                </div>
-                <div>
-                    <label for="complement">Complemento:</label>
-                    <input type="text" id="complement" name="complement">
-                </div>
-                <div>
-                    <label for="neighborhood">Bairro:</label>
-                    <input type="text" id="neighborhood" name="neighborhood" required>
-                </div>
-                <div>
-                    <label for="city">Cidade:</label>
-                    <input type="text" id="city" name="city" required>
-                </div>
-                <div>
-                    <label for="cep">CEP:</label>
-                    <input type="text" id="cep" name="cep" required>
-                </div>
-                <button id="save-address-button">Confirmar Endereço</button>
+            <div id="header-cart-icon" class="desktop-only">
+                <a href="#checkout-view" aria-label="Ver Sacola">
+                    <span class="cart-icon">🛍️</span>
+                    <span class="cart-badge">0</span>
+                </a>
             </div>
+        </header>
 
-            <button id="checkout-button" style="display:none;">Finalizar Pedido</button>
-        </section>
+        <main>
+            <section id="menu-view">
+                <div class="search-bar-container">
+                    <label for="menu-search" class="sr-only">Buscar no cardápio</label>
+                    <input type="search" id="menu-search" placeholder="O que você gostaria de comer hoje?">
+                </div>
+                <div class="category-filters-container">
+                    <button class="category-filter active">Todos</button>
+                    <button class="category-filter">Pizzas</button>
+                    <button class="category-filter">Bebidas</button>
+                    <button class="category-filter">Sobremesas</button>
+                    <!-- Add more category buttons as needed -->
+                </div>
+                <div id="menu-items-list">
+                    <p>Preparando as delícias do cardápio...</p>
+                </div>
+            </section>
 
-        <section id="pix-display-container" style="display:none;">
-            <h2>Pagamento PIX</h2>
-            <p>Escaneie o QR Code abaixo ou copie o código para pagar:</p>
-            <div id="pix-qr-code">[Placeholder para QR Code PIX]</div>
-            <p><strong>Copia e Cola:</strong> <code id="pix-copy-paste-code">[Placeholder para Código PIX Copia e Cola]</code></p>
-            <button id="confirm-payment-button">Confirmar Pagamento (Simulado)</button>
-            <button id="whatsapp-share-button" style="margin-top: 10px;">Compartilhar Pedido no WhatsApp</button> 
-        </section>
+            <section id="checkout-view" style="display:none;">
+                <h2>Quase lá! Seu Pedido</h2>
 
-        <section id="order-history-container">
-            <h2>Seus Últimos Pedidos</h2>
-            <div id="past-orders-list">
-                <p>Nenhum pedido encontrado no seu histórico.</p>
-            </div>
-        </section>
-    </main>
+                <div id="order-summary-step">
+                    <h3>Confira seu Pedido</h3>
+                    <div id="cart-items">
+                        <p>Sua sacola está vazia. Que tal adicionar algo delicioso do cardápio?</p> <!-- Default cart content -->
+                    </div>
+                    <p>Total: R$ <span id="cart-total">0.00</span></p>
+                    <button id="to-address-step-button" class="btn btn-primary">Informar Endereço de Entrega</button>
+                </div>
 
-    <footer>
-        <p>&copy; 2024 Tembiu. Todos os direitos reservados.</p>
-        <!-- Link to docs, etc. -->
-    </footer>
+                <div id="address-step" style="display:none;">
+                    <h3>Onde Entregamos seu Pedido?</h3>
+                    <div id="address-form-fields">
+                        <div>
+                            <label for="street">Logradouro:</label>
+                            <input type="text" id="street" name="street" required>
+                        </div>
+                        <div>
+                            <label for="number">Número:</label>
+                            <input type="text" id="number" name="number" required>
+                        </div>
+                        <div>
+                            <label for="complement">Complemento:</label>
+                            <input type="text" id="complement" name="complement">
+                        </div>
+                        <div>
+                            <label for="neighborhood">Bairro:</label>
+                            <input type="text" id="neighborhood" name="neighborhood" required>
+                        </div>
+                        <div>
+                            <label for="city">Cidade:</label>
+                            <input type="text" id="city" name="city" required>
+                        </div>
+                        <div>
+                            <label for="cep">CEP:</label>
+                            <input type="text" id="cep" name="cep" required>
+                        </div>
+                    </div>
+                    <button id="save-address-button" class="btn btn-primary">Continuar para Pagamento</button>
+                </div>
+
+                <div id="payment-step" style="display:none;">
+                    <h3>Pagamento via PIX</h3>
+                    <p>Escaneie o QR Code com seu app do banco ou copie o código abaixo:</p>
+                    <div id="pix-qr-code">[Placeholder para QR Code PIX]</div>
+                    <p><strong>Código PIX (Copia e Cola):</strong> <code id="pix-copy-paste-code">[Placeholder para Código PIX Copia e Cola]</code></p>
+                    <button id="confirm-payment-button" class="btn btn-secondary">Já Paguei, Finalizar Pedido</button>
+                    <button id="whatsapp-share-button" class="btn btn-secondary" style="margin-top: 10px;">Enviar Pedido por WhatsApp</button>
+                </div>
+            </section>
+
+            <section id="order-history-view">
+                <h2>Seu Histórico de Pedidos</h2>
+                <div id="past-orders-list">
+                    <p>Você ainda não tem pedidos no seu histórico. Faça seu primeiro pedido!</p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; 2024 Tembiu. Todos os direitos reservados.</p>
+            <!-- Link to docs, etc. -->
+        </footer>
+    </div> <!-- End of #app-container -->
+
+    <nav id="bottom-nav" class="mobile-only">
+        <a href="#menu-view" class="nav-item active" aria-label="Cardápio">
+            <span class="nav-icon">🍽️</span>
+            <span class="nav-text">Cardápio</span>
+        </a>
+        <a href="#checkout-view" class="nav-item" aria-label="Sacola">
+            <span class="nav-icon">🛍️</span>
+            <span class="nav-text">Sacola</span>
+            <span class="cart-badge-nav">0</span> <!-- Badge for cart count -->
+        </a>
+        <a href="#order-history-view" class="nav-item" aria-label="Pedidos">
+            <span class="nav-icon">🧾</span>
+            <span class="nav-text">Meus Pedidos</span>
+        </a>
+    </nav>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="js/main.js"></script>

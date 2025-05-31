@@ -1,439 +1,615 @@
+:root {
+    /* Color Palette */
+    --primary-color: #E71D36; /* Red */
+    --secondary-color: #2EC4B6; /* Teal */
+    --background-color-light: #F9FAFB; /* Light Gray - Changed from #FFFFFF for slight off-white */
+    --background-color-dark: #121212;
+    --surface-color-light: #FFFFFF;
+    --surface-color-dark: #1E1E1E;
+    --text-color-primary-light: #1F2937; /* Dark Gray */
+    --text-color-secondary-light: #6B7280; /* Medium Gray */
+    --text-color-primary-dark: #F9FAFB; /* Light Gray */
+    --text-color-secondary-dark: #D1D5DB; /* Medium-Light Gray */
+    --accent-color-success: #10B981; /* Green */
+    --accent-color-error: #EF4444;   /* Red */
+    --accent-color-warning: #F59E0B; /* Amber */
+    --border-color-light: #E5E7EB; /* Light Gray */
+    --border-color-dark: #374151; /* Dark Gray */
+
+    /* Typography */
+    --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    /* Spacing (8px grid) */
+    --space-1: 0.25rem; /* 4px */
+    --space-2: 0.5rem;  /* 8px */
+    --space-3: 0.75rem; /* 12px */
+    --space-4: 1rem;    /* 16px */
+    --space-5: 1.25rem; /* 20px */
+    --space-6: 1.5rem;  /* 24px */
+    --space-8: 2rem;    /* 32px */
+    --space-10: 2.5rem; /* 40px */
+    --space-12: 3rem;   /* 48px */
+
+    /* Borders */
+    --border-radius-small: 0.25rem; /* 4px */
+    --border-radius-medium: 0.5rem; /* 8px */
+    --border-radius-large: 1rem;   /* 16px */
+    --border-width: 1px;
+    --border-width-medium: 2px;
+
+    /* Shadows - Subtle */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+    /* Transitions */
+    --transition-duration: 0.2s;
+    --transition-timing-function: ease-in-out;
+}
+
+/* Global Reset / Base Styles */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 100%;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-    font-family: sans-serif;
+    font-family: var(--font-family-primary);
+    font-weight: var(--font-weight-normal);
     line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: var(--background-color-light);
+    color: var(--text-color-primary-light);
+    padding-bottom: 70px; /* Space for bottom nav */
 }
 
-header {
-    background: #333;
-    color: #fff;
-    padding: 1rem 0;
-    text-align: center;
+/* Basic Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: var(--font-weight-bold);
+    line-height: 1.3;
+    margin-bottom: var(--space-3);
+    color: var(--text-color-primary-light);
 }
 
-header h1 {
-    margin: 0;
-    font-size: 2rem;
+h1 { font-size: 2rem; } /* Example sizes, can be adjusted */
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.5rem; }
+
+p {
+    margin-bottom: var(--space-4);
+    color: var(--text-color-secondary-light);
 }
 
-header p {
-    margin: 0;
-    font-size: 1rem;
+a { /* Added outline:none here as well */
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color var(--transition-duration) var(--transition-timing-function);
+    outline: none; /* Added for focus-visible */
 }
 
-main {
-    padding: 1rem;
-    max-width: 800px;
-    margin: 20px auto;
-    background: #fff;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+a:hover {
+    color: #A01427; /* Darker shade of primary-color */
 }
 
-#menu-container ul {
-    list-style: none;
-    padding: 0;
+img, video, canvas, svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
 
-/* Modified rule for better layout with button */
-#menu-container li {
-    display: flex; /* Use flexbox for alignment */
-    justify-content: space-between; /* Pushes button to the right */
-    align-items: center; /* Vertically aligns text and button */
-    padding: 0.75rem 0.5rem; /* Adjust padding */
-    border-bottom: 1px #eee solid;
-}
-
-#menu-container li:last-child {
-    border-bottom: none;
-}
-
-/* Styling for the add to cart button (can be an alternative to dynamic JS styling) */
-.add-to-cart-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 0.5rem 0.8rem; /* Slightly larger padding */
-    border-radius: 4px;
+button {
+    font-family: var(--font-family-primary);
     cursor: pointer;
-    font-size: 0.9rem;
-    white-space: nowrap; /* Prevents button text from wrapping */
+    border: none;
+    background-color: transparent;
+    transition: background-color var(--transition-duration) var(--transition-timing-function), color var(--transition-duration) var(--transition-timing-function);
+    outline: none; /* Added for focus-visible */
 }
 
-.add-to-cart-btn:hover {
-    background-color: #0056b3;
+input, textarea, select {
+    font-family: var(--font-family-primary);
+    font-size: 1rem;
+    outline: none; /* Added for focus-visible */
+    padding: var(--space-2) var(--space-3);
+    border: var(--border-width) solid var(--border-color-light);
+    border-radius: var(--border-radius-medium);
+    background-color: var(--surface-color-light);
+    color: var(--text-color-primary-light);
+    width: 100%;
+    margin-bottom: var(--space-3);
 }
 
-footer {
-    text-align: center;
-    padding: 1rem 0;
-    margin-top: 2rem;
-    background: #333;
-    color: #fff;
+input:focus, textarea:focus, select:focus {
+    outline: none; /* This is overridden by :focus-visible for keyboard users */
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(231, 29, 54, 0.2); /* Focus ring with primary color */
 }
 
-/* Cart Styling */
-#cart-container {
-    margin-top: 2rem;
-    padding: 1rem;
-    background-color: #e9ecef;
-    border-radius: 5px;
+label {
+    display: block;
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-1);
+    color: var(--text-color-primary-light);
 }
 
-#cart-container h2 {
-    margin-top: 0;
-    color: #333;
+/* Utility for visually hidden, accessible to screen readers */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
 }
 
-#cart-items p {
-    font-style: italic;
+/* App Container */
+#app-container {
+    max-width: 1200px; /* Max width for larger screens */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 70px); /* Full height minus bottom nav */
 }
 
-/* Cart Item Styling to accommodate remove button */
-.cart-item {
+/* Header */
+.app-header {
+    background-color: var(--surface-color-light);
+    padding: var(--space-3) var(--space-4);
     display: flex;
     justify-content: space-between;
-    align-items: center; /* Vertically align text and button */
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #ccc;
+    align-items: center;
+    border-bottom: var(--border-width) solid var(--border-color-light);
+    box-shadow: var(--shadow-sm);
 }
 
-.cart-item:last-child {
-    border-bottom: none;
+#logo-container h1 {
+    font-size: 1.5rem; /* Adjusted from global h1 */
+    color: var(--primary-color);
+    margin-bottom: 0; /* Override default heading margin */
 }
 
-.cart-item span { /* To allow text to not stretch if button is large */
-    flex-grow: 1; /* Allow text to take available space */
+#header-cart-icon .cart-icon {
+    font-size: 1.5rem; /* Adjust icon size */
+}
+#header-cart-icon .cart-badge {
+    background-color: var(--primary-color);
+    color: var(--surface-color-light);
+    font-size: 0.75rem;
+    font-weight: var(--font-weight-bold);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--border-radius-large);
+    position: relative;
+    top: -0.5em;
+    right: -0.25em;
 }
 
-.remove-from-cart-btn {
-    background-color: #dc3545; /* Red for removal */
-    color: white;
-    border: none;
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.8rem; /* Slightly smaller */
-    margin-left: 10px; /* Space from item text */
+/* Main Content Area */
+main {
+    flex-grow: 1;
+    padding: var(--space-4);
+}
+
+section { /* Default padding for views */
+    padding: var(--space-4) 0;
+}
+
+/* Menu View */
+#menu-view .search-bar-container input[type="search"] {
+    margin-bottom: var(--space-4);
+}
+
+.category-filters-container {
+    display: flex;
+    overflow-x: auto; /* Horizontal scroll on mobile */
+    padding-bottom: var(--space-2); /* For scrollbar */
+    margin-bottom: var(--space-4);
+    gap: var(--space-2);
+}
+
+.category-filter {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--border-radius-large);
+    background-color: var(--border-color-light); /* Neutral background */
+    color: var(--text-color-secondary-light);
+    font-weight: var(--font-weight-medium);
     white-space: nowrap;
 }
 
-.remove-from-cart-btn:hover {
-    background-color: #c82333;
+.category-filter.active, .category-filter:hover {
+    background-color: var(--primary-color);
+    color: var(--surface-color-light);
 }
 
-.remove-from-cart-btn:active {
-    filter: brightness(85%);
+#menu-items-list li { /* Conceptual Menu Item Card */
+    background-color: var(--surface-color-light);
+    border: var(--border-width) solid var(--border-color-light);
+    border-radius: var(--border-radius-medium);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+    box-shadow: var(--shadow-sm);
+    /* Add flex/grid for internal layout later */
+}
+#menu-items-list li span { /* Example for item name */
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-color-primary-light);
 }
 
-
-#cart-total {
-    font-weight: bold;
+/* Checkout View */
+#checkout-view h2, #order-history-view h2 {
+    margin-bottom: var(--space-6);
+}
+#checkout-view h3 { /* Step Headings */
+    font-size: 1.25rem;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: var(--border-width-medium) solid var(--primary-color);
+    display: inline-block; /* So border only spans text width */
 }
 
-#checkout-button {
-    display: block;
-    width: 100%;
-    padding: 0.75rem;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-top: 1rem;
+#address-form-fields div { /* Spacing for form field containers */
+    margin-bottom: var(--space-4);
 }
 
-#checkout-button:hover {
-    background-color: #218838;
-}
-
-/* PIX Display Styling */
-#pix-display-container {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    text-align: center; /* Center align content */
-}
-
-#pix-display-container h2 {
-    margin-top: 0;
-    color: #333;
-}
-
-#pix-qr-code {
-    margin: 1rem auto;
-    /* Padding can create a border effect around the QR code. 
-       Adjust or remove as desired. For now, let's reduce it or make it 0 
-       if the QR code itself should be exactly 200x200.
-       If the QR code library adds its own margin/padding, this might need further adjustment.
-       Let's keep a minimal padding to act as a small border. */
-    padding: 5px; 
-    background-color: #fff; /* Background for the container, if QR is smaller or has transparency */
-    border: 1px solid #ccc; /* Border for the container */
-    width: 210px;  /* Container width: 200px for QR + 2*5px padding */
-    height: 210px; /* Container height: 200px for QR + 2*5px padding */
-    /* line-height, text-align, font-style, color are no longer needed for placeholder text */
-    display: flex; /* To help center the img/canvas if it's smaller than container */
+#payment-step #pix-qr-code {
+    margin: var(--space-4) auto;
+    padding: var(--space-2);
+    background-color: var(--surface-color-light);
+    border: var(--border-width) solid var(--border-color-light);
+    width: 220px;  /* Container width for 200px QR + padding */
+    height: 220px;
+    display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: var(--shadow-sm);
+}
+#payment-step #pix-copy-paste-code {
+    display: block;
+    padding: var(--space-3);
+    background-color: var(--background-color-light);
+    border: var(--border-width) dashed var(--border-color-light);
+    word-break: break-all;
+    margin-top: var(--space-4);
+    border-radius: var(--border-radius-medium);
+    font-family: monospace;
+    color: var(--text-color-secondary-light);
 }
 
-/* Optional: If qrcode.js generates an img or canvas, you might want to style it directly */
-#pix-qr-code img, 
-#pix-qr-code canvas {
-    /* The library sets the width and height on the element directly.
-       This ensures it's displayed as a block and respects its own dimensions. */
-    display: block; 
+
+/* Footer */
+.app-footer {
+    background-color: var(--text-color-primary-light);
+    color: var(--text-color-primary-dark);
+    padding: var(--space-6) var(--space-4);
+    text-align: center;
+    font-size: 0.875rem;
+}
+.app-footer p {
+    color: var(--text-color-secondary-dark);
+    margin-bottom: 0;
 }
 
-#pix-copy-paste-code {
-    display: inline-block; /* Or block with text-align:center on parent */
-    padding: 0.5rem;
-    background-color: #e9ecef;
-    border: 1px dashed #ccc;
-    word-break: break-all; /* Ensure long codes wrap */
+/* Bottom Navigation Bar */
+#bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--surface-color-light);
+    border-top: var(--border-width) solid var(--border-color-light);
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: var(--space-2) 0;
+    z-index: 1000;
 }
 
-#confirm-payment-button {
-    display: inline-block; /* Or block with margin auto for centering */
-    padding: 0.75rem 1.5rem;
-    background-color: #17a2b8;
-    color: white;
-    border: none;
-    border-radius: 5px;
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color-secondary-light);
+    font-size: 0.75rem; /* Text size */
+    padding: var(--space-1) var(--space-3);
+    position: relative; /* For badge positioning */
+}
+.nav-item .nav-icon {
+    font-size: 1.5rem; /* Icon size */
+    margin-bottom: var(--space-1);
+}
+.nav-item.active, .nav-item:hover {
+    color: var(--primary-color);
+}
+.nav-item .cart-badge-nav {
+    position: absolute;
+    top: var(--space-1);
+    right: var(--space-1);
+    background-color: var(--primary-color);
+    color: var(--surface-color-light);
+    font-size: 0.7rem;
+    font-weight: var(--font-weight-bold);
+    padding: 2px 5px;
+    border-radius: 50%;
+    min-width: 16px;
+    text-align: center;
+}
+
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--border-radius-medium);
+    font-weight: var(--font-weight-semibold);
+    text-align: center;
+    transition: background-color var(--transition-duration) var(--transition-timing-function),
+                color var(--transition-duration) var(--transition-timing-function),
+                transform var(--transition-duration) var(--transition-timing-function);
+    border: var(--border-width) solid transparent;
     font-size: 1rem;
-    cursor: pointer;
-    margin-top: 1.5rem;
+    width: 100%; /* Default to full width for mobile-first */
+    margin-bottom: var(--space-3); /* Default spacing for buttons */
+}
+.btn:hover {
+    transform: translateY(-2px); /* Subtle lift */
+}
+.btn:active {
+    transform: translateY(0px);
+    filter: brightness(0.95);
 }
 
-#confirm-payment-button:hover {
-    background-color: #138496;
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--surface-color-light);
+}
+.btn-primary:hover {
+    background-color: #A01427; /* Darker primary */
+    color: var(--surface-color-light);
 }
 
-/* WhatsApp Share Button Styling */
-#whatsapp-share-button {
-    display: block; /* Make it a block element to take full width or center with margin auto */
-    width: fit-content; /* Adjust width to content or set a specific width */
-    margin: 10px auto 0 auto; /* Top margin, auto for left/right to center */
-    padding: 0.75rem 1.5rem;
-    background-color: #25D366; /* WhatsApp Green */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    text-decoration: none; /* If it were an <a> tag */
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: var(--text-color-primary-light); /* Ensure contrast */
+}
+.btn-secondary:hover {
+    background-color: #208F83; /* Darker secondary */
+    color: var(--text-color-primary-light); /* Ensure contrast */
 }
 
-#whatsapp-share-button:hover {
-    background-color: #1EBE57;
+.btn-outline {
+    background-color: transparent;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.btn-outline:hover {
+    background-color: rgba(231, 29, 54, 0.1); /* Light primary background */
+    color: var(--primary-color);
 }
 
-/* Order History Styling */
-#order-history-container {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background-color: #f0f0f0; /* Slightly different background */
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
 
-#order-history-container h2 {
-    margin-top: 0;
-    color: #333;
-}
+/* Responsive Visibility */
+.desktop-only { display: none; }
 
-.past-order {
-    padding: 1rem;
-    margin-bottom: 1rem;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.past-order h3 { /* For Order ID or Date */
-    margin-top: 0;
-    font-size: 1.1rem;
-    color: #555;
-}
-
-.past-order ul {
-    list-style: disc;
-    margin-left: 20px;
-    padding-left: 0;
-}
-
-.past-order li {
-    font-size: 0.9rem;
-    color: #444;
-}
-
-.order-again-btn {
-    background-color: #ffc107; /* A warning/amber color */
-    color: #212529;
-    border: none;
-    padding: 0.5rem 0.8rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
-}
-
-.order-again-btn:hover {
-    background-color: #e0a800;
-}
-
-/* Button Active States for Visual Feedback */
-
-.add-to-cart-btn:active,
-#checkout-button:active,
-#confirm-payment-button:active,
-#whatsapp-share-button:active,
-.order-again-btn:active {
-    /* Darken background slightly or use a transform for a "pressed" effect */
-    /* Option 1: Darken background (adjust filter or use specific darker colors) */
-    filter: brightness(85%);
-    
-    /* Option 2: Transform (can sometimes affect layout if not careful) */
-    /* transform: translateY(1px); */
-    /* box-shadow: inset 0 0 5px rgba(0,0,0,0.2); */
-}
-
-/* Ensure :hover styles are defined for a good experience too */
-/* (Most already have hover styles, but adding for completeness if any were missed) */
-
-.add-to-cart-btn:hover {
-    background-color: #0056b3; /* Already defined */
-}
-
-#checkout-button:hover {
-    background-color: #218838; /* Already defined */
-}
-
-#confirm-payment-button:hover {
-    background-color: #138496; /* Already defined */
-}
-
-#whatsapp-share-button:hover {
-    background-color: #1EBE57; /* Already defined */
-}
-
-.order-again-btn:hover {
-    background-color: #e0a800; /* Already defined */
-}
-
-/* General Body and Typography Adjustments for smaller screens */
-@media (max-width: 768px) {
+@media (min-width: 768px) { /* Tablet and above */
     body {
-        font-size: 14px; /* Slightly smaller base font for mobile */
+        padding-bottom: 0; /* Remove padding for bottom nav if it's hidden */
     }
-
-    header h1 {
-        font-size: 1.5rem; /* Adjust header font size */
+    .mobile-only { display: none !important; } /* Important to override inline styles if any */
+    .desktop-only { display: block; } /* Or flex, inline-block etc. as needed */
+    
+    /* Adjust button widths for desktop if needed */
+    .btn {
+        width: auto; /* Allow buttons to size to content on desktop */
+        min-width: 120px; /* Example min-width */
     }
-
-    main {
-        padding: 0.5rem; /* Reduce padding on main content */
-        margin: 10px;    /* Reduce margin */
-    }
-
-    /* Ensure buttons are easily tappable */
-    button, .add-to-cart-btn, .remove-from-cart-btn, .order-again-btn {
-        padding: 0.8rem 1rem; /* Increase padding for easier tapping */
-        font-size: 0.95rem;
-    }
-}
-
-/* Menu Container adjustments */
-@media (max-width: 600px) {
-    #menu-container ul li, 
-    .cart-item {
-        flex-direction: column; /* Stack item details and button/remove vertically */
-        align-items: flex-start; /* Align items to the start */
-    }
-
-    #menu-container ul li span,
-    .cart-item span {
-        margin-bottom: 0.5rem; /* Space between text and button */
-    }
-
-    .add-to-cart-btn,
-    .remove-from-cart-btn {
-        width: 100%; /* Make buttons full width for easier tapping */
-        margin-left: 0; /* Reset margin if any */
-        padding: 0.75rem;
-        box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    }
-}
-
-/* Cart, PIX, Order History sections adjustments */
-@media (max-width: 768px) {
-    #cart-container,
-    #pix-display-container,
-    #order-history-container {
-        padding: 1rem; /* Adjust padding */
-    }
-
-    #pix-qr-code {
-        /* Make QR code responsive if needed, but it's fixed size from JS.
-           Container might need to allow scrolling or QR size adjusted in JS for very small screens.
-           For now, ensure its container doesn't break layout. Max-width can help. */
-        max-width: 100%; 
-        /* If QR code is 200px, container width was 210px. 
-           This means screen must be at least ~220px wide for it not to overflow.
-           Consider making QR code size dynamic in JS for very small screens,
-           or accept that very narrow screens might have horizontal scroll for it. */
-    }
-
-    #confirm-payment-button,
-    #whatsapp-share-button {
-        /* Ensure these buttons stack nicely if they were inline-block */
-        display: block;
+    #checkout-view .btn { /* Keep checkout buttons full width or adjust as needed */
         width: 100%;
-        margin-top: 0.75rem;
-        margin-left: 0; /* Reset margin-left if they were inline */
-        box-sizing: border-box;
     }
 }
 
-/* Footer adjustments */
+
+/* Existing specific styles (review and refactor/remove in subsequent steps) */
+/* Commenting out styles that are now handled by global styles or need complete rethink */
+
+/* header already styled by .app-header */
+/* header h1 already styled by #logo-container h1 or global h1 */
+/* header p - if needed, add specific class and style with tokens */
+
+/* main is now a flex item, padding added via section */
+/* #menu-container ul - padding handled by global reset */
+/* #menu-container li - partially handled by #menu-items-list li, needs full review */
+
+/* .add-to-cart-btn - use .btn.btn-primary or similar */
+/* footer - styled by .app-footer */
+
+/* #cart-container - now part of #checkout-view */
+/* #cart-items p - specific styling, review */
+/* .cart-item - needs review within #checkout-view */
+/* .remove-from-cart-btn - use .btn.btn-outline or similar with error color */
+/* #cart-total - basic styling, review */
+/* #checkout-button - replaced by step buttons, use .btn.btn-primary */
+
+/* #pix-display-container - now part of #payment-step */
+/* #pix-qr-code - styled within #payment-step */
+/* #pix-copy-paste-code - styled within #payment-step */
+/* #confirm-payment-button - use .btn.btn-secondary or other */
+/* #whatsapp-share-button - use .btn.btn-secondary or other */
+
+/* #order-history-container - now #order-history-view */
+/* .past-order - needs review with tokens */
+/* .order-again-btn - use .btn.btn-secondary or .btn-outline */
+
+/* Button Active States - .btn:active handles general feedback now */
+
+/* Media Queries - existing ones need full review and integration with token-based responsive design */
+/* Specific overrides within existing media queries are largely commented or will be removed as components are refactored */
+
 @media (max-width: 768px) {
-    footer {
-        padding: 0.8rem 0;
-        font-size: 0.8rem;
+    /* body { font-size: 14px; } */ /* Base font-size adjusted globally if needed */
+    /* header h1 { font-size: 1.5rem; } */
+    main {
+        padding: var(--space-2); /* Reduced padding for main on mobile */
     }
+    /* button styles in media queries need to be re-evaluated against new .btn classes */
+}
+
+@media (max-width: 600px) {
+    #menu-items-list li,  /* Assuming this is the new menu item list */
+    #cart-items .cart-item { /* Assuming .cart-item is still used */
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #menu-items-list li span, /* Example for item name */
+    #cart-items .cart-item span { /* Example for item text */
+        margin-bottom: var(--space-2);
+    }
+
+    /* .add-to-cart-btn, (old class) */
+    /* .remove-from-cart-btn { (old class) */
+        /* width: 100%;
+        margin-left: 0;
+        padding: var(--space-3);
+        box-sizing: border-box;
+    } */
 }
 
 /* Further adjustments for very small screens (e.g., less than 400px) */
-@media (max-width: 400px) {
-    header h1 {
-        font-size: 1.2rem;
-    }
-    
-    body {
-        font-size: 13px;
-    }
+/* @media (max-width: 400px) { ... } */
+#address-form-fields {
+    padding: var(--space-2) 0;
+}
 
-    /* Ensure buttons are still reasonably sized */
-    button, .add-to-cart-btn, .remove-from-cart-btn, .order-again-btn {
-        padding: 0.6rem 0.8rem; 
-        font-size: 0.9rem;
-    }
+#address-step .btn { /* Ensure address step button is full width */
+    width: 100%;
+}
+#order-summary-step .btn {
+    width: 100%;
+}
 
-    #pix-qr-code {
-        /* On very small screens, the 200px QR might be too big.
-           The container is 210px. If screen is < 210px, it will overflow.
-           A smaller QR code generated by JS would be ideal here.
-           For now, this CSS won't shrink the QR code itself, just its container if possible. */
-        /* width: 160px; */ /* Example: make container smaller if QR code was also made smaller */
-        /* height: 160px; */ /* JS would need to generate 150x150 QR for 5px padding */
-                       /* This assumes JS QR generation size is also adapted. */
-                       /* If JS QR size is fixed, then this might clip or look odd. */
-                       /* Let's assume JS QR size is not changed by this CSS for now. */
-    }
+/* Ensure cart items have some styling */
+#cart-items .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2) 0;
+    border-bottom: var(--border-width) solid var(--border-color-light);
+}
+#cart-items .cart-item:last-child {
+    border-bottom: none;
+}
+#cart-items .cart-item span {
+    flex-grow: 1;
+}
+#cart-items .remove-from-cart-btn { /* Basic styling for now */
+    background-color: var(--accent-color-error);
+    color: var(--surface-color-light);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--border-radius-small);
+    font-size: 0.8rem;
+    margin-left: var(--space-2);
+}
+#cart-items .remove-from-cart-btn:hover {
+    filter: brightness(0.9);
+}
+
+#past-orders-list .past-order {
+    background-color: var(--surface-color-light);
+    border: var(--border-width) solid var(--border-color-light);
+    border-radius: var(--border-radius-medium);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+    box-shadow: var(--shadow-sm);
+}
+#past-orders-list .past-order h3 {
+    font-size: 1.1rem;
+    color: var(--text-color-primary-light);
+    margin-bottom: var(--space-2);
+}
+#past-orders-list .past-order ul {
+    list-style: none; /* Or disc, if preferred */
+    padding-left: 0;
+    margin-bottom: var(--space-3);
+}
+#past-orders-list .past-order li {
+    font-size: 0.9rem;
+    color: var(--text-color-secondary-light);
+    margin-bottom: var(--space-1);
+}
+#past-orders-list .order-again-btn { /* Basic styling for now */
+    background-color: var(--secondary-color);
+    color: var(--surface-color-light);
+    padding: var(--space-2) var(--space-3);
+}
+#past-orders-list .order-again-btn:hover {
+    filter: brightness(0.9);
+}
+
+/* Address form specific styling */
+#address-form-fields div {
+    margin-bottom: var(--space-3); /* Consistent spacing between form rows */
+}
+
+#address-form-fields label {
+    font-size: 0.875rem; /* Slightly smaller label */
+    color: var(--text-color-secondary-light); /* Lighter color for labels */
+    margin-bottom: var(--space-1);
+}
+
+#address-form-fields input[type="text"] {
+    border-color: var(--border-color-light); /* Default border */
+}
+#address-form-fields input[type="text"]:focus {
+    border-color: var(--primary-color); /* Primary color border on focus */
+    box-shadow: 0 0 0 2px rgba(231, 29, 54, 0.15); /* Softer focus shadow */
+}
+#menu-items-list {
+    padding-top: var(--space-4);
+}
+/* Ensure that the cart-badge on the desktop header is visible if not empty */
+#header-cart-icon .cart-badge:empty {
+    /* display: none; */ /* JS will handle visibility based on count > 0 */
+}
+/* Ensure cart badge in bottom nav is visible if not empty */
+#bottom-nav .cart-badge-nav:empty {
+     /* display: none; */ /* JS will handle visibility based on count > 0 */
+}
+
+/* Accessibility & Performance Improvements */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(231, 29, 54, 0.3);
 }
