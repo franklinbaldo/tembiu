@@ -4,18 +4,14 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
 
 ## Phase 1: Implement Core v1.0 Functionality (from README)
 
-- [~] **Task:** Basic responsive template and menu loading.
-    - **Details:** HTML structure, CSS styling, JavaScript for fetching, parsing, and displaying `menu.csv`. Interactive menu items with "add to cart" functionality. Basic cart display (items and total with quantity). Functional item removal from cart. CSS media queries added for improved responsiveness across screen sizes. **Header now dynamically displays `restaurantConfig.name`.**
-    - **Status:** Initial structure and functionality implemented. Cart quantity handling and item removal added. Responsiveness improved. Dynamic restaurant name in header. Further UI refinements may be needed.
-    - **Rationale:** Foundation for all other v1.0 features.
+- [x] **Task:** Basic responsive template and menu loading.
+    - **Details:** Completely new UI/UX implemented with mobile-first design, CSS variables, new HTML structure, and JS logic for view management. Menu loading and display adapted to new card layout.
 - [x] **Task:** PIX Integration (Placeholder/Conceptual). 
     - **Details:** UI elements for PIX display are in place. `handleCheckout` now uses `qrcode.js` to generate a real client-side QR code. **PIX data string structure refined to follow custom format from README.md (using configured phone for 'Tel').**
     - **Status:** Client-side QR code generation implemented with refined data structure.
     - **Rationale:** Core payment method for the app.
-- [~] **Task:** WhatsApp Integration (Placeholder/Conceptual). 
-    - **Details:** WhatsApp share button UI is in place. `handleWhatsAppShare` formats cart data and opens a `wa.me` link. **Client-side `restaurantConfig` (name, phone) added and used in message and `wa.me` link.**
-    - **Status:** JS logic for `wa.me` link and basic config implemented. Further enhancements could include UI for config.
-    - **Rationale:** Core communication method for orders.
+- [x] **Task:** WhatsApp Integration (Placeholder/Conceptual).
+    - **Details:** JS logic for `wa.me` link in place. Message formatting includes cart details and customer address. `restaurantConfig` used for contact details.
 - [x] **Task:** Basic PWA Features.
     - **Sub-Task:** [x] Create and link `manifest.json`.
     - **Sub-Task:** [x] Implement basic service worker for offline caching of static assets.
@@ -51,8 +47,7 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Rationale:** Comprehensive and clear documentation is key for user adoption and contributions.
 
 - [x] **Task:** Refine UI/UX for Core Features. 
-    - **Details:** Improve visual hierarchy and spacing of menu, cart, PIX display, and order history. Ensure better responsiveness. Add loading indicators. Design user-friendly quantity management in cart. **[Cart quantity handling implemented. CSS active styles for button feedback added. Placeholder 'Remover' buttons added to cart items, now fully functional. Dynamic display of restaurant name in header implemented.]**
-    - **Rationale:** Enhance usability and align with the "premium experience" goal from `README.md`.
+    - **Details:** Superseded by comprehensive UI/UX overhaul (implemented based on new design brief). New design includes significantly improved visual hierarchy, spacing, mobile-first responsiveness, and component styling using design tokens.
 - [x] **Task:** Implement Real PIX QR Code Generation (Client-Side).
     - **Details:** Integrated qrcode.js library. handleCheckout now calls gerarPixCopiaECola to produce a standard BR Code compliant PIX string (including merchant key, name, city, value, TXID, CRC16) and uses this for QR code generation and "Copia e Cola" display.
     - **Rationale:** Move PIX feature from placeholder to a functional (client-side) state.
@@ -109,6 +104,30 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
         - List of most frequently ordered items.
     - **Sub-Task:** Ensure this data is presented clearly.
     - **Rationale:** Provides insights for the restaurant owner as per README.
+- [ ] **Task:** Full End-to-End Testing of New UI and JS Logic.
+    - **Details:** `Thorough interactive testing of all user flows, navigation, cart operations, checkout steps, address handling, PIX generation, and order history with the new UI and refactored JavaScript.`
+    - **Rationale:** `Crucial to ensure stability and correct functionality after major UI/UX and JS changes.`
+- [ ] **Task:** Implement Client-Side Menu Search Functionality.
+    - **Details:** `Wire up the existing search input (`#menu-search`) to filter items in `#menu-items-list` based on user input. Update `renderMenuItems` or create a new filtering function.`
+    - **Rationale:** `Enhances menu usability, UI placeholder already exists.`
+- [ ] **Task:** Implement Client-Side Category Filtering Functionality.
+    - **Details:** `Wire up the category filter buttons (`.category-filter`) to filter items in `#menu-items-list`. Update `renderMenuItems` or create a new filtering function.`
+    - **Rationale:** `Improves menu navigation, UI placeholder already exists.`
+- [ ] **Task:** PWA: Enhance Offline Support for New Views & Data.
+    - **Details:** `Update service worker (`sw.js`) to cache all critical static assets for the new views (menu, checkout, history). Consider strategies for caching dynamic data like menu items and order history for a richer offline experience beyond basic static asset caching.`
+    - **Rationale:** `Improves PWA robustness and user experience in low/no connectivity scenarios.`
+- [ ] **Task:** UI: Refine Mobile Bottom Navigation Interaction.
+    - **Details:** `Review active state styling for clarity. Consider smooth transitions or animations if desired and within performance budget. Ensure behavior is robust across different interactions and view changes.`
+    - **Rationale:** `Polishes a key navigation component of the new UI.`
+- [ ] **Task:** UI: Polish Menu Item Card Interactions.
+    - **Details:** `Review hover states for menu item cards. Consider subtle animations for 'Add to Cart' if desired. Ensure cards are fully responsive and text truncation/wrapping is handled gracefully for varying content lengths.`
+    - **Rationale:** `Enhances the visual appeal and interactivity of the core menu display.`
+- [ ] **Task:** UI: Polish Checkout Step Transitions.
+    - **Details:** `Ensure transitions between order summary, address, and payment steps are smooth and provide clear visual feedback to the user about their progress in the checkout flow. Verify all button states (disabled, active).`
+    - **Rationale:** `Improves the user experience of the critical checkout process.`
+- [ ] **Task:** UI: Implement Loading Indicators.
+    - **Details:** `Add visual loading indicators (e.g., spinners, skeletons, or simple text messages) for asynchronous operations like `loadMenu()` to improve perceived performance and provide feedback to the user during data fetching.`
+    - **Rationale:** `Enhances user experience by managing expectations during loading times.`
 
 ## Future Phases (High-Level from README Roadmap)
 
