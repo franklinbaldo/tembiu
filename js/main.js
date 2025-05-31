@@ -3,13 +3,55 @@ console.log("Tembiu main.js loaded.");
 // Client-side Restaurant Configuration (Placeholders)
 const restaurantConfig = {
     name: "Tembiu Lanchonete Virtual", // Placeholder restaurant name
-    phone: "5511999999999",           // Placeholder phone number (for wa.me link)
+    phone: "5511999999999",           // Placeholder phone number (for wa.me link) // Used as PIX key (telefone). Consider adding a dedicated 'pixKey' if different.
+    cidade: "Porto Velho",            // Placeholder city, configure as needed
     // Future items: currency, deliveryFee, etc.
     // Example for PIX Tel field (if different from WhatsApp or needs specific format)
     // pixTel: "11999999999" 
 };
 
 let cart = []; // Initialize cart
+
+function gerarPixCopiaECola({ chave, nome, cidade, valor = null, descricao = '', txid = '***' }) {
+  function formatTag(tag, value) {
+    const len = String(value.length).padStart(2, '0');
+    return `${tag}${len}${value}`;
+  }
+
+  function crc16(payload) {
+    let polinomio = 0x1021;
+    let resultado = 0xFFFF;
+    for (let i = 0; i < payload.length; i++) {
+      resultado ^= payload.charCodeAt(i) << 8;
+      for (let j = 0; j < 8; j++) {
+        resultado = (resultado << 1) ^ ((resultado & 0x8000) ? polinomio : 0);
+        resultado &= 0xFFFF;
+      }
+    }
+    return resultado.toString(16).toUpperCase().padStart(4, '0');
+  }
+
+  const gui = formatTag('00', 'BR.GOV.BCB.PIX');
+  const chavePix = formatTag('01', chave);
+  const infoAdicional = descricao ? formatTag('02', descricao) : '';
+  const merchantAccountInfo = formatTag('26', gui + chavePix + infoAdicional);
+
+  const payloadSemCRC =
+    formatTag('00', '01') +
+    formatTag('01', '12') + // Point of Initiation Method: 12 for static QR
+    merchantAccountInfo +
+    formatTag('52', '0000') + // Merchant Category Code
+    formatTag('53', '986') +  // Currency Code (BRL)
+    (valor ? formatTag('54', String(valor)) : '') + // Transaction Amount - ensure string
+    formatTag('58', 'BR') + // Country Code
+    formatTag('59', nome.substring(0, 25)) + // Merchant Name (max 25 chars)
+    formatTag('60', cidade.substring(0, 15)) + // Merchant City (max 15 chars)
+    formatTag('62', formatTag('05', txid)) + // Transaction ID (txid)
+    '6304'; // CRC16 tag and length placeholder
+
+  const crc = crc16(payloadSemCRC);
+  return payloadSemCRC + crc;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     // Display Restaurant Name in Header
@@ -422,13 +464,25 @@ function handleCheckout() {
     }
 
     const orderId = "TEMBIU-" + Date.now(); 
-    const itemsStringForData = cart.map(item => `${item.quantity}x${item.nome.replace(/\s+/g, '')}`).join(',');
-    
-    // Use configured phone for the "Tel" part of the PIX data string
-    const configuredTel = `Tel:${restaurantConfig.phone}`; 
-    const placeholderLoc = "Loc:LOCATION_PLUS_CODE_PLACEHOLDER"; 
 
-    const pixDataString = `${configuredTel} ID:${orderId} Items:${itemsStringForData} ${placeholderLoc}`;
+    // Calculate totalAmount from the cart
+    let totalAmount = 0;
+    cart.forEach(item => {
+        totalAmount += item.preco * item.quantity;
+    });
+
+    // Define pixParams
+    const pixParams = {
+        chave: restaurantConfig.phone, // Assuming this is a valid PIX key
+        nome: restaurantConfig.name,
+        cidade: "CIDADE_PLACEHOLDER", // Placeholder for city
+        valor: totalAmount.toFixed(2), // Format to two decimal places as a string
+        txid: orderId,
+        descricao: "Pedido " + orderId // Simple description
+    };
+
+    // Call gerarPixCopiaECola to get the PIX string
+    const pixDataString = gerarPixCopiaECola(pixParams);
 
     const pixQrCodeElement = document.getElementById('pix-qr-code');
     const pixCopyPasteElement = document.getElementById('pix-copy-paste-code');
@@ -460,6 +514,6 @@ function handleCheckout() {
     if (pixDisplayContainer) pixDisplayContainer.style.display = 'block';
     if (cartContainer) cartContainer.style.display = 'none'; 
     
-    console.log("Displaying PIX information with refined QR Code data for order:", orderId);
-    console.log("Refined PIX Data String for QR Code:", pixDataString);
+    console.log("Displaying PIX information for order:", orderId);
+    console.log("PIX Data String (Copia e Cola):", pixDataString);
 }
