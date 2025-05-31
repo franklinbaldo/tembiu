@@ -38,8 +38,8 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Rationale:** This is the first unchecked major item in the `README.md` roadmap (v1.1) and adds significant value through data persistence and automation.
 - [~] **Task:** Refine `menu.csv` and `menu.json` examples and documentation.
     - **Sub-Task:** [x] Main `README.md`'s `menu.csv` example refined and linked to detailed guide in `docs/README.md#configuration`.
-    - **Sub-Task:** [ ] Provide a sample `menu.json` file in the repository (e.g., `menu_example.json`).
-    - **Sub-Task:** [ ] Document the structure and usage of `menu.json` in `docs/README.md` (filling the placeholder).
+    - **Sub-Task:** [x] Provide a sample `menu.json` file in the repository (e.g., `menu_example.json`).
+    - **Sub-Task:** [x] Document the structure and usage of `menu.json` in `docs/README.md` (filling the placeholder).
     - **Sub-Task:** [ ] Implement or verify client-side logic in `js/main.js` to load and parse `menu.json` if `menu.csv` is not found or if a configuration points to JSON.
     - **Rationale:** Crucial for new users to quickly understand how to configure their menus using either format.
 - [~] **Task:** Review and Enhance Documentation (`docs/`).
