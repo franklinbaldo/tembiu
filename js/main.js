@@ -265,8 +265,16 @@ function handleConfirmPayment() {
 
     saveOrderToHistory(confirmedOrderItems); // Save the confirmed order (with quantities)
 
+    // Create the payload for the backend
+    const orderPayload = {
+        orderId: "TEMBIU-WEB-" + Date.now(),
+        items: confirmedOrderItems, // This is already a copy of cart items with quantities
+        customerName: "", // Placeholder as customer name is not collected yet
+        customerPhone: "" // Placeholder as customer phone is not collected yet
+    };
+
     // After saving, attempt to send to backend
-    sendOrderToBackend(confirmedOrderItems)
+    sendOrderToBackend(orderPayload)
         .then(backendResponse => {
             console.log("sendOrderToBackend success:", backendResponse.message);
             // Potentially show a more specific success message to user based on backendResponse

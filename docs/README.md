@@ -16,6 +16,9 @@ This documentation will guide you through setting up, configuring, using, and co
 - Installation Options
 - First Launch
 
+### Local Development Environment Setup
+For detailed instructions on setting up a local development environment, please see the [Local Development Setup Guide](local_development_setup.md).
+
 ## Configuration
 
 This section will detail how to configure your Tembiu instance.
@@ -86,6 +89,9 @@ Brownie com Sorvete,sobremesas,18.00,Brownie de chocolate meio amargo com uma bo
 ## Technical Architecture
 
 *(Placeholder for a more in-depth look at the client-side architecture, data flow, PWA implementation details, and the conceptual Google Apps Script backend.)*
+
+### Google Apps Script Backend
+For detailed instructions on setting up the optional Google Apps Script backend for order logging, please see the [Google Apps Script Setup Guide](google_apps_script_setup.md).
 
 ## Contributing
 
