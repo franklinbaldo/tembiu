@@ -35,7 +35,12 @@
             <div id="pix-qr-code">[Placeholder para QR Code PIX]</div>
             <p><strong>Copia e Cola:</strong> <code id="pix-copy-paste-code">[Placeholder para Código PIX Copia e Cola]</code></p>
             <button id="confirm-payment-button">Confirmar Pagamento (Simulado)</button>
-            <button id="whatsapp-share-button" style="margin-top: 10px;">Compartilhar Pedido no WhatsApp</button> 
+            <button id="whatsapp-share-button" style="margin-top: 10px;">Compartilhar Pedido no WhatsApp</button>
+        </section>
+
+        <section id="google-pay-container" style="display:none;">
+            <h2>Pagar com Google Pay</h2>
+            <div id="google-pay-button"></div>
         </section>
 
         <section id="order-history-container">
@@ -52,6 +57,8 @@
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script async src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>
     <script src="js/main.js"></script>
+    <script src="js/google_pay.js"></script>
 </body>
 </html>
