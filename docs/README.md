@@ -124,6 +124,7 @@ Each menu item object in the array should have the following fields:
 - Digital Menu Display
 - Shopping Cart & Ordering
 - PIX Payment (Client-Side QR Generation)
+- Google Pay Button (experimental) - veja [Google Pay Setup](google_pay_setup.md)
 - WhatsApp Integration
 - Order History ("Smart History")
 - Progressive Web App (PWA) Functionality
@@ -141,6 +142,10 @@ We welcome contributions! Please see the main project `README.md` for initial gu
 - Reporting Bugs
 - Suggesting Enhancements
 - Code Contribution Guidelines
+## Open Source Store Frameworks
+Para sugestões de plataformas completas de e-commerce que podem ser integradas ao Tembiu, confira o documento [Store Frameworks](store_frameworks.md).
+Para habilitar pagamentos com Google Pay, consulte o guia [Google Pay Setup](google_pay_setup.md).
+
 
 ## Troubleshooting
 
