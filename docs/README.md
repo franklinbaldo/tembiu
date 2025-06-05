@@ -195,6 +195,7 @@ Tembiu is packed with features designed to provide a seamless experience for bot
 *   **Order History ("Smart History"):**
     *   Saves past orders to the user's local browser storage.
     *   "Order Again" functionality allows quick re-ordering of items from past orders.
+    *   A "Clear History" button lets users delete saved orders at any time, honoring the "Right to be forgotten" principle.
 
 *   **Progressive Web App (PWA) Functionality:**
     *   Installable on user devices for an app-like experience (icon on home screen).

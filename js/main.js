@@ -65,6 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (saveAddressButton) {
         saveAddressButton.addEventListener('click', handleSaveAddress);
     }
+
+    const clearHistoryButton = document.getElementById('clear-history-button');
+    if (clearHistoryButton) {
+        clearHistoryButton.addEventListener('click', handleClearHistory);
+    }
 });
 
 async function loadMenu() {
@@ -457,7 +462,7 @@ function loadOrderHistory() {
     });
 }
 
-function handleOrderAgain(orderItemsFromHistory) { 
+function handleOrderAgain(orderItemsFromHistory) {
     console.log("Order Again clicked. Items to re-populate:", orderItemsFromHistory);
     cart = []; 
 
@@ -476,6 +481,15 @@ function handleOrderAgain(orderItemsFromHistory) {
     if (cartContainer) {
         cartContainer.scrollIntoView({ behavior: 'smooth' });
     }
+}
+
+function handleClearHistory() {
+    const confirmation = confirm("Tem certeza que deseja limpar seu histórico de pedidos?");
+    if (!confirmation) return;
+
+    localStorage.removeItem('tembiuOrderHistory');
+    loadOrderHistory();
+    alert("Histórico de pedidos limpo com sucesso.");
 }
 
 function formatCartForWhatsApp(cartArray) {
