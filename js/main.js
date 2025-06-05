@@ -10,6 +10,7 @@ const restaurantConfig = {
 };
 
 let cart = []; // Initialize cart
+let allMenuItems = []; // Store all menu items for filtering
 
 document.addEventListener('DOMContentLoaded', () => {
     // Display Restaurant Name in Header
@@ -35,8 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    loadMenu(); 
-    loadOrderHistory(); 
+    loadMenu();
+    loadOrderHistory();
+
+    const searchInput = document.getElementById('menu-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', applyFiltersAndRender);
+    }
 
     // Button Event Listeners (existing code)
     const checkoutButton = document.getElementById('checkout-button');
@@ -65,9 +71,11 @@ async function loadMenu() {
         }
         const csvData = await response.text();
         const menuItems = parseCSV(csvData);
-        
-        console.log("Menu Items Loaded:", menuItems);
-        renderMenuItems(menuItems);
+
+        allMenuItems = menuItems;
+        console.log("Menu Items Loaded:", allMenuItems);
+        initializeCategories(allMenuItems);
+        applyFiltersAndRender();
 
     } catch (error) {
         console.error('Error fetching or parsing menu.csv:', error);
@@ -101,8 +109,42 @@ function parseCSV(csvText) {
     return items;
 }
 
+function initializeCategories(items) {
+    const container = document.getElementById('category-filters');
+    if (!container) return;
+    const categories = ['Todos', ...new Set(items.map(i => i.categoria))];
+    container.innerHTML = '';
+    categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.textContent = cat;
+        btn.classList.add('category-filter');
+        if (cat === 'Todos') btn.classList.add('active');
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.category-filter').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyFiltersAndRender();
+        });
+        container.appendChild(btn);
+    });
+}
+
+function applyFiltersAndRender() {
+    const searchInput = document.getElementById('menu-search');
+    const term = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const activeBtn = document.querySelector('.category-filter.active');
+    const category = activeBtn ? activeBtn.textContent.trim() : 'Todos';
+
+    let filtered = allMenuItems.filter(item => {
+        if (typeof item.disponivel === 'string' && item.disponivel.toLowerCase() !== 'true') return false;
+        if (category !== 'Todos' && item.categoria.toLowerCase() !== category.toLowerCase()) return false;
+        if (term && !(item.nome.toLowerCase().includes(term) || (item.descricao && item.descricao.toLowerCase().includes(term)))) return false;
+        return true;
+    });
+    renderMenuItems(filtered);
+}
+
 function renderMenuItems(menuItems) {
-    const menuContainer = document.getElementById('menu-container');
+    const menuContainer = document.getElementById('menu-items-list');
     if (!menuContainer) return;
 
     if (menuItems.length > 0) {
@@ -125,7 +167,7 @@ function renderMenuItems(menuItems) {
         });
         menuContainer.appendChild(ul);
     } else {
-        menuContainer.innerHTML = '<p>Nenhum item disponível no cardápio.</p>';
+        menuContainer.innerHTML = '<p>Nenhum item encontrado.</p>';
     }
 }
 

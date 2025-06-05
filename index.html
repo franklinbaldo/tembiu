@@ -17,7 +17,14 @@
     <main>
         <!-- Product categories and items will be rendered here -->
         <section id="menu-container">
-            <p>Carregando cardápio...</p>
+            <div class="search-bar-container">
+                <label for="menu-search" class="sr-only">Buscar no cardápio</label>
+                <input type="search" id="menu-search" placeholder="Buscar no cardápio">
+            </div>
+            <div id="category-filters" class="category-filters-container"></div>
+            <div id="menu-items-list">
+                <p>Carregando cardápio...</p>
+            </div>
         </section>
 
         <section id="cart-container">
