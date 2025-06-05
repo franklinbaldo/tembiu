@@ -58,14 +58,16 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Sub-Task:** [x] Main `README.md`'s `menu.csv` example refined and linked to detailed guide in `docs/README.md#configuration`.
     - **Sub-Task:** [x] Provide a sample `menu.json` file in the repository (e.g., `menu_example.json`).
     - **Sub-Task:** [x] Document the structure and usage of `menu.json` in `docs/README.md` (filling the placeholder).
-    - **Sub-Task:** [ ] Implement or verify client-side logic in `js/main.js` to load and parse `menu.json` if `menu.csv` is not found or if a configuration points to JSON.
+
+    - **Sub-Task:** [x] Implement or verify client-side logic in `js/main.js` to load and parse `menu.json` if `menu.csv` is not found or if a configuration points to JSON.
+
     - **Rationale:** Crucial for new users to quickly understand how to configure their menus using either format.
 - [~] **Task:** Review and Enhance Documentation (`docs/`).
     - **Sub-Task:** [x] Initial `docs/README.md` created. Menu (`menu.csv`) and basic Restaurant Settings configuration sections populated with details.
     - **Sub-Task:** [x] Local development setup guide created (`docs/local_development_setup.md`).
     - **Sub-Task:** [x] Google Apps Script setup guide created (`docs/google_apps_script_setup.md`).
-    - **Sub-Task:** [ ] Populate placeholder sections in `docs/README.md`: "Getting Started," "Features" (detailing existing ones like PWA, PIX, WhatsApp, History), "Technical Architecture," "Contributing," and "Troubleshooting."
-    - **Sub-Task:** [ ] Ensure all documentation links are correct and working.
+    - **Sub-Task:** [x] Populate placeholder sections in `docs/README.md`: "Getting Started," "Features" (detailing existing ones like PWA, PIX, WhatsApp, History), "Technical Architecture," "Contributing," and "Troubleshooting."
+    - **Sub-Task:** [x] Ensure all documentation links are correct and working.
     - **Rationale:** Comprehensive and clear documentation is key for user adoption and contributions.
 
 - [x] **Task:** Refine UI/UX for Core Features. 
