@@ -8,10 +8,14 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Details:** HTML structure, CSS styling, JavaScript for fetching, parsing, and displaying `menu.csv`. Interactive menu items with "add to cart" functionality. Basic cart display (items and total with quantity). Functional item removal from cart. CSS media queries added for improved responsiveness across screen sizes. **Header now dynamically displays `restaurantConfig.name`.**
     - **Status:** Initial structure and functionality implemented. Cart quantity handling and item removal added. Responsiveness improved. Dynamic restaurant name in header. Further UI refinements may be needed.
     - **Rationale:** Foundation for all other v1.0 features.
-- [x] **Task:** PIX Integration (Placeholder/Conceptual). 
-    - **Details:** UI elements for PIX display are in place. `handleCheckout` now uses `qrcode.js` to generate a real client-side QR code. **PIX data string structure refined to follow custom format from README.md (using configured phone for 'Tel').**
-    - **Status:** Client-side QR code generation implemented with refined data structure.
+- [x] **Task:** PIX Integration.
+    - **Details:** Implemented `gerarPixCopiaECola` and `generateAndDisplayPix` for BR Code compliant QR generation.
+    - **Status:** PIX QR code and copia e cola seguem o padrão oficial BR Code.
     - **Rationale:** Core payment method for the app.
+- [x] **Task:** Coleta de Endereço de Entrega.
+    - **Details:** Formulário simples em `index.html` salva o endereço em `localStorage` e é exigido antes do pagamento.
+    - **Status:** Endereço incluído no pedido e na mensagem do WhatsApp.
+    - **Rationale:** Essencial para pedidos de entrega.
 - [~] **Task:** WhatsApp Integration (Placeholder/Conceptual). 
     - **Details:** WhatsApp share button UI is in place. `handleWhatsAppShare` formats cart data and opens a `wa.me` link. **Client-side `restaurantConfig` (name, phone) added and used in message and `wa.me` link.**
     - **Status:** JS logic for `wa.me` link and basic config implemented. Further enhancements could include UI for config.

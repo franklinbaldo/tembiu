@@ -179,6 +179,42 @@ footer {
     background-color: #218838;
 }
 
+/* Address form styling */
+#address-container {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+}
+#address-container .address-field {
+    margin-bottom: 0.75rem;
+}
+#address-container label {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+#address-container input[type="text"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+#save-address-button {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 0.5rem;
+    cursor: pointer;
+}
+#save-address-button:hover {
+    background-color: #138496;
+}
+
 /* PIX Display Styling */
 #pix-display-container {
     margin-top: 2rem;

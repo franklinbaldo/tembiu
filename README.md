@@ -115,7 +115,9 @@ googlePlaceId: "ChIJN1t_tDeuEmsRUsoyG83frY4"
 
 ### 🏆 **Funcionalidades Enterprise**
 - ✅ **PIX Brasileiro Nativo** - QR Code + código copiável
+- ✅ **Compatível com BR Code** - geração de QR Code e "copia e cola" seguindo o padrão oficial
 - ✅ **WhatsApp Business** - pedidos formatados automaticamente
+- ✅ **Coleta de Endereço** - formulário simples de entrega integrado
 - ✅ **PWA Instalável** - funciona como app nativo
 - ✅ **Histórico Inteligente** - "pedir novamente" com 1 clique
 - ✅ **Sugestões por IA** - baseadas no comportamento do cliente

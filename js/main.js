@@ -4,6 +4,7 @@ console.log("Tembiu main.js loaded.");
 const restaurantConfig = {
     name: "Tembiu Lanchonete Virtual", // Placeholder restaurant name
     phone: "5511999999999",           // Placeholder phone number (for wa.me link)
+    cidade: "São Paulo"               // Placeholder city for PIX BR Code
     // Future items: currency, deliveryFee, etc.
     // Example for PIX Tel field (if different from WhatsApp or needs specific format)
     // pixTel: "11999999999" 
@@ -58,6 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const whatsappShareButton = document.getElementById('whatsapp-share-button');
     if (whatsappShareButton) {
         whatsappShareButton.addEventListener('click', handleWhatsAppShare);
+    }
+
+    const saveAddressButton = document.getElementById('save-address-button');
+    if (saveAddressButton) {
+        saveAddressButton.addEventListener('click', handleSaveAddress);
     }
 });
 
@@ -375,7 +381,9 @@ function handleConfirmPayment() {
     alert("Pagamento confirmado (simulação)! Obrigado pelo seu pedido. Seu pedido foi salvo localmente.");
 
     const pixDisplayContainer = document.getElementById('pix-display-container');
+    const addressContainer = document.getElementById('address-container');
     if (pixDisplayContainer) pixDisplayContainer.style.display = 'none';
+    if (addressContainer) addressContainer.style.display = 'none';
     
     cart = []; // Clear the current cart
     updateCartDisplay(); 
@@ -477,12 +485,21 @@ function formatCartForWhatsApp(cartArray) {
     // Prepend restaurant name to the message
     let message = `Olá ${restaurantConfig.name}! Gostaria de fazer o seguinte pedido:\n`; // Corrected newline
     let total = 0;
-    cartArray.forEach(item => { 
+    cartArray.forEach(item => {
         const itemSubtotal = item.preco * item.quantity;
         message += `- ${item.quantity}x ${item.nome} (R$ ${itemSubtotal.toFixed(2)})\n`; // Corrected newline
         total += itemSubtotal;
     });
     message += `\nTotal do Pedido: R$ ${total.toFixed(2)}`; // Corrected newline
+
+    const addr = getSavedAddress();
+    if (addr) {
+        let addrStr = `Logradouro: ${addr.street}, Número: ${addr.number}`;
+        if (addr.complement) addrStr += `, Complemento: ${addr.complement}`;
+        addrStr += `\nBairro: ${addr.neighborhood}\nCidade: ${addr.city}, CEP: ${addr.cep}`;
+        message += `\n\nEndereço de Entrega:\n${addrStr}`;
+    }
+
     return message;
 }
 
@@ -509,45 +526,117 @@ function handleCheckout() {
         return;
     }
 
-    const orderId = "TEMBIU-" + Date.now(); 
-    const itemsStringForData = cart.map(item => `${item.quantity}x${item.nome.replace(/\s+/g, '')}`).join(',');
-    
-    // Use configured phone for the "Tel" part of the PIX data string
-    const configuredTel = `Tel:${restaurantConfig.phone}`; 
-    const placeholderLoc = "Loc:LOCATION_PLUS_CODE_PLACEHOLDER"; 
+    const savedAddress = getSavedAddress();
+    const addressContainer = document.getElementById('address-container');
+    const cartContainer = document.getElementById('cart-container');
 
-    const pixDataString = `${configuredTel} ID:${orderId} Items:${itemsStringForData} ${placeholderLoc}`;
+    if (!savedAddress) {
+        if (addressContainer) addressContainer.style.display = 'block';
+        if (cartContainer) cartContainer.style.display = 'none';
+        return;
+    }
 
-    const pixQrCodeElement = document.getElementById('pix-qr-code');
-    const pixCopyPasteElement = document.getElementById('pix-copy-paste-code');
-    
-    if (pixQrCodeElement) {
-        pixQrCodeElement.innerHTML = ''; 
-        try {
-            new QRCode(pixQrCodeElement, {
-                text: pixDataString,
-                width: 200,
-                height: 200,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-            pixQrCodeElement.title = pixDataString; 
-        } catch (e) {
-            console.error("Error generating QR Code:", e);
-            pixQrCodeElement.textContent = "[Erro ao gerar QR Code]";
-        }
-    }
-    
-    if (pixCopyPasteElement) {
-        pixCopyPasteElement.textContent = pixDataString;
-    }
+    const orderId = "TEMBIU-" + Date.now();
+    const totalAmount = cart.reduce((sum, item) => sum + item.preco * item.quantity, 0);
+
+    generateAndDisplayPix(orderId, totalAmount);
 
     const pixDisplayContainer = document.getElementById('pix-display-container');
-    const cartContainer = document.getElementById('cart-container');
     if (pixDisplayContainer) pixDisplayContainer.style.display = 'block';
-    if (cartContainer) cartContainer.style.display = 'none'; 
-    
+    if (cartContainer) cartContainer.style.display = 'none';
+
     console.log("Displaying PIX information with refined QR Code data for order:", orderId);
-    console.log("Refined PIX Data String for QR Code:", pixDataString);
+}
+
+function getSavedAddress() {
+    const stored = localStorage.getItem("customerAddress");
+    if (!stored) return null;
+    try { return JSON.parse(stored); } catch (e) { return null; }
+}
+
+function handleSaveAddress() {
+    const street = document.getElementById("street").value.trim();
+    const number = document.getElementById("number").value.trim();
+    const complement = document.getElementById("complement").value.trim();
+    const neighborhood = document.getElementById("neighborhood").value.trim();
+    const city = document.getElementById("city").value.trim();
+    const cep = document.getElementById("cep").value.trim();
+
+    if (!street || !number || !neighborhood || !city || !cep) {
+        alert("Por favor, preencha todos os campos obrigatórios do endereço.");
+        return;
+    }
+
+    const address = { street, number, complement, neighborhood, city, cep };
+    try {
+        localStorage.setItem("customerAddress", JSON.stringify(address));
+    } catch (e) {
+        console.error("Error saving address:", e);
+    }
+
+    const addressContainer = document.getElementById("address-container");
+    if (addressContainer) addressContainer.style.display = "none";
+    handleCheckout();
+}
+
+function gerarPixCopiaECola({ chave, nome, cidade, valor = null, descricao = "", txid = "***" }) {
+    function formatTag(tag, value) {
+        const len = String(value.length).padStart(2, "0");
+        return `${tag}${len}${value}`;
+    }
+    function crc16(payload) {
+        let polinomio = 0x1021;
+        let resultado = 0xFFFF;
+        for (let i = 0; i < payload.length; i++) {
+            resultado ^= payload.charCodeAt(i) << 8;
+            for (let j = 0; j < 8; j++) {
+                resultado = (resultado << 1) ^ ((resultado & 0x8000) ? polinomio : 0);
+                resultado &= 0xFFFF;
+            }
+        }
+        return resultado.toString(16).toUpperCase().padStart(4, "0");
+    }
+    const gui = formatTag("00", "BR.GOV.BCB.PIX");
+    const chavePix = formatTag("01", chave);
+    const infoAdicional = descricao ? formatTag("02", descricao) : "";
+    const merchantAccountInfo = formatTag("26", gui + chavePix + infoAdicional);
+    const payloadSemCRC =
+        formatTag("00", "01") +
+        formatTag("01", "12") +
+        merchantAccountInfo +
+        formatTag("52", "0000") +
+        formatTag("53", "986") +
+        (valor ? formatTag("54", String(valor)) : "") +
+        formatTag("58", "BR") +
+        formatTag("59", nome.substring(0, 25)) +
+        formatTag("60", cidade.substring(0, 15)) +
+        formatTag("62", formatTag("05", txid)) +
+        "6304";
+    const crc = crc16(payloadSemCRC);
+    return payloadSemCRC + crc;
+}
+
+function generateAndDisplayPix(orderId, totalAmount) {
+    const pixParams = {
+        chave: restaurantConfig.phone,
+        nome: restaurantConfig.name,
+        cidade: restaurantConfig.cidade,
+        valor: totalAmount.toFixed(2),
+        txid: orderId,
+        descricao: `Pedido ${orderId}`
+    };
+    const pixDataString = gerarPixCopiaECola(pixParams);
+    const pixQrCodeElement = document.getElementById("pix-qr-code");
+    const pixCopyPasteElement = document.getElementById("pix-copy-paste-code");
+    if (pixQrCodeElement) {
+        pixQrCodeElement.innerHTML = "";
+        try {
+            new QRCode(pixQrCodeElement, { text: pixDataString, width: 200, height: 200, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
+            pixQrCodeElement.title = pixDataString;
+        } catch (e) {
+            pixQrCodeElement.textContent = "[Erro ao gerar QR Code]";
+            console.error("Error generating QR Code:", e);
+        }
+    }
+    if (pixCopyPasteElement) pixCopyPasteElement.textContent = pixDataString;
 }
