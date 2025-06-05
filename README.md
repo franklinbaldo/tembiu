@@ -129,6 +129,11 @@ googlePlaceId: "ChIJN1t_tDeuEmsRUsoyG83frY4"
 - ✅ **Offline-First** - funciona sem internet
 - ✅ **LGPD Compliant** - dados locais, privacidade total
 
+### 🔎 **Busca e Filtragem**
+Use o campo de busca localizado acima do cardápio para filtrar itens conforme você digita.
+Os botões de categoria exibidos logo abaixo permitem exibir somente pratos de uma categoria específica.
+Clique em **Todos** para remover o filtro de categoria.
+
 ---
 
 ## 🚀 **Demonstração ao Vivo**
