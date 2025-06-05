@@ -118,6 +118,13 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Sub-Task:** Ensure this data is presented clearly.
     - **Rationale:** Provides insights for the restaurant owner as per README.
 
+- [ ] **Task:** Implement Client-Side Menu Search Functionality.
+    - **Details:** Wire up the search input (`#menu-search`) to filter items conforme o usuário digita.
+    - **Rationale:** Facilita encontrar pratos rapidamente.
+- [ ] **Task:** Implement Client-Side Category Filtering.
+    - **Details:** Permitir filtragem por categoria usando botões gerados do cardápio.
+    - **Rationale:** Melhora a navegação entre diferentes tipos de itens.
+
 ## Future Phases (High-Level from README Roadmap)
 
 - [ ] Implement v1.2 - PWA Avançado (Push notifications, advanced offline, geolocation, A11Y).

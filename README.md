@@ -123,6 +123,7 @@ googlePlaceId: "ChIJN1t_tDeuEmsRUsoyG83frY4"
 - ✅ **Horários Google Maps** - sincronização automática
 - ✅ **Status em Tempo Real** - aberto/fechado automático
 - ✅ **Dark/Light Mode** - experiência premium
+- ✅ **Busca e Filtros de Cardápio** - encontre itens por nome ou categoria
 - ✅ **Offline-First** - funciona sem internet
 - ✅ **LGPD Compliant** - dados locais, privacidade total
 
