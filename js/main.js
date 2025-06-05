@@ -385,10 +385,12 @@ function handleConfirmPayment() {
 
     alert("Pagamento confirmado (simulação)! Obrigado pelo seu pedido. Seu pedido foi salvo localmente.");
 
-    const pixDisplayContainer = document.getElementById('pix-display-container');
-    const addressContainer = document.getElementById('address-container');
-    if (pixDisplayContainer) pixDisplayContainer.style.display = 'none';
-    if (addressContainer) addressContainer.style.display = 'none';
+    const pixDisplayContainer = document.getElementById("pix-display-container");
+    const addressContainer = document.getElementById("address-container");
+    const googlePayContainer = document.getElementById("google-pay-container");
+    if (pixDisplayContainer) pixDisplayContainer.style.display = "none";
+    if (addressContainer) addressContainer.style.display = "none";
+    if (googlePayContainer) googlePayContainer.style.display = "none";
     
     cart = []; // Clear the current cart
     updateCartDisplay(); 
@@ -555,9 +557,11 @@ function handleCheckout() {
 
     generateAndDisplayPix(orderId, totalAmount);
 
-    const pixDisplayContainer = document.getElementById('pix-display-container');
-    if (pixDisplayContainer) pixDisplayContainer.style.display = 'block';
-    if (cartContainer) cartContainer.style.display = 'none';
+    const pixDisplayContainer = document.getElementById("pix-display-container");
+    if (pixDisplayContainer) pixDisplayContainer.style.display = "block";
+    const googlePayContainer = document.getElementById("google-pay-container");
+    if (googlePayContainer) googlePayContainer.style.display = "block";
+    if (cartContainer) cartContainer.style.display = "none";
 
     console.log("Displaying PIX information with refined QR Code data for order:", orderId);
 }
