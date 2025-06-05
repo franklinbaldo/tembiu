@@ -212,6 +212,7 @@ const CONFIG = {
 ```
 
 📖 **[Guia Completo de Configuração](docs/configuration.md)**
+📖 **[Google Pay Setup](docs/google_pay_setup.md)**
 
 ---
 

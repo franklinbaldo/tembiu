@@ -55,7 +55,7 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
 - [ ] **Task:** Research Open Source Store Frameworks.
     - **Details:** Evaluate solutions like WooCommerce, Magento Open Source, PrestaShop, OpenCart e Odoo.
     - **Rationale:** Identificar recursos que possamos reutilizar ou integrar mantendo o espírito open source.
-- [ ] **Task:** Integrar Pagamento via Google Pay.
+- [x] **Task:** Integrar Pagamento via Google Pay.
     - **Details:** Adicionar botão Google Pay no front-end utilizando a API `google.payments.api`.
     - **Rationale:** Oferecer uma alternativa de pagamento digital amplamente usada.
 - [~] **Task:** Refine `menu.csv` and `menu.json` examples and documentation.
