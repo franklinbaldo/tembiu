@@ -110,7 +110,7 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Sub-Task:** Add a UI toggle (e.g., in the header or footer).
     - **Sub-Task:** Implement JS to switch themes and save user preference in localStorage.
     - **Rationale:** UI/UX enhancement listed in README.
-- [ ] **Task:** Implement "Clear Order History" Button (v1.x).
+- [x] **Task:** Implement "Clear Order History" Button (v1.x).
     - **Sub-Task:** Add a "Clear History" button to the order history section in `index.html`.
     - **Sub-Task:** Implement `handleClearHistory()` function in `js/main.js` to remove `tembiuOrderHistory` from localStorage and update the UI.
     - **Sub-Task:** Add a confirmation prompt before clearing.
