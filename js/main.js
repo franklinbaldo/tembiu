@@ -68,16 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loadMenu() {
+    let menuItems = [];
+
     try {
         // Attempt to load menu.json first
-        const jsonResponse = await fetch('menu.json');
+        const jsonResponse = await fetch("menu.json");
         if (jsonResponse.ok) {
-            const menuItems = await jsonResponse.json();
+            menuItems = await jsonResponse.json();
             console.log("menu.json loaded successfully:", menuItems);
-            // Assuming menu.json provides 'preco' as number and 'disponivel' as boolean
-            // If not, additional processing would be needed here like in parseCSV
-            renderMenuItems(menuItems);
-            return; // Exit if menu.json loaded successfully
         } else {
             console.warn(`Failed to load menu.json (status: ${jsonResponse.status}), falling back to menu.csv.`);
         }
@@ -85,33 +83,30 @@ async function loadMenu() {
         console.warn(`Error fetching or parsing menu.json: ${jsonError}. Falling back to menu.csv.`);
     }
 
-    // Fallback to menu.csv if menu.json is not found or fails to load
-    try {
-        console.log("Attempting to load menu.csv...");
-        const csvResponse = await fetch('menu.csv');
-        if (!csvResponse.ok) {
-            console.error('Failed to load menu.csv:', csvResponse.statusText);
-            document.getElementById('menu-container').innerHTML = '<p>Erro ao carregar o cardápio (CSV). Tente novamente mais tarde.</p>';
+    if (menuItems.length === 0) {
+        // Fallback to menu.csv if menu.json is not found or fails to load
+        try {
+            console.log("Attempting to load menu.csv...");
+            const csvResponse = await fetch("menu.csv");
+            if (!csvResponse.ok) {
+                console.error("Failed to load menu.csv:", csvResponse.statusText);
+                document.getElementById("menu-container").innerHTML = "<p>Erro ao carregar o cardápio. Tente novamente mais tarde.</p>";
+                return;
+            }
+            const csvData = await csvResponse.text();
+            menuItems = parseCSV(csvData);
+            console.log("menu.csv loaded and parsed:", menuItems);
+        } catch (csvError) {
+            console.error("Error fetching or parsing menu.csv:", csvError);
+            document.getElementById("menu-container").innerHTML = "<p>Ocorreu um erro inesperado ao carregar o cardápio.</p>";
             return;
         }
-        const csvData = await csvResponse.text();
-        const menuItems = parseCSV(csvData);
-
-        
-        console.log("menu.csv loaded and parsed:", menuItems);
-        renderMenuItems(menuItems);
-
-
-        allMenuItems = menuItems;
-        console.log("Menu Items Loaded:", allMenuItems);
-        initializeCategories(allMenuItems);
-        applyFiltersAndRender();
-
-
-    } catch (csvError) {
-        console.error('Error fetching or parsing menu.csv:', csvError);
-        document.getElementById('menu-container').innerHTML = '<p>Ocorreu um erro inesperado ao carregar o cardápio (CSV).</p>';
     }
+
+    allMenuItems = menuItems;
+    console.log("Menu Items Loaded:", allMenuItems);
+    initializeCategories(allMenuItems);
+    applyFiltersAndRender();
 }
 
 function parseCSV(csvText) {
@@ -175,17 +170,20 @@ function initializeCategories(items) {
 }
 
 function applyFiltersAndRender() {
-    const searchInput = document.getElementById('menu-search');
-    const term = searchInput ? searchInput.value.toLowerCase().trim() : '';
-    const activeBtn = document.querySelector('.category-filter.active');
-    const category = activeBtn ? activeBtn.textContent.trim() : 'Todos';
+    if (!Array.isArray(allMenuItems)) return;
 
-    let filtered = allMenuItems.filter(item => {
-        if (typeof item.disponivel === 'string' && item.disponivel.toLowerCase() !== 'true') return false;
-        if (category !== 'Todos' && item.categoria.toLowerCase() !== category.toLowerCase()) return false;
+    const searchInput = document.getElementById("menu-search");
+    const term = searchInput ? searchInput.value.toLowerCase().trim() : "";
+    const activeBtn = document.querySelector(".category-filter.active");
+    const category = activeBtn ? activeBtn.textContent.trim() : "Todos";
+
+    const filtered = allMenuItems.filter(item => {
+        if (typeof item.disponivel === "string" && item.disponivel.toLowerCase() !== "true") return false;
+        if (category !== "Todos" && item.categoria && item.categoria.toLowerCase() !== category.toLowerCase()) return false;
         if (term && !(item.nome.toLowerCase().includes(term) || (item.descricao && item.descricao.toLowerCase().includes(term)))) return false;
         return true;
     });
+
     renderMenuItems(filtered);
 }
 
