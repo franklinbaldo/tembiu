@@ -36,11 +36,31 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Sub-Task:** [x] Implement a function in GAS to log new orders to a Google Sheet. (Completed in `backend/google_apps_script_backend.gs.js`).
     - **Sub-Task:** [x] Document how to set up and deploy this GAS backend. (Documentation created in `docs/google_apps_script_setup.md`).
     - **Rationale:** This is the first unchecked major item in the `README.md` roadmap (v1.1) and adds significant value through data persistence and automation.
+- [ ] **Task:** Build Administrative Dashboard.
+    - **Details:** Use Google Apps Script or Google Data Studio to visualize orders and key metrics from the spreadsheet.
+    - **Rationale:** Gives restaurant owners real-time insights into sales.
+- [ ] **Task:** Implement Automated Email Notifications.
+    - **Details:** Configure GAS to send order confirmations or periodic summaries via email.
+    - **Rationale:** Streamlines communication with customers and staff.
+- [ ] **Task:** Generate Sales Reports.
+    - **Details:** Add GAS functions to compile daily or weekly sales reports from logged orders.
+    - **Rationale:** Facilitates performance tracking and inventory planning.
+- [ ] **Task:** Provide Webhook Endpoints for Integrations.
+    - **Details:** Expose simple GAS webhooks so external systems can receive new order data.
+    - **Rationale:** Enables integration with other services and automation tools.
+- [ ] **Task:** Research Open Source Store Frameworks.
+    - **Details:** Evaluate solutions like WooCommerce, Magento Open Source, PrestaShop, OpenCart e Odoo.
+    - **Rationale:** Identificar recursos que possamos reutilizar ou integrar mantendo o espírito open source.
+- [ ] **Task:** Integrar Pagamento via Google Pay.
+    - **Details:** Adicionar botão Google Pay no front-end utilizando a API `google.payments.api`.
+    - **Rationale:** Oferecer uma alternativa de pagamento digital amplamente usada.
 - [~] **Task:** Refine `menu.csv` and `menu.json` examples and documentation.
     - **Sub-Task:** [x] Main `README.md`'s `menu.csv` example refined and linked to detailed guide in `docs/README.md#configuration`.
     - **Sub-Task:** [x] Provide a sample `menu.json` file in the repository (e.g., `menu_example.json`).
     - **Sub-Task:** [x] Document the structure and usage of `menu.json` in `docs/README.md` (filling the placeholder).
+
     - **Sub-Task:** [x] Implement or verify client-side logic in `js/main.js` to load and parse `menu.json` if `menu.csv` is not found or if a configuration points to JSON.
+
     - **Rationale:** Crucial for new users to quickly understand how to configure their menus using either format.
 - [~] **Task:** Review and Enhance Documentation (`docs/`).
     - **Sub-Task:** [x] Initial `docs/README.md` created. Menu (`menu.csv`) and basic Restaurant Settings configuration sections populated with details.
@@ -99,6 +119,13 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
         - List of most frequently ordered items.
     - **Sub-Task:** Ensure this data is presented clearly.
     - **Rationale:** Provides insights for the restaurant owner as per README.
+
+- [ ] **Task:** Implement Client-Side Menu Search Functionality.
+    - **Details:** Wire up the search input (`#menu-search`) to filter items conforme o usuário digita.
+    - **Rationale:** Facilita encontrar pratos rapidamente.
+- [ ] **Task:** Implement Client-Side Category Filtering.
+    - **Details:** Permitir filtragem por categoria usando botões gerados do cardápio.
+    - **Rationale:** Melhora a navegação entre diferentes tipos de itens.
 
 ## Future Phases (High-Level from README Roadmap)
 

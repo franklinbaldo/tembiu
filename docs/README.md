@@ -169,6 +169,7 @@ Each menu item object in the array should have the following fields:
 
 ## Features
 
+
 Tembiu is packed with features designed to provide a seamless experience for both restaurants and customers. Here are some of the core functionalities:
 
 *   **Digital Menu Display:**
@@ -218,6 +219,7 @@ Tembiu is packed with features designed to provide a seamless experience for bot
 
 *(Note: "Conceptual/Future" indicates features described in the main project README that may not be fully implemented in the current core version. Always refer to the latest `TODO.md` or main project `README.md` for current feature status.)*
 
+
 ## Technical Architecture
 
 Tembiu is designed with a client-centric architecture, prioritizing simplicity, performance, and cost-effectiveness.
@@ -263,30 +265,15 @@ This architecture ensures that the core menu and ordering functionality can oper
 
 ## Contributing
 
-Tembiu is an open-source project, and we welcome contributions from everyone, whether you're a developer, a restaurant owner, or just an enthusiastic user!
 
-### Ways to Contribute
+We welcome contributions! Please see the main project `README.md` for initial guidelines, and this section will be expanded with more technical details for developers.
+- Reporting Bugs
+- Suggesting Enhancements
+- Code Contribution Guidelines
+## Open Source Store Frameworks
+Para sugestões de plataformas completas de e-commerce que podem ser integradas ao Tembiu, confira o documento [Store Frameworks](store_frameworks.md).
+Para habilitar pagamentos com Google Pay, consulte o guia [Google Pay Setup](google_pay_setup.md).
 
-*   **Reporting Bugs:** If you find a bug, please open an issue on the project's GitHub repository. Provide as much detail as possible, including steps to reproduce, browser version, and screenshots if applicable.
-*   **Suggesting Enhancements:** Have an idea for a new feature or an improvement to an existing one? Open an issue or start a discussion on GitHub.
-*   **Code Contributions (for Developers):**
-    1.  **Fork** the repository.
-    2.  Create a new **branch** for your feature or bugfix (e.g., `feature/new-cool-feature` or `fix/cart-bug`).
-    3.  Make your **changes** and **test** them thoroughly.
-    4.  **Commit** your changes with a clear and descriptive commit message.
-    5.  **Push** your branch to your fork and open a **Pull Request (PR)** against the main project repository.
-    *   Areas where help is particularly welcome include: UI/UX design, frontend feature development (JavaScript), Google Apps Script enhancements, writing tests, and internationalization (i18n).
-*   **Documentation:** Help improve this documentation, write tutorials, or provide examples.
-*   **Feedback from Restaurants:** If you're using Tembiu in your restaurant, share your experiences, pain points, and success stories. This real-world feedback is invaluable.
-*   **Spread the Word:** Tell other restaurant owners about Tembiu, star the project on GitHub, or share it on social media.
-
-### Guidelines
-
-*   Please ensure your code contributions adhere to the existing coding style.
-*   For significant changes, it's always a good idea to discuss them in an issue first.
-*   Be respectful and constructive in all communications.
-
-For more specific guidelines or if you're looking for tasks to work on, please check the main project `README.md` (usually at `../README.md`) and the "Issues" tab on GitHub.
 
 ## Troubleshooting
 

@@ -32,6 +32,35 @@ main {
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
+.search-bar-container {
+    margin-bottom: 1rem;
+}
+
+.search-bar-container input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.category-filters-container {
+    margin-bottom: 1rem;
+}
+
+.category-filter {
+    margin-right: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border: none;
+    background-color: #eee;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.category-filter.active {
+    background-color: #28a745;
+    color: #fff;
+}
+
 #menu-container ul {
     list-style: none;
     padding: 0;
