@@ -1,17 +1,115 @@
+:root {
+    --body-bg-color: #f4f4f4;
+    --body-text-color: #333;
+    --header-bg-color: #333;
+    --header-text-color: #fff;
+    --main-bg-color: #fff;
+    --main-box-shadow: rgba(0,0,0,0.1);
+    --input-border-color: #ccc;
+    --category-filter-bg-color: #eee;
+    --category-filter-active-bg-color: #28a745;
+    --category-filter-active-text-color: #fff;
+    --menu-item-border-color: #eee;
+    --button-primary-bg-color: #007bff;
+    --button-primary-text-color: white;
+    --button-primary-hover-bg-color: #0056b3;
+    --button-secondary-bg-color: #28a745;
+    --button-secondary-text-color: white;
+    --button-secondary-hover-bg-color: #218838;
+    --button-danger-bg-color: #dc3545;
+    --button-danger-text-color: white;
+    --button-danger-hover-bg-color: #c82333;
+    --button-info-bg-color: #17a2b8;
+    --button-info-text-color: white;
+    --button-info-hover-bg-color: #138496;
+    --button-warning-bg-color: #ffc107;
+    --button-warning-text-color: #212529;
+    --button-warning-hover-bg-color: #e0a800;
+    --button-whatsapp-bg-color: #25D366;
+    --button-whatsapp-text-color: white;
+    --button-whatsapp-hover-bg-color: #1EBE57;
+    --cart-bg-color: #e9ecef;
+    --cart-item-border-color: #ccc;
+    --address-form-bg-color: #f8f9fa;
+    --address-form-border-color: #dee2e6;
+    --pix-display-bg-color: #f8f9fa;
+    --pix-display-border-color: #dee2e6;
+    --pix-qr-bg-color: #fff;
+    --pix-qr-border-color: #ccc;
+    --pix-code-bg-color: #e9ecef;
+    --pix-code-border-color: #ccc;
+    --order-history-bg-color: #f0f0f0;
+    --order-history-border-color: #ddd;
+    --past-order-bg-color: #fff;
+    --past-order-border-color: #ccc;
+    --past-order-heading-color: #555;
+    --past-order-text-color: #444;
+}
+
+body.dark-mode {
+    --body-bg-color: #121212;
+    --body-text-color: #e0e0e0;
+    --header-bg-color: #1e1e1e;
+    --header-text-color: #f5f5f5;
+    --main-bg-color: #1e1e1e;
+    --main-box-shadow: rgba(255,255,255,0.1);
+    --input-border-color: #555;
+    --category-filter-bg-color: #333;
+    --category-filter-active-bg-color: #388e3c; /* Darker green */
+    --category-filter-active-text-color: #fff;
+    --menu-item-border-color: #333;
+    --button-primary-bg-color: #0056b3; /* Darker blue */
+    --button-primary-text-color: white;
+    --button-primary-hover-bg-color: #003d80;
+    --button-secondary-bg-color: #388e3c; /* Darker green */
+    --button-secondary-text-color: white;
+    --button-secondary-hover-bg-color: #2a6f30;
+    --button-danger-bg-color: #c82333; /* Darker red */
+    --button-danger-text-color: white;
+    --button-danger-hover-bg-color: #a01c28;
+    --button-info-bg-color: #138496; /* Darker info */
+    --button-info-text-color: white;
+    --button-info-hover-bg-color: #0f6170;
+    --button-warning-bg-color: #e0a800; /* Darker warning */
+    --button-warning-text-color: #212529;
+    --button-warning-hover-bg-color: #b38600;
+    --button-whatsapp-bg-color: #1EBE57; /* Slightly darker WhatsApp Green */
+    --button-whatsapp-text-color: white;
+    --button-whatsapp-hover-bg-color: #179C49;
+    --cart-bg-color: #2c2c2c;
+    --cart-item-border-color: #444;
+    --address-form-bg-color: #2a2a2a;
+    --address-form-border-color: #444;
+    --pix-display-bg-color: #2a2a2a;
+    --pix-display-border-color: #444;
+    --pix-qr-bg-color: #e0e0e0; /* Light background for QR to ensure readability */
+    --pix-qr-border-color: #555;
+    --pix-code-bg-color: #333;
+    --pix-code-border-color: #555;
+    --order-history-bg-color: #252525;
+    --order-history-border-color: #444;
+    --past-order-bg-color: #1e1e1e;
+    --past-order-border-color: #555;
+    --past-order-heading-color: #bbb;
+    --past-order-text-color: #aaa;
+}
+
 body {
     font-family: sans-serif;
     line-height: 1.6;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: var(--body-bg-color);
+    color: var(--body-text-color);
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
 }
 
 header {
-    background: #333;
-    color: #fff;
+    background: var(--header-bg-color);
+    color: var(--header-text-color);
     padding: 1rem 0;
     text-align: center;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 header h1 {
@@ -28,8 +126,9 @@ main {
     padding: 1rem;
     max-width: 800px;
     margin: 20px auto;
-    background: #fff;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background: var(--main-bg-color);
+    box-shadow: 0 0 10px var(--main-box-shadow);
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .search-bar-container {
@@ -39,8 +138,16 @@ main {
 .search-bar-container input {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input-border-color);
     border-radius: 4px;
+    background-color: var(--main-bg-color); /* Match main background */
+    color: var(--body-text-color); /* Match body text */
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.search-bar-container input::placeholder {
+    color: var(--body-text-color);
+    opacity: 0.7;
 }
 
 .category-filters-container {
@@ -51,14 +158,16 @@ main {
     margin-right: 0.5rem;
     padding: 0.4rem 0.6rem;
     border: none;
-    background-color: #eee;
+    background-color: var(--category-filter-bg-color);
+    color: var(--body-text-color); /* Adjust if needed based on filter bg */
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .category-filter.active {
-    background-color: #28a745;
-    color: #fff;
+    background-color: var(--category-filter-active-bg-color);
+    color: var(--category-filter-active-text-color);
 }
 
 #menu-container ul {
@@ -72,7 +181,8 @@ main {
     justify-content: space-between; /* Pushes button to the right */
     align-items: center; /* Vertically aligns text and button */
     padding: 0.75rem 0.5rem; /* Adjust padding */
-    border-bottom: 1px #eee solid;
+    border-bottom: 1px var(--menu-item-border-color) solid;
+    transition: border-color 0.3s;
 }
 
 #menu-container li:last-child {
@@ -81,43 +191,50 @@ main {
 
 /* Styling for the add to cart button (can be an alternative to dynamic JS styling) */
 .add-to-cart-btn {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--button-primary-bg-color);
+    color: var(--button-primary-text-color);
     border: none;
     padding: 0.5rem 0.8rem; /* Slightly larger padding */
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9rem;
     white-space: nowrap; /* Prevents button text from wrapping */
+    transition: background-color 0.3s;
 }
 
 .add-to-cart-btn:hover {
-    background-color: #0056b3;
+    background-color: var(--button-primary-hover-bg-color);
 }
 
 footer {
     text-align: center;
     padding: 1rem 0;
     margin-top: 2rem;
-    background: #333;
-    color: #fff;
+    background: var(--header-bg-color); /* Use header bg for consistency */
+    color: var(--header-text-color); /* Use header text for consistency */
+    transition: background-color 0.3s, color 0.3s;
 }
 
 /* Cart Styling */
 #cart-container {
     margin-top: 2rem;
     padding: 1rem;
-    background-color: #e9ecef;
+    background-color: var(--cart-bg-color);
     border-radius: 5px;
+    transition: background-color 0.3s;
 }
 
 #cart-container h2 {
     margin-top: 0;
-    color: #333;
+    color: var(--body-text-color); /* Match body text */
+    transition: color 0.3s;
 }
 
 #cart-items p {
     font-style: italic;
+    color: var(--body-text-color); /* Match body text */
+    opacity: 0.8;
+    transition: color 0.3s;
 }
 
 /* Cart Item Styling to accommodate remove button */
@@ -126,7 +243,8 @@ footer {
     justify-content: space-between;
     align-items: center; /* Vertically align text and button */
     padding: 0.5rem 0;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid var(--cart-item-border-color);
+    transition: border-color 0.3s;
 }
 
 .cart-item:last-child {
@@ -138,8 +256,8 @@ footer {
 }
 
 .remove-from-cart-btn {
-    background-color: #dc3545; /* Red for removal */
-    color: white;
+    background-color: var(--button-danger-bg-color);
+    color: var(--button-danger-text-color);
     border: none;
     padding: 0.3rem 0.6rem;
     border-radius: 4px;
@@ -147,10 +265,11 @@ footer {
     font-size: 0.8rem; /* Slightly smaller */
     margin-left: 10px; /* Space from item text */
     white-space: nowrap;
+    transition: background-color 0.3s;
 }
 
 .remove-from-cart-btn:hover {
-    background-color: #c82333;
+    background-color: var(--button-danger-hover-bg-color);
 }
 
 .remove-from-cart-btn:active {
@@ -160,32 +279,36 @@ footer {
 
 #cart-total {
     font-weight: bold;
+    color: var(--body-text-color);
+    transition: color 0.3s;
 }
 
 #checkout-button {
     display: block;
     width: 100%;
     padding: 0.75rem;
-    background-color: #28a745;
-    color: white;
+    background-color: var(--button-secondary-bg-color);
+    color: var(--button-secondary-text-color);
     border: none;
     border-radius: 5px;
     font-size: 1rem;
     cursor: pointer;
     margin-top: 1rem;
+    transition: background-color 0.3s;
 }
 
 #checkout-button:hover {
-    background-color: #218838;
+    background-color: var(--button-secondary-hover-bg-color);
 }
 
 /* Address form styling */
 #address-container {
     margin-top: 2rem;
     padding: 1rem;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
+    background-color: var(--address-form-bg-color);
+    border: 1px solid var(--address-form-border-color);
     border-radius: 5px;
+    transition: background-color 0.3s, border-color 0.3s;
 }
 #address-container .address-field {
     margin-bottom: 0.75rem;
@@ -193,138 +316,165 @@ footer {
 #address-container label {
     display: block;
     margin-bottom: 0.25rem;
+    color: var(--body-text-color);
+    transition: color 0.3s;
 }
 #address-container input[type="text"] {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input-border-color); /* Use general input border */
     border-radius: 4px;
+    background-color: var(--main-bg-color); /* Consistent input background */
+    color: var(--body-text-color); /* Consistent input text color */
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
+
+#address-container input[type="text"]::placeholder {
+    color: var(--body-text-color);
+    opacity: 0.7;
+}
+
 #save-address-button {
     display: block;
     width: 100%;
     padding: 0.75rem;
-    background-color: #17a2b8;
-    color: white;
+    background-color: var(--button-info-bg-color);
+    color: var(--button-info-text-color);
     border: none;
     border-radius: 5px;
     margin-top: 0.5rem;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 #save-address-button:hover {
-    background-color: #138496;
+    background-color: var(--button-info-hover-bg-color);
 }
 
 /* PIX Display Styling */
 #pix-display-container {
     margin-top: 2rem;
     padding: 1.5rem;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
+    background-color: var(--pix-display-bg-color);
+    border: 1px solid var(--pix-display-border-color);
     border-radius: 5px;
     text-align: center; /* Center align content */
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
 #pix-display-container h2 {
     margin-top: 0;
-    color: #333;
+    color: var(--body-text-color); /* Match body text */
+    transition: color 0.3s;
 }
 
 #pix-qr-code {
     margin: 1rem auto;
-    /* Padding can create a border effect around the QR code. 
-       Adjust or remove as desired. For now, let's reduce it or make it 0 
-       if the QR code itself should be exactly 200x200.
-       If the QR code library adds its own margin/padding, this might need further adjustment.
-       Let's keep a minimal padding to act as a small border. */
     padding: 5px; 
-    background-color: #fff; /* Background for the container, if QR is smaller or has transparency */
-    border: 1px solid #ccc; /* Border for the container */
-    width: 210px;  /* Container width: 200px for QR + 2*5px padding */
-    height: 210px; /* Container height: 200px for QR + 2*5px padding */
-    /* line-height, text-align, font-style, color are no longer needed for placeholder text */
-    display: flex; /* To help center the img/canvas if it's smaller than container */
+    background-color: var(--pix-qr-bg-color); /* Specific background for QR code readability */
+    border: 1px solid var(--pix-qr-border-color);
+    width: 210px;
+    height: 210px;
+    display: flex;
     justify-content: center;
     align-items: center;
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
 /* Optional: If qrcode.js generates an img or canvas, you might want to style it directly */
 #pix-qr-code img, 
 #pix-qr-code canvas {
-    /* The library sets the width and height on the element directly.
-       This ensures it's displayed as a block and respects its own dimensions. */
     display: block; 
 }
 
+body.dark-mode #pix-qr-code img,
+body.dark-mode #pix-qr-code canvas {
+    /* In dark mode, if the QR code itself is black on transparent, it might be hard to see.
+       The library usually generates black on white. If it's an SVG, fill might be an issue.
+       Assuming standard QR (black on white opaque image), this might not be needed.
+       If QR is transparent with black paths, filter: invert(1) hue-rotate(180deg) could make it white.
+       However, this can make it non-standard. Best is a light background for QR code itself.
+       The --pix-qr-bg-color is set to a light color in dark mode for this reason.
+    */
+}
+
+
 #pix-copy-paste-code {
-    display: inline-block; /* Or block with text-align:center on parent */
+    display: inline-block;
     padding: 0.5rem;
-    background-color: #e9ecef;
-    border: 1px dashed #ccc;
-    word-break: break-all; /* Ensure long codes wrap */
+    background-color: var(--pix-code-bg-color);
+    border: 1px dashed var(--pix-code-border-color);
+    word-break: break-all;
+    color: var(--body-text-color); /* Ensure text is readable */
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
 #confirm-payment-button {
-    display: inline-block; /* Or block with margin auto for centering */
+    display: inline-block;
     padding: 0.75rem 1.5rem;
-    background-color: #17a2b8;
-    color: white;
+    background-color: var(--button-info-bg-color); /* Re-using info button style */
+    color: var(--button-info-text-color);
     border: none;
     border-radius: 5px;
     font-size: 1rem;
     cursor: pointer;
     margin-top: 1.5rem;
+    transition: background-color 0.3s;
 }
 
 #confirm-payment-button:hover {
-    background-color: #138496;
+    background-color: var(--button-info-hover-bg-color);
 }
 
 /* WhatsApp Share Button Styling */
 #whatsapp-share-button {
-    display: block; /* Make it a block element to take full width or center with margin auto */
-    width: fit-content; /* Adjust width to content or set a specific width */
-    margin: 10px auto 0 auto; /* Top margin, auto for left/right to center */
+    display: block;
+    width: fit-content;
+    margin: 10px auto 0 auto;
     padding: 0.75rem 1.5rem;
-    background-color: #25D366; /* WhatsApp Green */
-    color: white;
+    background-color: var(--button-whatsapp-bg-color);
+    color: var(--button-whatsapp-text-color);
     border: none;
     border-radius: 5px;
     font-size: 1rem;
     cursor: pointer;
-    text-decoration: none; /* If it were an <a> tag */
+    text-decoration: none;
+    transition: background-color 0.3s;
 }
 
 #whatsapp-share-button:hover {
-    background-color: #1EBE57;
+    background-color: var(--button-whatsapp-hover-bg-color);
 }
 
 /* Order History Styling */
 #order-history-container {
     margin-top: 2rem;
     padding: 1.5rem;
-    background-color: #f0f0f0; /* Slightly different background */
-    border: 1px solid #ddd;
+    background-color: var(--order-history-bg-color);
+    border: 1px solid var(--order-history-border-color);
     border-radius: 5px;
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
 #order-history-container h2 {
     margin-top: 0;
-    color: #333;
+    color: var(--body-text-color);
+    transition: color 0.3s;
 }
 
 .past-order {
     padding: 1rem;
     margin-bottom: 1rem;
-    background-color: #fff;
-    border: 1px solid #ccc;
+    background-color: var(--past-order-bg-color);
+    border: 1px solid var(--past-order-border-color);
     border-radius: 4px;
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
 .past-order h3 { /* For Order ID or Date */
     margin-top: 0;
     font-size: 1.1rem;
-    color: #555;
+    color: var(--past-order-heading-color);
+    transition: color 0.3s;
 }
 
 .past-order ul {
@@ -335,61 +485,55 @@ footer {
 
 .past-order li {
     font-size: 0.9rem;
-    color: #444;
+    color: var(--past-order-text-color);
+    transition: color 0.3s;
 }
 
 .order-again-btn {
-    background-color: #ffc107; /* A warning/amber color */
-    color: #212529;
+    background-color: var(--button-warning-bg-color);
+    color: var(--button-warning-text-color);
     border: none;
     padding: 0.5rem 0.8rem;
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9rem;
     margin-top: 0.5rem;
+    transition: background-color 0.3s;
 }
 
 .order-again-btn:hover {
-    background-color: #e0a800;
+    background-color: var(--button-warning-hover-bg-color);
 }
 
 /* Button Active States for Visual Feedback */
-
+/* These use filter: brightness, which should work okay with variables */
 .add-to-cart-btn:active,
 #checkout-button:active,
 #confirm-payment-button:active,
 #whatsapp-share-button:active,
-.order-again-btn:active {
-    /* Darken background slightly or use a transform for a "pressed" effect */
-    /* Option 1: Darken background (adjust filter or use specific darker colors) */
+.order-again-btn:active,
+#save-address-button:active {
     filter: brightness(85%);
-    
-    /* Option 2: Transform (can sometimes affect layout if not careful) */
-    /* transform: translateY(1px); */
-    /* box-shadow: inset 0 0 5px rgba(0,0,0,0.2); */
 }
 
-/* Ensure :hover styles are defined for a good experience too */
-/* (Most already have hover styles, but adding for completeness if any were missed) */
+/* Hover states are already using variables or specific colors that will be overridden by variables */
 
-.add-to-cart-btn:hover {
-    background-color: #0056b3; /* Already defined */
+#theme-toggle-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 0.5rem;
+    background-color: var(--header-bg-color); /* Use a theme variable */
+    color: var(--header-text-color);       /* Use a theme variable */
+    border: 1px solid var(--header-text-color); /* Optional: border matching text */
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000; /* Ensure it's above other header content if any overlaps */
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
-#checkout-button:hover {
-    background-color: #218838; /* Already defined */
-}
-
-#confirm-payment-button:hover {
-    background-color: #138496; /* Already defined */
-}
-
-#whatsapp-share-button:hover {
-    background-color: #1EBE57; /* Already defined */
-}
-
-.order-again-btn:hover {
-    background-color: #e0a800; /* Already defined */
+#theme-toggle-button:hover {
+    filter: brightness(120%); /* Simple hover effect */
 }
 
 /* General Body and Typography Adjustments for smaller screens */

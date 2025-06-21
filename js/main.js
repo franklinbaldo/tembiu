@@ -70,6 +70,33 @@ document.addEventListener('DOMContentLoaded', () => {
     if (clearHistoryButton) {
         clearHistoryButton.addEventListener('click', handleClearHistory);
     }
+
+    // Theme Toggle Logic
+    const themeToggleButton = document.getElementById('theme-toggle-button');
+    if (themeToggleButton) {
+        themeToggleButton.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            // Save preference to localStorage
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeToggleButton.textContent = 'Tema Claro'; // Update button text
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeToggleButton.textContent = 'Tema Escuro'; // Update button text
+            }
+        });
+    }
+
+    // Apply saved theme on load
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        if (themeToggleButton) themeToggleButton.textContent = 'Tema Claro';
+    } else {
+        // Default to light theme if no preference or preference is 'light'
+        document.body.classList.remove('dark-mode'); // Ensure it's not there if 'light' or null
+        if (themeToggleButton) themeToggleButton.textContent = 'Tema Escuro';
+    }
 });
 
 async function loadMenu() {

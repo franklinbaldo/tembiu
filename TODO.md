@@ -105,10 +105,10 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Sub-Task:** If a pattern is found (e.g., "Pizza often ordered with Coke"), display a simple non-intrusive suggestion (e.g., a toast message or a small section below cart).
     - **Sub-Task:** Ensure this is lightweight and doesn't overly complicate the UI.
     - **Rationale:** Initial step for "Sugestões por IA" from README.
-- [ ] **Task:** Implement Dark/Light Mode Theme Toggle (v1.x).
-    - **Sub-Task:** Define CSS variables for color schemes (light and dark).
-    - **Sub-Task:** Add a UI toggle (e.g., in the header or footer).
-    - **Sub-Task:** Implement JS to switch themes and save user preference in localStorage.
+- [x] **Task:** Implement Dark/Light Mode Theme Toggle (v1.x).
+    - **Sub-Task:** [x] Define CSS variables for color schemes (light and dark).
+    - **Sub-Task:** [x] Add a UI toggle (e.g., in the header or footer).
+    - **Sub-Task:** [x] Implement JS to switch themes and save user preference in localStorage.
     - **Rationale:** UI/UX enhancement listed in README.
 - [x] **Task:** Implement "Clear Order History" Button (v1.x).
     - **Sub-Task:** Add a "Clear History" button to the order history section in `index.html`.

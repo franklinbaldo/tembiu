@@ -124,7 +124,7 @@ googlePlaceId: "ChIJN1t_tDeuEmsRUsoyG83frY4"
 - ✅ **URLs Compartilháveis** - links únicos para cada pedido 🆕
 - ✅ **Horários Google Maps** - sincronização automática
 - ✅ **Status em Tempo Real** - aberto/fechado automático
-- ✅ **Dark/Light Mode** - experiência premium
+- ✅ **Dark/Light Mode (Modo Escuro/Claro)** - experiência premium com tema adaptável 🌓
 - ✅ **Busca e Filtros de Cardápio** - encontre itens por nome ou categoria
 - ✅ **Offline-First** - funciona sem internet
 - ✅ **LGPD Compliant** - dados locais, privacidade total
