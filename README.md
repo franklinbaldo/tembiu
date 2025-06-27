@@ -374,6 +374,8 @@ Toast: "💡 Que tal uma Coca-Cola? +1"
   "clientesFrequentes": ["11999999999", "11888888888"]
 }
 ```
+- 📊 **Estatísticas na página** - seção "Estatísticas" exibe o total de pedidos,
+  ticket médio e itens mais populares.
 
 ### **Relatórios Automáticos** (com GAS)
 - 📈 **Vendas por período**

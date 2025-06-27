@@ -115,7 +115,7 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
     - **Sub-Task:** Implement `handleClearHistory()` function in `js/main.js` to remove `tembiuOrderHistory` from localStorage and update the UI.
     - **Sub-Task:** Add a confirmation prompt before clearing.
     - **Rationale:** Fulfills "Direito ao esquecimento" mentioned in README.
-- [ ] **Task:** Display Basic Client-Side Analytics (v1.x).
+- [x] **Task:** Display Basic Client-Side Analytics (v1.x).
     - **Sub-Task:** Create a new section/modal in `index.html` for analytics.
     - **Sub-Task:** In `js/main.js`, add functions to calculate and display simple metrics from `localStorage` order history:
         - Total number of orders made.
