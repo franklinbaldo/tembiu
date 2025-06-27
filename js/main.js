@@ -455,7 +455,7 @@ function loadOrderHistory() {
         return;
     }
 
-    pastOrdersList.innerHTML = ''; 
+    pastOrdersList.innerHTML = '';
     history.forEach(order => { // order.items here have quantity
         const orderDiv = document.createElement('div');
         orderDiv.classList.add('past-order');
@@ -487,6 +487,8 @@ function loadOrderHistory() {
         
         pastOrdersList.appendChild(orderDiv);
     });
+
+    updateAnalytics(history);
 }
 
 function handleOrderAgain(orderItemsFromHistory) {
@@ -517,6 +519,41 @@ function handleClearHistory() {
     localStorage.removeItem('tembiuOrderHistory');
     loadOrderHistory();
     alert("Histórico de pedidos limpo com sucesso.");
+}
+
+function calculateAnalytics(history) {
+    const totals = { totalOrders: history.length, totalValue: 0, items: {} };
+    history.forEach(order => {
+        order.items.forEach(item => {
+            const qty = item.quantity || 1;
+            totals.totalValue += item.preco * qty;
+            totals.items[item.nome] = (totals.items[item.nome] || 0) + qty;
+        });
+    });
+    const averageOrderValue = totals.totalOrders ? totals.totalValue / totals.totalOrders : 0;
+    const topItems = Object.entries(totals.items)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([name, count]) => ({ name, count }));
+    return { totalOrders: totals.totalOrders, averageOrderValue, topItems };
+}
+
+function updateAnalytics(history) {
+    const container = document.getElementById('analytics-content');
+    if (!container) return;
+    const { totalOrders, averageOrderValue, topItems } = calculateAnalytics(history);
+    let html = `<p>Total de Pedidos: ${totalOrders}</p>`;
+    html += `<p>Valor Médio dos Pedidos: R$ ${averageOrderValue.toFixed(2)}</p>`;
+    if (topItems.length > 0) {
+        html += '<h3>Itens Mais Pedidos</h3><ul>';
+        topItems.forEach(item => {
+            html += `<li>${item.name} (${item.count})</li>`;
+        });
+        html += '</ul>';
+    } else {
+        html += '<p>Nenhum item registrado.</p>';
+    }
+    container.innerHTML = html;
 }
 
 function formatCartForWhatsApp(cartArray) {
