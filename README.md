@@ -23,13 +23,14 @@
 - 🤝 **Unir tradição e inovação** - sabedoria ancestral sobre cooperação + tecnologia moderna
 - 🌍 **Criar identidade continental** - projeto que pode expandir por toda América do Sul
 
-*"Porque toda boa tecnologia, como toda boa comida, deve ser compartilhada"*
+_"Porque toda boa tecnologia, como toda boa comida, deve ser compartilhada"_
 
 ---
 
 ## 🔗 **URLs Compartilháveis de Pedidos**
 
 ### **Funcionalidade Única no Mercado**
+
 Cada pedido gera automaticamente um **link único** com todos os detalhes codificados:
 
 ```javascript
@@ -39,12 +40,13 @@ https://restaurante.github.io/cardapio/?pedido=eyJpZCI6IjQ1Nzg5MTIz...
 // Contém todos os dados do pedido:
 ✅ Itens pedidos com preços
 ✅ Dados do cliente
-✅ Informações de pagamento  
+✅ Informações de pagamento
 ✅ Dados do restaurante
 ✅ Timestamp do pedido
 ```
 
 ### **Experiência do Cliente**
+
 ```
 📱 Cliente recebe no WhatsApp:
 "🔗 Revisar Pedido: https://bellavista.com/?pedido=xyz123"
@@ -53,7 +55,7 @@ https://restaurante.github.io/cardapio/?pedido=eyJpZCI6IjQ1Nzg5MTIz...
 ┌─────────────────────────────┐
 │ 📋 Pedido #45789123         │
 │ ┌─ 🍽️ Bella Vista ─────────┐ │
-│ │ Status: Aguardando      │ │  
+│ │ Status: Aguardando      │ │
 │ │ 🍕 Pizza Margherita x2  │ │
 │ │ 🥤 Coca-Cola x2         │ │
 │ │ Total: R$ 70,80         │ │
@@ -63,8 +65,9 @@ https://restaurante.github.io/cardapio/?pedido=eyJpZCI6IjQ1Nzg5MTIz...
 ```
 
 ### **Vantagens Exclusivas**
+
 - 🔖 **Comprovante Permanente** - acesso a qualquer momento
-- 📤 **Viral Marketing** - cliente compartilha com amigos  
+- 📤 **Viral Marketing** - cliente compartilha com amigos
 - 💼 **Profissionalismo** - experiência de app enterprise
 - 📞 **Menos Suporte** - cliente tem todas as informações
 - 💰 **Zero Infraestrutura** - funciona com site estático
@@ -74,18 +77,20 @@ https://restaurante.github.io/cardapio/?pedido=eyJpZCI6IjQ1Nzg5MTIz...
 ## ⏰ **Sistema de Horários Inteligente**
 
 ### **Integração Google Maps Business**
+
 ```javascript
 // Configuração automática via Google Maps
 googlePlaceId: "ChIJN1t_tDeuEmsRUsoyG83frY4"
 
 // Benefícios:
 ✅ Horários sempre atualizados automaticamente
-✅ Status em tempo real (aberto/fechado)  
+✅ Status em tempo real (aberto/fechado)
 ✅ Sincronização com horários oficiais
 ✅ SEO boost + visibilidade local
 ```
 
 ### **Recursos Automáticos**
+
 - 🟢 **Status no Header** - "Aberto • Fecha às 23:00"
 - 🔴 **Modo Fechado** - "Fechado • Abre amanhã às 11:00"
 - ⚠️ **Banner Inteligente** - aparece quando fechado
@@ -93,27 +98,30 @@ googlePlaceId: "ChIJN1t_tDeuEmsRUsoyG83frY4"
 - 🕐 **Modal Completo** - clique no status para ver todos os horários
 
 ### **Por que Google Maps é Essencial**
-| Benefício | Impacto |
-|-----------|---------|
-| **Visibilidade Local** | +30-50% descoberta orgânica |
-| **Credibilidade** | 4x mais avaliações de clientes |
-| **Conversão** | 3x mais ligações diretas |
-| **Marketing** | Fotos do cardápio integradas |
-| **Navegação** | Direções automáticas para delivery |
+
+| Benefício              | Impacto                            |
+| ---------------------- | ---------------------------------- |
+| **Visibilidade Local** | +30-50% descoberta orgânica        |
+| **Credibilidade**      | 4x mais avaliações de clientes     |
+| **Conversão**          | 3x mais ligações diretas           |
+| **Marketing**          | Fotos do cardápio integradas       |
+| **Navegação**          | Direções automáticas para delivery |
 
 ---
 
 ## 🌟 **Por que este projeto é revolucionário?**
 
 ### 💸 **Custo Zero vs. Mercado Caro**
-| Solução | Custo Mensal | Taxa por Transação | Setup |
-|---------|--------------|-------------------|--------|
-| **Este Projeto** | **R$ 0** | **0%** | **5 minutos** |
-| iFood/Uber Eats | R$ 0-200 | 12-27% | Semanas |
-| SaaS Tradicionais | R$ 50-300 | 3-8% | Dias |
-| Apps Customizados | R$ 2.000+ | Variável | Meses |
+
+| Solução           | Custo Mensal | Taxa por Transação | Setup         |
+| ----------------- | ------------ | ------------------ | ------------- |
+| **Este Projeto**  | **R$ 0**     | **0%**             | **5 minutos** |
+| iFood/Uber Eats   | R$ 0-200     | 12-27%             | Semanas       |
+| SaaS Tradicionais | R$ 50-300    | 3-8%               | Dias          |
+| Apps Customizados | R$ 2.000+    | Variável           | Meses         |
 
 ### 🏆 **Funcionalidades Enterprise**
+
 - ✅ **PIX Brasileiro Nativo** - QR Code + código copiável
 - ✅ **Compatível com BR Code** - geração de QR Code e "copia e cola" seguindo o padrão oficial
 - ✅ **WhatsApp Business** - pedidos formatados automaticamente
@@ -130,6 +138,7 @@ googlePlaceId: "ChIJN1t_tDeuEmsRUsoyG83frY4"
 - ✅ **LGPD Compliant** - dados locais, privacidade total
 
 ### 🔎 **Busca e Filtragem**
+
 Use o campo de busca localizado acima do cardápio para filtrar itens conforme você digita.
 Os botões de categoria exibidos logo abaixo permitem exibir somente pratos de uma categoria específica.
 Clique em **Todos** para remover o filtro de categoria.
@@ -141,6 +150,7 @@ Clique em **Todos** para remover o filtro de categoria.
 ### [👉 **EXPERIMENTE AGORA** 👈](https://seu-usuario.github.io/cardapio-digital)
 
 **Teste o fluxo completo:**
+
 1. 📱 Abra no celular (ou simule mobile no browser)
 2. 🛒 Adicione itens ao carrinho
 3. 💳 Gere um código PIX real
@@ -152,9 +162,11 @@ Clique em **Todos** para remover o filtro de categoria.
 ## ⚡ **Instalação Rápida (5 minutos)**
 
 ### **Opção 1: Um Clique (Recomendado)**
+
 [![Use this template](https://img.shields.io/badge/Use_this_template-2ea44f?style=for-the-badge&logo=github&logoColor=white)](https://github.com/seu-usuario/tembiu/generate)
 
 ### **Opção 2: Fork Tradicional**
+
 1. **Fork** este repositório
 2. **Edite** `index.html` - seção `CONFIG` (nome, telefone, emoji)
 3. **Crie** arquivo `menu.csv` com seus pratos
@@ -162,6 +174,7 @@ Clique em **Todos** para remover o filtro de categoria.
 5. **Acesse** `seuusuario.github.io/tembiu`
 
 ### **Opção 3: Clone Local**
+
 ```bash
 git clone https://github.com/seu-usuario/tembiu.git
 cd tembiu
@@ -173,7 +186,8 @@ cd tembiu
 
 ## 📋 **Configuração do Cardápio**
 
-### **CSV Simples (Recomendado)** 
+### **CSV Simples (Recomendado)**
+
 Crie `menu.csv` editável no Excel/Google Sheets:
 
 ```csv
@@ -184,9 +198,11 @@ Coca-Cola,bebidas,5.00,Lata 350ml.,🥤,true
 Suco de Laranja Natural,bebidas,8.00,Feito com laranjas frescas, 500ml.,🍊,true
 Brownie com Sorvete,sobremesas,18.00,Brownie de chocolate meio amargo com uma bola de sorvete de creme.,🍰,false
 ```
+
 Para informações mais detalhadas sobre a estrutura do `menu.csv` e outras opções de configuração, consulte nosso [Guia de Configuração](docs/README.md#configuration).
 
 ### **JSON Avançado**
+
 Crie `menu.json` para máxima flexibilidade:
 
 ```json
@@ -194,7 +210,7 @@ Crie `menu.json` para máxima flexibilidade:
   {
     "name": "Pizza Margherita",
     "category": "pizzas",
-    "price": 26.90,
+    "price": 26.9,
     "description": "Molho de tomate, mussarela de búfala, manjericão fresco",
     "emoji": "🍕",
     "available": true
@@ -203,16 +219,17 @@ Crie `menu.json` para máxima flexibilidade:
 ```
 
 ### **Configurações do Restaurante**
+
 Edite no `index.html`:
 
 ```javascript
 const CONFIG = {
-    restaurant: {
-        name: "Seu Restaurante",
-        phone: "5511999999999",    // WhatsApp
-        deliveryFee: 5.00,
-        emoji: "🍽️"
-    }
+  restaurant: {
+    name: "Seu Restaurante",
+    phone: "5511999999999", // WhatsApp
+    deliveryFee: 5.0,
+    emoji: "🍽️",
+  },
 };
 ```
 
@@ -224,21 +241,25 @@ const CONFIG = {
 ## 🎯 **Casos de Uso Reais**
 
 ### 🍕 **Pizzaria**
+
 - **Combos automáticos** - pizza + refrigerante
 - **Sabores em destaque** - categorias visuais
 - **Promoções** - controle via `disponivel: false`
 
-### 🍔 **Hamburgueria** 
+### 🍔 **Hamburgueria**
+
 - **Montagem visual** - descrições detalhadas
 - **Adicionais** - batata, molhos, bebidas
 - **Combos personalizados** - sugestões inteligentes
 
 ### 🍱 **Comida Japonesa**
+
 - **Combinados** - múltiplos itens por pedido
 - **Categorização clara** - sashimi, temaki, hot
 - **Experiência premium** - dark mode, animações
 
 ### ☕ **Cafeteria**
+
 - **Cardápio compacto** - foco em simplicidade
 - **Pedidos rápidos** - histórico + sugestões
 - **Horário flexível** - disponibilidade dinâmica
@@ -248,6 +269,7 @@ const CONFIG = {
 ## 🏗️ **Arquitetura Técnica**
 
 ### **Frontend (100% Client-Side)**
+
 ```
 ├── 📄 HTML5 Semântico
 ├── 🎨 CSS3 + Variáveis CSS
@@ -257,6 +279,7 @@ const CONFIG = {
 ```
 
 ### **Backend Opcional (Google Apps Script)**
+
 ```
 ├── 📊 Google Sheets como banco
 ├── 🔄 Automações via GAS
@@ -266,6 +289,7 @@ const CONFIG = {
 ```
 
 ### **Infraestrutura**
+
 ```
 GitHub Pages (Gratuito)
 ├── 🌍 CDN Global
@@ -280,18 +304,20 @@ GitHub Pages (Gratuito)
 ## 💳 **Sistema PIX Avançado**
 
 ### **Código PIX Estruturado**
+
 ```
 Dados do PIX (máx. 140 chars):
 Tel:11999999999 ID:45789123 Items:1x2,3x1,5x3 Loc:8G7Q+2QR
 
 Contém:
 📱 Telefone do cliente
-🆔 ID único do pedido  
+🆔 ID único do pedido
 📦 Lista de itens (idxquantidade)
 📍 Plus Code de localização
 ```
 
 ### **Fluxo Inteligente**
+
 1. **Cliente** preenche dados e escolhe PIX
 2. **Sistema** gera QR Code + código copiável
 3. **Cliente** paga no banco (dados aparecem no extrato)
@@ -304,12 +330,14 @@ Contém:
 ## 🤖 **IA e Personalização**
 
 ### **Histórico Automático**
+
 - 📋 **Últimos 10 pedidos** salvos localmente
 - 🔄 **"Pedir Novamente"** - 1 clique refaz pedido
 - ⚡ **Verificação automática** - só itens disponíveis
 - 🎯 **Banner inteligente** - sugere repetir último pedido
 
 ### **Sugestões Contextuais**
+
 ```javascript
 // Exemplo: Cliente adiciona Pizza
 Sistema analisa histórico → encontra padrão:
@@ -319,6 +347,7 @@ Toast: "💡 Que tal uma Coca-Cola? +1"
 ```
 
 ### **Machine Learning Simples**
+
 - 📊 **Análise de padrões** - itens pedidos juntos
 - 🎯 **Frequência** - quantidade média por item
 - ⏰ **Contexto temporal** - horários preferenciais
@@ -329,6 +358,7 @@ Toast: "💡 Que tal uma Coca-Cola? +1"
 ## 📱 **PWA (Progressive Web App)**
 
 ### **Recursos Nativos**
+
 - 📲 **Instalável** - ícone na tela inicial
 - 🔔 **Push Notifications** - avisos de pedidos
 - 🌐 **Offline** - funciona sem internet
@@ -336,6 +366,7 @@ Toast: "💡 Que tal uma Coca-Cola? +1"
 - 🔄 **Auto-update** - sempre atualizado
 
 ### **Cross-Platform**
+
 ```
 ✅ Android (Chrome, Samsung Internet, Edge)
 ✅ iOS (Safari, Chrome, Firefox)
@@ -348,12 +379,14 @@ Toast: "💡 Que tal uma Coca-Cola? +1"
 ## 🛡️ **Privacidade e Segurança**
 
 ### **LGPD Compliant**
+
 - 🔒 **Dados locais** - localStorage do navegador
 - 🚫 **Zero tracking** - sem cookies de terceiros
 - 🗑️ **Direito ao esquecimento** - botão "Limpar Histórico"
 - 👁️ **Transparência total** - usuário vê todos os dados
 
 ### **Segurança**
+
 - 🔐 **HTTPS nativo** - GitHub Pages
 - 🛡️ **CSP Headers** - proteção XSS
 - 🔒 **Sem backend** - zero vazamentos de dados
@@ -364,6 +397,7 @@ Toast: "💡 Que tal uma Coca-Cola? +1"
 ## 📊 **Analytics e Insights**
 
 ### **Para o Restaurante**
+
 ```javascript
 // Dados disponíveis via localStorage:
 {
@@ -374,10 +408,12 @@ Toast: "💡 Que tal uma Coca-Cola? +1"
   "clientesFrequentes": ["11999999999", "11888888888"]
 }
 ```
+
 - 📊 **Estatísticas na página** - seção "Estatísticas" exibe o total de pedidos,
   ticket médio e itens mais populares.
 
 ### **Relatórios Automáticos** (com GAS)
+
 - 📈 **Vendas por período**
 - 🍕 **Ranking de pratos**
 - ⏰ **Análise de horários**
@@ -389,42 +425,49 @@ Toast: "💡 Que tal uma Coca-Cola? +1"
 ## 🌍 **Roadmap 2025-2026**
 
 ### **🚀 v1.0 - Core MVP** (Julho 2025) ✅
+
 - [x] Template responsivo
 - [x] PIX + WhatsApp
 - [x] PWA básico
 - [x] Histórico inteligente
 
 ### **📈 v1.1 - Google Apps Script** (Agosto 2025)
+
 - [ ] Backend gratuito via GAS
 - [ ] Dashboard administrativo
 - [ ] Automações de email
 - [ ] Relatórios de vendas
 
 ### **🔥 v1.2 - PWA Avançado** (Setembro 2025)
+
 - [ ] Push notifications
 - [ ] Modo offline avançado
 - [ ] Geolocalização
 - [ ] Acessibilidade A11Y
 
 ### **💳 v1.3 - Pagamentos Híbridos** (Outubro 2025)
+
 - [ ] PIX avançado com comprovante
 - [ ] Cartão via maquininha
 - [ ] Sistema de pontos/fidelidade
 - [ ] Split de conta
 
 ### **🏪 v2.0 - Marketplace** (Novembro 2025)
+
 - [ ] Templates premium
 - [ ] Sistema de plugins
 - [ ] Customizador visual
 - [ ] Suporte premium pago
 
 ### **🤖 v2.1 - IA Avançada** (Dezembro 2025)
+
 - [ ] Chatbot integrado
 - [ ] Recomendações por ML
 - [ ] Otimização de preços
 - [ ] Análise de sentimento
 
 ### **🌟 v3.0 - Ecossistema** (Q1 2026)
+
 - [ ] Multi-restaurante
 - [ ] API pública
 - [ ] Delivery integrado
@@ -435,10 +478,11 @@ Toast: "💡 Que tal uma Coca-Cola? +1"
 ## 💰 **Modelo de Sustentabilidade**
 
 ### **Core Gratuito (Sempre)**
+
 ✅ Template completo com todas as funcionalidades  
 ✅ Documentação e tutoriais  
 ✅ Suporte via comunidade (GitHub Issues)  
-✅ Atualizações regulares  
+✅ Atualizações regulares
 
 ### **🤝 Apoie o Projeto (Opcional mas Apreciado)**
 
@@ -447,30 +491,35 @@ Toast: "💡 Que tal uma Coca-Cola? +1"
 Se este projeto te ajudou a economizar centenas ou milhares de reais em taxas e mensalidades, considere fazer uma doação simbólica:
 
 #### **Como Funciona:**
+
 - 🎯 **R$ 1 por cliente** que fez pelo menos um pedido
 - 📅 **Uma única vez na vida** - não é recorrente
 - 🎁 **Totalmente voluntário** - projeto continua gratuito
 - 📊 **Transparente** - valor total fica público
 
 #### **Exemplos:**
+
 ```
 🍕 Pizzaria pequena (50 clientes) = R$ 50 de doação
-🍔 Hambúrguer médio (200 clientes) = R$ 200 de doação  
+🍔 Hambúrguer médio (200 clientes) = R$ 200 de doação
 🍱 Japonês popular (500 clientes) = R$ 500 de doação
 ```
 
 #### **Por que R$ 1?**
+
 - **Valor simbólico** - representa gratidão, não custo
 - **Escala justa** - restaurante próspero contribui mais
 - **Alinhamento perfeito** - criador é recompensado pelo sucesso gerado
 - **Menos que uma Coca-Cola** - qualquer restaurante pode pagar
 
 #### **Como Doar:**
+
 [![PIX](https://img.shields.io/badge/PIX-32BC8B?style=for-the-badge&logo=pix&logoColor=white)](https://nubank.com.br/pagar/2s5jb/cardapio-digital)
 [![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/cardapiodigital)
 [![GitHub Sponsors](https://img.shields.io/badge/Sponsor-EA4AAA?style=for-the-badge&logo=github-sponsors&logoColor=white)](https://github.com/sponsors/seu-usuario)
 
 ### **Impacto das Doações:**
+
 ```
 🎯 Meta 2025: R$ 10.000 em doações
 ├── 💻 50% → Desenvolvimento (novas funcionalidades)
@@ -480,21 +529,24 @@ Se este projeto te ajudou a economizar centenas ou milhares de reais em taxas e 
 ```
 
 ### **Transparência Total:**
+
 - 📊 **[Dashboard de Doações](https://transparencia.cardapio-digital.com)** - valores públicos
 - 🧾 **Relatórios mensais** - onde o dinheiro foi investido
 - 🗳️ **Votação da comunidade** - prioridades de desenvolvimento
 
 ### **Serviços Premium (Para quem quer mais)**
-| Serviço | Preço | Descrição |
-|---------|-------|-----------|
-| **Suporte Dedicado** | R$ 50-100/mês | WhatsApp + videochamadas |
-| **Setup Completo** | R$ 400-800 | Configuração profissional |
-| **Templates Premium** | R$ 100-300 | Designs exclusivos por setor |
-| **Customizações** | R$ 500-3000 | Desenvolvimento sob demanda |
+
+| Serviço               | Preço         | Descrição                    |
+| --------------------- | ------------- | ---------------------------- |
+| **Suporte Dedicado**  | R$ 50-100/mês | WhatsApp + videochamadas     |
+| **Setup Completo**    | R$ 400-800    | Configuração profissional    |
+| **Templates Premium** | R$ 100-300    | Designs exclusivos por setor |
+| **Customizações**     | R$ 500-3000   | Desenvolvimento sob demanda  |
 
 ### **Marketplace (Futuro)**
+
 - 30% de comissão em templates premium
-- Certificação de desenvolvedores  
+- Certificação de desenvolvedores
 - Sistema de avaliações
 - Suporte técnico integrado
 
@@ -502,25 +554,27 @@ Se este projeto te ajudou a economizar centenas ou milhares de reais em taxas e 
 
 ### **💌 Carta do Criador**
 
-> *Oi! Sou o criador deste projeto e quero compartilhar por que criei isso...*
-> 
-> *Vi muitos restaurantes pequenos pagando R$ 200-500/mês para soluções que podiam ser gratuitas. Decidi criar uma alternativa que fosse:*
-> - *✅ **Gratuita para sempre***
-> - *✅ **Sem vendor lock-in***  
-> - *✅ **Código aberto***
-> - *✅ **Feita para o Brasil***
-> 
-> *Se este projeto te economizou dinheiro ou aumentou suas vendas, uma doação de R$ 1 por cliente seria uma forma linda de dizer "obrigado" e me motivar a continuar desenvolvendo.*
-> 
-> *Mas lembre-se: **o projeto sempre será gratuito**, independente de doações! 🙏*
-> 
-> *— Franklin Silveira Baldo, Procurador do Estado de Rondônia*
+> _Oi! Sou o criador deste projeto e quero compartilhar por que criei isso..._
+>
+> _Vi muitos restaurantes pequenos pagando R$ 200-500/mês para soluções que podiam ser gratuitas. Decidi criar uma alternativa que fosse:_
+>
+> - \*✅ **Gratuita para sempre\***
+> - \*✅ **Sem vendor lock-in\***
+> - \*✅ **Código aberto\***
+> - \*✅ **Feita para o Brasil\***
+>
+> _Se este projeto te economizou dinheiro ou aumentou suas vendas, uma doação de R$ 1 por cliente seria uma forma linda de dizer "obrigado" e me motivar a continuar desenvolvendo._
+>
+> _Mas lembre-se: **o projeto sempre será gratuito**, independente de doações! 🙏_
+>
+> _— Franklin Silveira Baldo, Procurador do Estado de Rondônia_
 
 ---
 
 ## 🤝 **Como Contribuir**
 
 ### **Para Desenvolvedores**
+
 ```bash
 # 1. Fork o projeto
 # 2. Crie uma branch
@@ -536,6 +590,7 @@ git push origin feature/nova-funcionalidade
 ```
 
 ### **Áreas que Precisamos de Ajuda**
+
 - 🎨 **UI/UX Design** - templates e componentes
 - 💻 **Frontend** - novas funcionalidades
 - 🔧 **Google Apps Script** - automações
@@ -544,12 +599,14 @@ git push origin feature/nova-funcionalidade
 - 🧪 **Testes** - cobertura e qualidade
 
 ### **Para Restaurantes**
+
 - 🍽️ **Beta testing** - teste novas funcionalidades
 - 💬 **Feedback** - relate problemas e sugestões
 - 📸 **Casos de uso** - compartilhe resultados
 - ⭐ **Divulgação** - star no GitHub + redes sociais
 
 ### **Para a Comunidade**
+
 - ⭐ **Star o projeto** - aumenta visibilidade
 - 🔄 **Fork e customize** - crie suas versões
 - 🐛 **Reporte bugs** - issues no GitHub
@@ -561,22 +618,24 @@ git push origin feature/nova-funcionalidade
 ## 🏆 **Casos de Sucesso**
 
 ### **📊 Impacto em Números**
+
 ```
 🍽️ 50+ restaurantes usando
-⭐ 500+ stars no GitHub  
+⭐ 500+ stars no GitHub
 🔄 200+ forks personalizados
 💰 R$ 100.000+ economizados em taxas
 ⚡ 90% redução no tempo de setup
 ```
 
 ### **💬 Depoimentos**
-> *"Economizamos R$ 200/mês que pagávamos para uma solução paga. Em 6 meses já pagou o setup!"*  
+
+> _"Economizamos R$ 200/mês que pagávamos para uma solução paga. Em 6 meses já pagou o setup!"_  
 > **— Maria Silva, Pizzaria Bella Vista**
 
-> *"Nossos clientes adoram o 'pedir novamente'. 40% dos pedidos agora são repetições automáticas."*  
+> _"Nossos clientes adoram o 'pedir novamente'. 40% dos pedidos agora são repetições automáticas."_  
 > **— João Santos, Hamburgueria do Chef**
 
-> *"Setup em 15 minutos. Impossível de acreditar que é grátis!"*  
+> _"Setup em 15 minutos. Impossível de acreditar que é grátis!"_  
 > **— Ana Costa, Cafeteria Aroma**
 
 ---
@@ -584,6 +643,7 @@ git push origin feature/nova-funcionalidade
 ## 🆘 **Suporte e Comunidade**
 
 ### **Canais Oficiais**
+
 - 💬 **[Discord Comunidade](https://discord.gg/tembiu)** - chat em tempo real
 - 🐛 **[GitHub Issues](https://github.com/seu-usuario/tembiu/issues)** - bugs e problemas
 - 💡 **[GitHub Discussions](https://github.com/seu-usuario/tembiu/discussions)** - ideias e dúvidas
@@ -591,40 +651,47 @@ git push origin feature/nova-funcionalidade
 - 📱 **[WhatsApp](https://wa.me/5511999999999)** - suporte rápido
 
 ### **Recursos de Aprendizado**
+
 - 📖 **[Documentação Completa](docs/)** - guias detalhados
 - 🎥 **[Playlist YouTube](https://youtube.com/playlist/tembiu)** - tutoriais em vídeo
 - 📝 **[Blog](https://blog.tembiu.com)** - dicas e novidades
 - 🔴 **[Lives](https://youtube.com/c/tembiu/live)** - desenvolvimento ao vivo
 
 ### **FAQ Rápido**
+
 <details>
 <summary><strong>❓ É realmente grátis para sempre?</strong></summary>
 
 Sim! O código é open source e o GitHub Pages é gratuito. Você só paga se quiser serviços premium opcionais.
+
 </details>
 
 <details>
 <summary><strong>❓ Funciona no iPhone?</strong></summary>
 
 Perfeitamente! É um PWA que funciona como app nativo em iOS e Android.
+
 </details>
 
 <details>
 <summary><strong>❓ Preciso saber programar?</strong></summary>
 
 Não! Basta editar um arquivo CSV no Excel e fazer algumas configurações básicas.
+
 </details>
 
 <details>
 <summary><strong>❓ Como atualizo o cardápio?</strong></summary>
 
 Edite o arquivo CSV no GitHub. Mudanças aparecem automaticamente em 1-2 minutos.
+
 </details>
 
 <details>
 <summary><strong>❓ E se eu precisar de ajuda?</strong></summary>
 
 Comunidade no Discord, issues no GitHub, ou contrate suporte premium se precisar de algo urgente.
+
 </details>
 
 ---
@@ -632,6 +699,7 @@ Comunidade no Discord, issues no GitHub, ou contrate suporte premium se precisar
 ## 📄 **Licença e Legal**
 
 ### **MIT License**
+
 ```
 Copyright (c) 2025 Cardápio Digital Open Source
 
@@ -646,12 +714,14 @@ furnished to do so, subject to the following conditions:
 ```
 
 ### **Uso Comercial**
+
 ✅ **Permitido** - use em seu restaurante  
 ✅ **Modificação** - customize como quiser  
 ✅ **Redistribuição** - compartilhe suas versões  
-✅ **Venda de serviços** - ofereça setup como freelancer  
+✅ **Venda de serviços** - ofereça setup como freelancer
 
 ### **Compliance**
+
 - 🇧🇷 **LGPD** - dados locais, sem vazamentos
 - 💳 **PIX** - protocolo oficial do Banco Central
 - 📱 **PWA** - padrões W3C e Google
@@ -662,6 +732,7 @@ furnished to do so, subject to the following conditions:
 ## 🌟 **Reconhecimentos**
 
 ### **Tecnologias Utilizadas**
+
 - [GitHub Pages](https://pages.github.com/) - Hosting gratuito
 - [PWA](https://web.dev/progressive-web-apps/) - Padrão Google
 - [PIX](https://www.bcb.gov.br/estabilidadefinanceira/pix) - Banco Central do Brasil
@@ -669,12 +740,14 @@ furnished to do so, subject to the following conditions:
 - [Google Apps Script](https://script.google.com/) - Google Cloud
 
 ### **Inspirações**
+
 - Movimento open source brasileiro
 - Necessidade real de restaurantes pequenos
 - Democratização da tecnologia
 - Sustentabilidade e impacto social
 
 ### **Contribuidores**
+
 Obrigado a todos que tornaram este projeto possível! 🙏
 
 [![Contributors](https://contrib.rocks/image?repo=seu-usuario/cardapio-digital)](https://github.com/seu-usuario/cardapio-digital/graphs/contributors)
@@ -684,12 +757,15 @@ Obrigado a todos que tornaram este projeto possível! 🙏
 ## 🚀 **Comece Agora!**
 
 ### **1 Minuto para Testar:**
+
 👉 **[DEMO AO VIVO](https://seu-usuario.github.io/cardapio-digital)** 👈
 
 ### **5 Minutos para Ter o Seu:**
+
 [![Use this template](https://img.shields.io/badge/🚀_Criar_Meu_Cardápio-FF6B35?style=for-the-badge&logoColor=white)](https://github.com/seu-usuario/cardapio-digital/generate)
 
 ### **Junte-se à Comunidade:**
+
 [![Discord](https://img.shields.io/badge/💬_Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/tembiu)
 [![WhatsApp](https://img.shields.io/badge/📱_WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/5511999999999)
 

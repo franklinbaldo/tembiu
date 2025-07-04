@@ -16,16 +16,16 @@ The file `js/google_pay.js` contains a working example using the `google.payment
 const paymentDataRequest = {
   // ...
   tokenizationSpecification: {
-      type: "PAYMENT_GATEWAY",
-      parameters: {
-        gateway: "stripe",
-        gatewayMerchantId: "tembiuGateway"
-      }
+    type: "PAYMENT_GATEWAY",
+    parameters: {
+      gateway: "stripe",
+      gatewayMerchantId: "tembiuGateway",
+    },
   },
-    merchantInfo: {
-      merchantId: "01234567890123456789",
-      merchantName: "Tembiu Demo"
-    }
+  merchantInfo: {
+    merchantId: "01234567890123456789",
+    merchantName: "Tembiu Demo",
+  },
 };
 ```
 
@@ -34,4 +34,3 @@ const paymentDataRequest = {
 With these values in place, load the app locally and proceed with an order. After you click **Finalizar Pedido**, the Google Pay button becomes visible. When pressed, the API will prompt a test payment and log the result in the browser console.
 
 This example is intended as a starting point and does not handle real payment confirmation. For production use, consult the official Google Pay documentation and implement secure backend processing.
-

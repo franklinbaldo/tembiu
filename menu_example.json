@@ -2,7 +2,7 @@
   {
     "nome": "Pizza Margherita",
     "categoria": "pizzas",
-    "preco": 26.90,
+    "preco": 26.9,
     "descricao": "Molho de tomate mussarela manjericão",
     "emoji": "🍕",
     "disponivel": true
@@ -10,7 +10,7 @@
   {
     "nome": "Spaghetti Carbonara",
     "categoria": "massas",
-    "preco": 28.90,
+    "preco": 28.9,
     "descricao": "Massa fresca com ovos pancetta",
     "emoji": "🍝",
     "disponivel": true
@@ -18,7 +18,7 @@
   {
     "nome": "Tiramisu",
     "categoria": "sobremesas",
-    "preco": 16.90,
+    "preco": 16.9,
     "descricao": "Sobremesa italiana tradicional",
     "emoji": "🍰",
     "disponivel": true
