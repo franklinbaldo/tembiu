@@ -91,7 +91,7 @@ googlePlaceId: "ChIJN1t_tDeuEmsRUsoyG83frY4"
 
 ### **Recursos Automáticos**
 
-- 🟢 **Status no Header** - "Aberto • Fecha às 23:00"
+- 🟢 **Status no Header** - "Aberto • Fecha às 23:00" (agora baseado em horário estático no `restaurantConfig`)
 - 🔴 **Modo Fechado** - "Fechado • Abre amanhã às 11:00"
 - ⚠️ **Banner Inteligente** - aparece quando fechado
 - 📝 **Pedidos Agendados** - aceita pedidos para processar depois

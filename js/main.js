@@ -2,10 +2,13 @@ console.log("Tembiu main.js loaded.");
 
 // Client-side Restaurant Configuration (Placeholders)
 const restaurantConfig = {
-  name: "Tembiu Lanchonete Virtual", // Placeholder restaurant name
-  phone: "5511999999999", // Placeholder phone number (for wa.me link)
-  cidade: "São Paulo", // Placeholder city for PIX BR Code
-  // Future items: currency, deliveryFee, etc.
+    name: "Tembiu Lanchonete Virtual", // Placeholder restaurant name
+    phone: "5511999999999", // Placeholder phone number (for wa.me link)
+    cidade: "São Paulo", // Placeholder city for PIX BR Code
+    timezone: "America/Sao_Paulo", // Timezone for open/close status
+    openTime: "11:00", // Opening hour (24h format)
+    closeTime: "23:00", // Closing hour (24h format)
+    // Future items: currency, deliveryFee, etc.
   // Example for PIX Tel field (if different from WhatsApp or needs specific format)
   // pixTel: "11999999999"
 };
@@ -105,7 +108,43 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.remove("dark-mode"); // Ensure it's not there if 'light' or null
     if (themeToggleButton) themeToggleButton.textContent = "Tema Escuro";
   }
+
+  initOpenStatus();
 });
+
+function initOpenStatus() {
+    const statusElem = document.getElementById("open-status");
+    if (!statusElem || !restaurantConfig.openTime || !restaurantConfig.closeTime) {
+        return;
+    }
+
+    function updateStatus() {
+        const localeTime = new Date().toLocaleTimeString("pt-BR", {
+            timeZone: restaurantConfig.timezone || "UTC",
+            hour12: false,
+        });
+        const [curH, curM] = localeTime.split(":").map(Number);
+        const [openH, openM] = restaurantConfig.openTime.split(":").map(Number);
+        const [closeH, closeM] = restaurantConfig.closeTime.split(":").map(Number);
+
+        const curMinutes = curH * 60 + curM;
+        const openMinutes = openH * 60 + openM;
+        const closeMinutes = closeH * 60 + closeM;
+
+        if (curMinutes >= openMinutes && curMinutes < closeMinutes) {
+            statusElem.textContent = `Aberto • Fecha às ${restaurantConfig.closeTime}`;
+            statusElem.classList.add("open");
+            statusElem.classList.remove("closed");
+        } else {
+            statusElem.textContent = `Fechado • Abre às ${restaurantConfig.openTime}`;
+            statusElem.classList.add("closed");
+            statusElem.classList.remove("open");
+        }
+    }
+
+    updateStatus();
+    setInterval(updateStatus, 60000);
+}
 
 async function loadMenu() {
   let menuItems = [];

@@ -83,8 +83,13 @@ Example in `js/main.js`:
 const restaurantConfig = {
   name: "Seu Restaurante Aqui", // Used in page header and WhatsApp messages
   phone: "5511999999999", // Used for WhatsApp "wa.me" links
+  timezone: "America/Sao_Paulo", // Timezone for scheduling
+  openTime: "11:00", // Opening hour
+  closeTime: "23:00", // Closing hour
 };
 ```
+
+These scheduling fields enable the header to display a basic "open" or "closed" status according to the configured hours.
 
 _(Future versions may move this to a dedicated configuration file or a user interface.)_
 
