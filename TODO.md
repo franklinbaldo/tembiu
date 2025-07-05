@@ -96,9 +96,9 @@ This TODO list is derived from the project's `README.md` and aims to guide devel
   - **Sub-Task:** Develop a mechanism or page (potentially reusing `index.html` with specific URL params) to display a read-only summary of an order when accessed via a shareable URL.
   - **Sub-Task:** Add UI elements for copying/sharing the generated URL.
   - **Rationale:** Key unique feature mentioned in README, enhances professionalism and sharing.
-- [ ] **Task:** Basic Smart Scheduling System - Phase 1 (v1.x).
-  - **Sub-Task:** Add restaurant open/close times and timezone to `restaurantConfig` in `js/main.js`.
-  - **Sub-Task:** Implement logic in `js/main.js` to display a simple "Open" / "Closed" status based on current time and configured hours.
+- [~] **Task:** Basic Smart Scheduling System - Phase 1 (v1.x).
+  - **Sub-Task:** [x] Add restaurant open/close times and timezone to `restaurantConfig` in `js/main.js`.
+  - **Sub-Task:** [x] Implement logic in `js/main.js` to display a simple "Open" / "Closed" status based on current time and configured hours.
   - **Sub-Task:** (Future) Consider disabling "Add to Cart" or "Checkout" if closed, or allow pre-orders.
   - **Rationale:** First step towards "Sistema de Horários Inteligente" from README. Full Google Maps integration is a larger future phase.
 - [ ] **Task:** Implement Basic Contextual Item Suggestions (v1.x).

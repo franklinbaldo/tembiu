@@ -44,6 +44,8 @@
   --past-order-border-color: #ccc;
   --past-order-heading-color: #555;
   --past-order-text-color: #444;
+    --status-open-color: #28a745;
+    --status-closed-color: #dc3545;
 }
 
 body.dark-mode {
@@ -92,6 +94,8 @@ body.dark-mode {
   --past-order-border-color: #555;
   --past-order-heading-color: #bbb;
   --past-order-text-color: #aaa;
+    --status-open-color: #28a745;
+    --status-closed-color: #dc3545;
 }
 
 body {
@@ -124,6 +128,19 @@ header h1 {
 header p {
   margin: 0;
   font-size: 1rem;
+}
+
+#open-status {
+    margin-top: 0.25rem;
+    font-weight: bold;
+}
+
+#open-status.open {
+    color: var(--status-open-color);
+}
+
+#open-status.closed {
+    color: var(--status-closed-color);
 }
 
 main {
