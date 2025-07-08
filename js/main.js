@@ -1,22 +1,50 @@
 console.log("Tembiu main.js loaded.");
 
-// Client-side Restaurant Configuration (Placeholders)
-const restaurantConfig = {
-    name: "Tembiu Lanchonete Virtual", // Placeholder restaurant name
-    phone: "5511999999999", // Placeholder phone number (for wa.me link)
-    cidade: "São Paulo", // Placeholder city for PIX BR Code
-    timezone: "America/Sao_Paulo", // Timezone for open/close status
-    openTime: "11:00", // Opening hour (24h format)
-    closeTime: "23:00", // Closing hour (24h format)
-    // Future items: currency, deliveryFee, etc.
-  // Example for PIX Tel field (if different from WhatsApp or needs specific format)
-  // pixTel: "11999999999"
-};
+// --- Turso Configuration (WARNING: EXPOSES API KEY CLIENT-SIDE) ---
+// Replace with your actual Turso database URL and API token.
+// This is NOT recommended for production due to security risks.
+const TURSO_DATABASE_URL = "YOUR_TURSO_DATABASE_URL_HERE";
+const TURSO_AUTH_TOKEN = "YOUR_TURSO_AUTH_TOKEN_HERE";
+
+let db;
+
+// Initialize Turso client
+try {
+  db = libsql.createClient({
+    url: TURSO_DATABASE_URL,
+    authToken: TURSO_AUTH_TOKEN,
+  });
+  console.log("Turso client initialized.");
+} catch (e) {
+  console.error("Failed to initialize Turso client:", e);
+  alert("Erro ao conectar com o banco de dados. Verifique o console.");
+}
+// --- End Turso Configuration ---
+
+let restaurantConfig = {}; // Will be loaded from Turso
+
+async function loadRestaurantConfig() {
+  if (!db) {
+    console.error("Turso client not initialized. Cannot load restaurant config.");
+    return;
+  }
+  try {
+    const rs = await db.execute("SELECT key, value FROM restaurant_config");
+    rs.rows.forEach(row => {
+      restaurantConfig[row.key] = row.value;
+    });
+    console.log("Restaurant config loaded from Turso:", restaurantConfig);
+  } catch (e) {
+    console.error("Error loading restaurant config from Turso:", e);
+  }
+}
 
 let cart = []; // Initialize cart
 let allMenuItems = []; // Store all menu items for filtering
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadRestaurantConfig(); // Load config before using it
+
   // Display Restaurant Name in Header
   try {
     const headerTitle = document.querySelector("header h1");
@@ -131,7 +159,17 @@ function initOpenStatus() {
         const openMinutes = openH * 60 + openM;
         const closeMinutes = closeH * 60 + closeM;
 
-        if (curMinutes >= openMinutes && curMinutes < closeMinutes) {
+        // Handle closing time crossing midnight
+        let isCurrentlyOpen = false;
+        if (openMinutes < closeMinutes) {
+            // Normal hours (e.g., 11:00 to 23:00)
+            isCurrentlyOpen = curMinutes >= openMinutes && curMinutes < closeMinutes;
+        } else {
+            // Hours cross midnight (e.g., 22:00 to 02:00)
+            isCurrentlyOpen = curMinutes >= openMinutes || curMinutes < closeMinutes;
+        }
+
+        if (isCurrentlyOpen) {
             statusElem.textContent = `Aberto • Fecha às ${restaurantConfig.closeTime}`;
             statusElem.classList.add("open");
             statusElem.classList.remove("closed");
@@ -147,93 +185,38 @@ function initOpenStatus() {
 }
 
 async function loadMenu() {
-  let menuItems = [];
+  if (!db) {
+    console.error("Turso client not initialized. Cannot load menu.");
+    document.getElementById("menu-container").innerHTML =
+      "<p>Erro ao carregar o cardápio: Conexão com o banco de dados falhou.</p>";
+    return;
+  }
 
   try {
-    // Attempt to load menu.json first
-    const jsonResponse = await fetch("menu.json");
-    if (jsonResponse.ok) {
-      menuItems = await jsonResponse.json();
-      console.log("menu.json loaded successfully:", menuItems);
-    } else {
-      console.warn(
-        `Failed to load menu.json (status: ${jsonResponse.status}), falling back to menu.csv.`,
-      );
-    }
-  } catch (jsonError) {
-    console.warn(
-      `Error fetching or parsing menu.json: ${jsonError}. Falling back to menu.csv.`,
-    );
+    const rs = await db.execute("SELECT nome, categoria, preco, descricao, emoji, disponivel FROM menu_items WHERE disponivel = TRUE");
+    allMenuItems = rs.rows.map(row => ({
+      nome: row.nome,
+      categoria: row.categoria,
+      preco: row.preco,
+      descricao: row.descricao,
+      emoji: row.emoji,
+      disponivel: row.disponivel === 1 // SQLite boolean is 0 or 1
+    }));
+    console.log("Menu Items Loaded from Turso:", allMenuItems);
+    initializeCategories(allMenuItems);
+    applyFiltersAndRender();
+  } catch (e) {
+    console.error("Error loading menu from Turso:", e);
+    document.getElementById("menu-container").innerHTML =
+      "<p>Erro ao carregar o cardápio do banco de dados. Tente novamente mais tarde.</p>";
   }
-
-  if (menuItems.length === 0) {
-    // Fallback to menu.csv if menu.json is not found or fails to load
-    try {
-      console.log("Attempting to load menu.csv...");
-      const csvResponse = await fetch("menu.csv");
-      if (!csvResponse.ok) {
-        console.error("Failed to load menu.csv:", csvResponse.statusText);
-        document.getElementById("menu-container").innerHTML =
-          "<p>Erro ao carregar o cardápio. Tente novamente mais tarde.</p>";
-        return;
-      }
-      const csvData = await csvResponse.text();
-      menuItems = parseCSV(csvData);
-      console.log("menu.csv loaded and parsed:", menuItems);
-    } catch (csvError) {
-      console.error("Error fetching or parsing menu.csv:", csvError);
-      document.getElementById("menu-container").innerHTML =
-        "<p>Ocorreu um erro inesperado ao carregar o cardápio.</p>";
-      return;
-    }
-  }
-
-  allMenuItems = menuItems;
-  console.log("Menu Items Loaded:", allMenuItems);
-  initializeCategories(allMenuItems);
-  applyFiltersAndRender();
 }
 
-function parseCSV(csvText) {
-  const lines = csvText.trim().split("\n");
-  if (lines.length < 2) {
-    console.warn("CSV has no data rows.");
-    return [];
-  }
+// parseCSV function is no longer needed as data comes from Turso
+// function parseCSV(csvText) { ... }
 
-  const headers = lines[0].split(",").map((header) => header.trim());
-  const items = [];
-  const disponivelHeaderIndex = headers.indexOf("disponivel");
-
-  for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(",");
-    if (values.length === headers.length) {
-      const item = {};
-      headers.forEach((header, index) => {
-        const value = values[index] ? values[index].trim() : "";
-        if (header === "preco") {
-          item[header] = parseFloat(value);
-        } else if (header === "disponivel") {
-          item[header] = value.toLowerCase() === "true";
-        } else {
-          item[header] = value;
-        }
-      });
-      // Ensure 'preco' is a number if not already converted (e.g. if header was different)
-      if (typeof item.preco !== "number") {
-        item.preco = parseFloat(item.preco) || 0;
-      }
-      // Ensure 'disponivel' is a boolean if not already converted
-      if (typeof item.disponivel !== "boolean") {
-        item.disponivel = String(item.disponivel).toLowerCase() === "true";
-      }
-      items.push(item);
-    } else {
-      console.warn(`Skipping malformed CSV line: ${lines[i]}`);
-    }
-  }
-  return items;
-}
+// parseCSV function is no longer needed as data comes from Turso
+// function parseCSV(csvText) { ... }
 
 function initializeCategories(items) {
   const container = document.getElementById("category-filters");
@@ -404,54 +387,41 @@ function handleRemoveItemFromCart(itemName) {
 
 // New function to send order data to the backend
 async function sendOrderToBackend(orderData) {
-  const backendUrl = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"; // Placeholder
-  console.log("Attempting to send order to backend:", orderData);
-
-  // Reminder: The actual GAS backend (doPost function) will need to be deployed
-  // and this URL replaced with the correct script web app URL.
-  if (backendUrl === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
-    console.warn(
-      "Placeholder backend URL is being used. Order will not be sent to a live backend.",
-    );
-    // For demonstration, log what would be sent:
-    // alert(`Simulating send to backend: ${JSON.stringify(orderData)}`);
-    // To prevent actual fetch errors with placeholder, we can return early or mock success for now.
-    // Let's simulate a successful log for now for client-side flow.
-    return Promise.resolve({
-      status: "simulated_success",
-      message: "Order logged for backend (simulation).",
-      receivedData: orderData,
-    });
+  if (!db) {
+    console.error("Turso client not initialized. Cannot send order.");
+    alert("Erro ao enviar pedido: Conexão com o banco de dados falhou.");
+    return Promise.reject("DB not initialized");
   }
 
+  console.log("Attempting to send order to Turso:", orderData);
+
   try {
-    const response = await fetch(backendUrl, {
-      method: "POST",
-      // GAS doPost typically expects 'application/x-www-form-urlencoded' by default from forms,
-      // but can handle 'application/json' if parsed correctly from e.postData.contents.
-      // Or, mode 'no-cors' might be needed if GAS is not set up for CORS, but then response is opaque.
-      // For a JSON payload, text/plain is often easier with e.postData.contents.
-      headers: {
-        "Content-Type": "text/plain", // Sending as text/plain to be parsed from e.postData.contents
-      },
-      body: JSON.stringify(orderData),
+    const orderId = orderData.orderId;
+    const totalAmount = orderData.items.reduce((sum, item) => sum + item.preco * item.quantity, 0);
+    const timestamp = new Date().toISOString(); // Use ISO string for consistent storage
+
+    // Start a transaction
+    await db.transaction(async tx => {
+      // Insert into orders table
+      await tx.execute({
+        sql: "INSERT INTO orders (order_id, timestamp, customer_name, customer_phone, total_amount) VALUES (?, ?, ?, ?, ?)",
+        args: [orderId, timestamp, orderData.customerName || null, orderData.customerPhone || null, totalAmount]
+      });
+
+      // Insert into order_items table for each item
+      for (const item of orderData.items) {
+        await tx.execute({
+          sql: "INSERT INTO order_items (order_id, item_name, quantity, price_at_order) VALUES (?, ?, ?, ?)",
+          args: [orderId, item.nome, item.quantity, item.preco]
+        });
+      }
     });
 
-    if (!response.ok) {
-      // For opaque responses (mode: 'no-cors'), response.ok might not be accurate.
-      // However, with 'Content-Type': 'text/plain', we expect a normal response.
-      throw new Error(
-        `Backend responded with status: ${response.status} ${response.statusText}`,
-      );
-    }
-
-    const responseData = await response.json(); // Assuming GAS returns JSON
-    console.log("Response from backend:", responseData);
-    // alert(`Order sent to backend: ${responseData.message}`); // Optional user feedback
-    return responseData;
+    console.log("Order successfully saved to Turso:", orderId);
+    return { status: "success", message: "Order saved to Turso." };
   } catch (error) {
-    console.error("Error sending order to backend:", error);
-    // alert(`Error sending order to backend: ${error.message}`); // Optional user feedback
+    console.error("Error saving order to Turso:", error);
+    alert("Erro ao salvar o pedido no banco de dados. Tente novamente.");
     return Promise.reject(error);
   }
 }
@@ -463,47 +433,44 @@ function handleConfirmPayment() {
   }
   console.log("Payment confirmed (simulated). Order details:", cart);
 
-  // Create a copy of the cart at this moment for saving and sending
   const confirmedOrderItems = cart.map((item) => ({ ...item }));
-
-  saveOrderToHistory(confirmedOrderItems); // Save the confirmed order (with quantities)
-
-  // Create the payload for the backend
   const orderPayload = {
     orderId: "TEMBIU-WEB-" + Date.now(),
-    items: confirmedOrderItems, // This is already a copy of cart items with quantities
-    customerName: "", // Placeholder as customer name is not collected yet
-    customerPhone: "", // Placeholder as customer phone is not collected yet
+    items: confirmedOrderItems,
+    customerName: "",
+    customerPhone: "",
   };
 
-  // After saving, attempt to send to backend
   sendOrderToBackend(orderPayload)
     .then((backendResponse) => {
       console.log("sendOrderToBackend success:", backendResponse.message);
-      // Potentially show a more specific success message to user based on backendResponse
+      saveOrderToHistory(confirmedOrderItems); // Save to local history only after successful DB save
+      alert(
+        "Pagamento confirmado! Obrigado pelo seu pedido. Seu pedido foi salvo no banco de dados e localmente.",
+      );
     })
     .catch((error) => {
       console.error("sendOrderToBackend failed:", error.message);
-      // Potentially inform user that backend sync might have failed but order is saved locally
+      alert(
+        "Erro ao confirmar pagamento. O pedido pode não ter sido salvo no banco de dados, mas foi salvo localmente.",
+      );
+      saveOrderToHistory(confirmedOrderItems); // Still save to local history if DB fails
+    })
+    .finally(() => {
+      const pixDisplayContainer = document.getElementById("pix-display-container");
+      const addressContainer = document.getElementById("address-container");
+      const googlePayContainer = document.getElementById("google-pay-container");
+      if (pixDisplayContainer) pixDisplayContainer.style.display = "none";
+      if (addressContainer) addressContainer.style.display = "none";
+      if (googlePayContainer) googlePayContainer.style.display = "none";
+
+      cart = [];
+      updateCartDisplay();
+      loadOrderHistory();
+
+      const cartContainer = document.getElementById("cart-container");
+      if (cartContainer) cartContainer.style.display = "block";
     });
-
-  alert(
-    "Pagamento confirmado (simulação)! Obrigado pelo seu pedido. Seu pedido foi salvo localmente.",
-  );
-
-  const pixDisplayContainer = document.getElementById("pix-display-container");
-  const addressContainer = document.getElementById("address-container");
-  const googlePayContainer = document.getElementById("google-pay-container");
-  if (pixDisplayContainer) pixDisplayContainer.style.display = "none";
-  if (addressContainer) addressContainer.style.display = "none";
-  if (googlePayContainer) googlePayContainer.style.display = "none";
-
-  cart = []; // Clear the current cart
-  updateCartDisplay();
-  loadOrderHistory();
-
-  const cartContainer = document.getElementById("cart-container");
-  if (cartContainer) cartContainer.style.display = "block";
 }
 
 function saveOrderToHistory(currentCartItems) {
