@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
+                   script-src 'self' https://unpkg.com;
+                   style-src 'self' 'unsafe-inline';
+                   img-src 'self' data:;
+                   connect-src 'self' YOUR_TURSO_DATABASE_HOSTNAME_HERE wss://YOUR_TURSO_DATABASE_HOSTNAME_HERE;
+                   object-src 'none';
+                   base-uri 'self';
+                   form-action 'self';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Tembiu</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Basic styling for admin page, can be expanded -->
+    <style>
+        body { font-family: sans-serif; margin: 0; background-color: #f4f4f4; color: #333; }
+        header { background-color: #333; color: #fff; padding: 1em; text-align: center; }
+        nav { background-color: #444; padding: 1em; }
+        nav ul { list-style-type: none; padding: 0; margin: 0; text-align: center; }
+        nav ul li { display: inline; margin-right: 20px; }
+        nav ul li a { color: #fff; text-decoration: none; font-weight: bold; }
+        nav ul li a.active { text-decoration: underline; }
+        .container { padding: 20px; max-width: 1200px; margin: auto; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { color: #333; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        .admin-section { margin-bottom: 30px; }
+        label { display: block; margin-top: 10px; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"], input[type="number"], textarea, select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea { resize: vertical; min-height: 80px; }
+        button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+            margin-right: 5px;
+        }
+        button:hover { background-color: #4cae4c; }
+        button.danger { background-color: #d9534f; }
+        button.danger:hover { background-color: #c9302c; }
+        button.secondary { background-color: #f0ad4e; }
+        button.secondary:hover { background-color: #ec971f; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .action-buttons button { font-size: 0.9em; padding: 5px 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-inline-group { display: flex; align-items: center; margin-bottom: 10px; }
+        .form-inline-group label { margin-right: 10px; margin-bottom: 0; }
+        .form-inline-group input[type="checkbox"] { width: auto; margin-right: 5px; }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            nav ul li { display: block; margin-bottom: 10px; }
+            input[type="text"], input[type="number"], textarea, select {
+                width: 100%; /* Full width on smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tembiu - Painel Administrativo</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#menu-management" class="nav-link active" data-section="menu-management-section">Gerenciar Cardápio</a></li>
+            <li><a href="#restaurant-config" class="nav-link" data-section="restaurant-config-section">Configurações do Restaurante</a></li>
+            <li><a href="#order-management" class="nav-link" data-section="order-management-section">Gerenciar Pedidos</a></li>
+            <li><a href="#reports" class="nav-link" data-section="reports-section">Relatórios</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <section id="menu-management-section" class="admin-section active-section">
+            <h2>Gerenciar Cardápio</h2>
+            <form id="menu-item-form">
+                <input type="hidden" id="menu-item-id"> <!-- For editing -->
+                <div class="form-group">
+                    <label for="item-name">Nome do Item:</label>
+                    <input type="text" id="item-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="item-category">Categoria:</label>
+                    <input type="text" id="item-category" required>
+                </div>
+                <div class="form-group">
+                    <label for="item-price">Preço (R$):</label>
+                    <input type="number" id="item-price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="item-description">Descrição:</label>
+                    <textarea id="item-description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="item-emoji">Emoji (opcional):</label>
+                    <input type="text" id="item-emoji">
+                </div>
+                <div class="form-inline-group">
+                    <input type="checkbox" id="item-available" checked>
+                    <label for="item-available">Disponível</label>
+                </div>
+                <button type="submit" id="save-item-button">Salvar Item</button>
+                <button type="button" id="clear-form-button" class="secondary">Limpar Formulário</button>
+            </form>
+
+            <h3>Itens do Cardápio</h3>
+            <div class="search-bar-container">
+                <input type="search" id="admin-menu-search" placeholder="Buscar item no cardápio..." style="width: 100%; padding: 10px; margin-bottom: 15px;">
+            </div>
+            <table id="menu-items-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Categoria</th>
+                        <th>Preço</th>
+                        <th>Disponível</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody aria-live="polite" aria-relevant="all">
+                    <!-- Rows will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </section>
+
+        <section id="restaurant-config-section" class="admin-section" style="display: none;">
+            <h2>Configurações do Restaurante</h2>
+            <form id="restaurant-config-form">
+                <div class="form-group">
+                    <label for="config-name">Nome do Restaurante:</label>
+                    <input type="text" id="config-name" data-configkey="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="config-phone">Telefone (WhatsApp - formato internacional, ex: 5511999999999):</label>
+                    <input type="text" id="config-phone" data-configkey="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="config-cidade">Cidade (para PIX):</label>
+                    <input type="text" id="config-cidade" data-configkey="cidade" required>
+                </div>
+                <div class="form-group">
+                    <label for="config-delivery-fee">Taxa de Entrega (R$):</label>
+                    <input type="number" id="config-delivery-fee" step="0.01" data-configkey="deliveryFee">
+                </div>
+                <div class="form-group">
+                    <label for="config-emoji">Emoji do Restaurante (opcional):</label>
+                    <input type="text" id="config-emoji" data-configkey="emoji">
+                </div>
+                <div class="form-group">
+                    <label for="config-open-time">Horário de Abertura (HH:MM):</label>
+                    <input type="time" id="config-open-time" data-configkey="openTime">
+                </div>
+                <div class="form-group">
+                    <label for="config-close-time">Horário de Fechamento (HH:MM):</label>
+                    <input type="time" id="config-close-time" data-configkey="closeTime">
+                </div>
+                <div class="form-group">
+                    <label for="config-timezone">Fuso Horário (ex: America/Sao_Paulo):</label>
+                    <input type="text" id="config-timezone" data-configkey="timezone" placeholder="America/Sao_Paulo">
+                </div>
+                <div class="form-group">
+                    <label for="config-google-place-id">Google Place ID (opcional - para horários automáticos):</label>
+                    <input type="text" id="config-google-place-id" data-configkey="googlePlaceId" placeholder="ChIJN1t_tDeuEmsRUsoyG83frY4">
+                    <small>Use o <a href="https://developers.google.com/maps/documentation/places/web-service/place-id" target="_blank">Place ID Finder</a> para encontrar o ID do seu estabelecimento.</small>
+                </div>
+                <div class="form-group">
+                    <label for="config-notification-email">Email para Notificações de Pedidos (Restaurante):</label>
+                    <input type="email" id="config-notification-email" data-configkey="restaurantNotificationEmail" placeholder="restaurante@email.com">
+                </div>
+                <!-- Add more config fields as needed -->
+                <button type="submit" id="save-config-button">Salvar Configurações</button>
+                <button type="button" id="reset-config-button" class="secondary">Recarregar Configurações Atuais</button>
+            </form>
+        </section>
+
+        <section id="order-management-section" class="admin-section" style="display: none;">
+            <h2>Gerenciar Pedidos</h2>
+            <div class="filters">
+                <label for="order-status-filter">Filtrar por Status:</label>
+                <select id="order-status-filter">
+                    <option value="">Todos</option>
+                    <option value="Pending">Pendente</option>
+                    <option value="Confirmed">Confirmado</option>
+                    <option value="Preparing">Em Preparo</option>
+                    <option value="Out for Delivery">Saiu para Entrega</option>
+                    <option value="Delivered">Entregue</option>
+                    <option value="Cancelled">Cancelado</option>
+                </select>
+                <label for="order-date-filter">Filtrar por Data:</label>
+                <input type="date" id="order-date-filter">
+                <button id="apply-order-filters">Aplicar Filtros</button>
+            </div>
+            <table id="orders-table">
+                <thead>
+                    <tr>
+                        <th>ID do Pedido</th>
+                        <th>Data</th>
+                        <th>Cliente</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody aria-live="polite" aria-relevant="all">
+                    <!-- Order rows will be populated by JavaScript -->
+                </tbody>
+            </table>
+
+            <!-- Modal for Order Details -->
+            <div id="order-details-modal" class="modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+                <div class="modal-content">
+                    <button class="close-button" aria-label="Fechar modal" onclick="document.getElementById('order-details-modal').style.display='none'">&times;</button>
+                    <h3 id="modal-title">Detalhes do Pedido: <span id="modal-order-id"></span></h3>
+                    <p><strong>Data:</strong> <span id="modal-order-timestamp"></span></p>
+                    <p><strong>Cliente:</strong> <span id="modal-order-customer-name"></span> (<span id="modal-order-customer-phone"></span>)</p>
+                    <p><strong>Endereço:</strong> <span id="modal-order-address"></span></p>
+                    <p><strong>Total:</strong> R$ <span id="modal-order-total"></span></p>
+                    <h4>Itens:</h4>
+                    <ul id="modal-order-items-list"></ul>
+                    <div class="form-group">
+                        <label for="modal-order-status"><strong>Status Atual:</strong></label>
+                        <select id="modal-order-status-select">
+                            <option value="Pending">Pendente</option>
+                            <option value="Confirmed">Confirmado</option>
+                            <option value="Preparing">Em Preparo</option>
+                            <option value="Out for Delivery">Saiu para Entrega</option>
+                            <option value="Delivered">Entregue</option>
+                            <option value="Cancelled">Cancelado</option>
+                        </select>
+                        <button id="update-order-status-button" class="secondary">Atualizar Status</button>
+                        <button id="notify-customer-button" class="secondary" style="margin-left: 10px;" title="Funcionalidade de notificação em desenvolvimento">Notificar Cliente (Conceitual)</button>
+                        <button id="share-order-link-button" class="secondary" style="margin-left: 10px;">Compartilhar Link do Pedido</button>
+                    </div>
+                     <p><em>ID Interno DB: <span id="modal-order-db-id"></span></em></p>
+                </div>
+            </div>
+        </section>
+        <style>
+            .modal {
+                position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%;
+                overflow: auto; background-color: rgba(0,0,0,0.4); display: flex;
+                align-items: center; justify-content: center;
+            }
+            .modal-content {
+                background-color: #fefefe; margin: auto; padding: 20px;
+                border: 1px solid #888; width: 80%; max-width: 700px;
+                border-radius: 5px; position: relative;
+            }
+            .close-button {
+                color: #aaa; float: right; font-size: 28px; font-weight: bold;
+                position: absolute; top: 10px; right: 20px;
+            }
+            .close-button:hover, .close-button:focus {
+                color: black; text-decoration: none; cursor: pointer;
+            }
+            .filters { margin-bottom: 20px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+            .filters label { margin-right: 5px; }
+            .filters select, .filters input[type="date"], .filters button { padding: 8px; border-radius: 4px; border: 1px solid #ddd;}
+        </style>
+
+        <section id="reports-section" class="admin-section" style="display: none;">
+            <h2>Relatórios de Vendas</h2>
+            <div class="report-filters form-inline-group" style="margin-bottom: 20px;">
+                <label for="report-start-date">Data Início:</label>
+                <input type="date" id="report-start-date">
+                <label for="report-end-date" style="margin-left: 10px;">Data Fim:</label>
+                <input type="date" id="report-end-date">
+                <button id="generate-reports-button" style="margin-left: 10px;">Gerar Relatórios</button>
+            </div>
+
+            <div id="reports-output-container">
+                <div class="report-block">
+                    <h3>Sumário de Vendas</h3>
+                    <div id="sales-summary-report" aria-live="polite">
+                        <p>Selecione um período e clique em "Gerar Relatórios".</p>
+                    </div>
+                </div>
+                <hr style="margin: 20px 0;">
+                <div class="report-block">
+                    <h3>Itens Mais Vendidos (por Quantidade)</h3>
+                    <div id="popular-items-qty-report" aria-live="polite">
+                        <p>Selecione um período e clique em "Gerar Relatórios".</p>
+                    </div>
+                </div>
+                <hr style="margin: 20px 0;">
+                <div class="report-block">
+                    <h3>Itens Mais Vendidos (por Receita)</h3>
+                    <div id="popular-items-revenue-report" aria-live="polite">
+                        <p>Selecione um período e clique em "Gerar Relatórios".</p>
+                    </div>
+                </div>
+                <hr style="margin: 20px 0;">
+                <div class="report-block">
+                    <h3>Vendas por Categoria</h3>
+                    <div id="sales-by-category-report" aria-live="polite">
+                        <p>Selecione um período e clique em "Gerar Relatórios".</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <style>
+            /* Add some basic styling for report blocks */
+            .report-block { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border-radius: 4px; }
+            .report-block h3 { margin-top: 0; color: #337ab7; }
+            .report-block table { width: 100%; margin-top: 10px;}
+            .report-block th, .report-block td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd;}
+            .report-block th { background-color: #e9ecef; }
+        </style>
+    </div>
+
+    <!-- Turso Client -->
+    <script src="https://unpkg.com/@libsql/client@0.6.0/dist/index.js"></script>
+    <!-- Admin specific JS -->
+    <script src="js/admin.js"></script>
+</body>
+</html>

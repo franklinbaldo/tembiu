@@ -137,8 +137,118 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (themeToggleButton) themeToggleButton.textContent = "Tema Escuro";
   }
 
-  initOpenStatus();
+  // Check for shareable order URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const sharedOrderId = urlParams.get('order_id');
+
+  if (sharedOrderId) {
+    displaySharedOrderSummary(sharedOrderId);
+  } else {
+    // Normal page load: initialize menu, cart, history, etc.
+    initOpenStatus();
+    loadMenu();
+    loadOrderHistory();
+    // Hide summary container if it was somehow visible
+    const summaryContainer = document.getElementById("order-summary-container");
+    if (summaryContainer) summaryContainer.style.display = "none";
+  }
 });
+
+async function displaySharedOrderSummary(orderId) {
+    // Hide main content sections and show summary section
+    document.querySelector("header").style.display = "none"; // Optional: hide header too
+    document.querySelector("main").style.display = "none"; // Hide the main content area
+    const menuContainer = document.getElementById("menu-container");
+    if (menuContainer) menuContainer.style.display = "none";
+    const cartContainer = document.getElementById("cart-container");
+    if (cartContainer) cartContainer.style.display = "none";
+    const historyContainer = document.getElementById("order-history-container");
+    if (historyContainer) historyContainer.style.display = "none";
+    const analyticsContainer = document.getElementById("analytics-container");
+    if (analyticsContainer) analyticsContainer.style.display = "none";
+    const addressContainer = document.getElementById("address-container");
+    if (addressContainer) addressContainer.style.display = "none";
+    const pixContainer = document.getElementById("pix-display-container");
+    if (pixContainer) pixContainer.style.display = "none";
+    const googlePayContainer = document.getElementById("google-pay-container");
+    if (googlePayContainer) googlePayContainer.style.display = "none";
+
+
+    const summaryContainer = document.getElementById("order-summary-container");
+    const summaryContent = document.getElementById("order-summary-content");
+
+    if (!summaryContainer || !summaryContent) {
+        console.error("Order summary container elements not found.");
+        return;
+    }
+    summaryContainer.style.display = "block";
+    summaryContent.innerHTML = "<p>Carregando detalhes do pedido...</p>";
+
+    if (!db) {
+        summaryContent.innerHTML = "<p style='color:red;'>Erro: Conexão com banco de dados não configurada para buscar o pedido.</p>";
+        return;
+    }
+
+    try {
+        const orderRs = await db.execute({
+            sql: `SELECT order_id, timestamp, customer_name, customer_phone, total_amount, status,
+                         address_street, address_number, address_complement, address_neighborhood, address_city, address_cep
+                  FROM orders WHERE order_id = ?`,
+            args: [orderId]
+        });
+
+        if (orderRs.rows.length === 0) {
+            summaryContent.innerHTML = "<p>Pedido não encontrado.</p>";
+            return;
+        }
+        const order = orderRs.rows[0];
+
+        const itemsRs = await db.execute({
+            sql: "SELECT item_name, quantity, price_at_order FROM order_items WHERE order_id = ?",
+            args: [order.order_id]
+        });
+
+        let html = `
+            <p><strong>ID do Pedido:</strong> ${order.order_id}</p>
+            <p><strong>Data:</strong> ${new Date(order.timestamp).toLocaleString('pt-BR')}</p>
+            <p><strong>Status:</strong> ${order.status || 'N/A'}</p>
+            <p><strong>Total:</strong> R$ ${typeof order.total_amount === 'number' ? order.total_amount.toFixed(2) : 'N/A'}</p>
+        `;
+
+        const customerName = order.customer_name || "";
+        const customerPhone = order.customer_phone || "";
+        if (customerName || customerPhone) {
+            html += `<p><strong>Cliente:</strong> ${customerName} (${customerPhone})</p>`;
+        }
+
+        const addressParts = [
+            order.address_street, order.address_number, order.address_complement,
+            order.address_neighborhood, order.address_city, order.address_cep
+        ].filter(part => part).join(', ');
+        if (addressParts) {
+            html += `<p><strong>Endereço de Entrega:</strong> ${addressParts}</p>`;
+        }
+
+        html += "<h4>Itens do Pedido:</h4><ul>";
+        itemsRs.rows.forEach(item => {
+            html += `<li>${item.quantity}x ${item.item_name} - R$ ${(item.price_at_order * item.quantity).toFixed(2)}</li>`;
+        });
+        html += "</ul>";
+
+        // Display restaurant name from config if available (config should have loaded earlier, but this is a distinct flow)
+        if (restaurantConfig && restaurantConfig.name) {
+             html = `<h3>Pedido no ${restaurantConfig.name}</h3>` + html;
+        }
+
+
+        summaryContent.innerHTML = html;
+
+    } catch (error) {
+        console.error("Error fetching shared order details:", error);
+        summaryContent.innerHTML = `<p style='color:red;'>Erro ao buscar detalhes do pedido: ${error.message}</p>`;
+    }
+}
+
 
 function initOpenStatus() {
     const statusElem = document.getElementById("open-status");
@@ -290,19 +400,28 @@ function renderMenuItems(menuItems) {
         // Ensure item.preco is a number before calling toFixed
         const price =
           typeof item.preco === "number" ? item.preco.toFixed(2) : "N/A";
-        li.innerHTML = `
-                    <span>${item.emoji || "🍽️"} ${item.nome} (${item.categoria}) - R$ ${price}</span>
-                    <button class="add-to-cart-btn">Adicionar</button>
-                `;
-        li.querySelector(".add-to-cart-btn").addEventListener("click", () => {
-          addItemToCart(item); // item here is the original from menuItems
+        // Create elements manually to avoid potential XSS from item data if it contained HTML
+        const span = document.createElement("span");
+        span.textContent = `${item.emoji || "🍽️"} ${item.nome} (${item.categoria}) - R$ ${price}`;
+
+        const button = document.createElement("button");
+        button.classList.add("add-to-cart-btn");
+        button.textContent = "Adicionar";
+        button.addEventListener("click", () => {
+            addItemToCart(item);
         });
+
+        li.appendChild(span);
+        li.appendChild(button);
         ul.appendChild(li);
       }
     });
     menuContainer.appendChild(ul);
   } else {
-    menuContainer.innerHTML = "<p>Nenhum item encontrado.</p>";
+    menuContainer.innerHTML = ""; // Clear previous content
+    const p = document.createElement("p");
+    p.textContent = "Nenhum item encontrado.";
+    menuContainer.appendChild(p);
   }
 }
 
@@ -321,7 +440,98 @@ function addItemToCart(itemFromMenu) {
   }
   console.log(`${itemFromMenu.nome} processed for cart:`, cart);
   updateCartDisplay();
+  fetchAndDisplayItemSuggestions(itemFromMenu.nome); // Call suggestions
 }
+
+async function fetchAndDisplayItemSuggestions(itemName) {
+    if (!db) {
+        console.warn("Database not available, skipping suggestions.");
+        return;
+    }
+
+    console.log(`Fetching suggestions for item: ${itemName}`);
+
+    try {
+        const query = `
+            SELECT oi2.item_name, COUNT(oi2.item_name) as frequency
+            FROM order_items oi1
+            JOIN order_items oi2 ON oi1.order_id = oi2.order_id AND oi1.item_name != oi2.item_name
+            WHERE oi1.item_name = ?
+            GROUP BY oi2.item_name
+            ORDER BY frequency DESC
+            LIMIT 5;
+        `;
+        // Note: The LIMIT is 5 to get a few options, we'll filter cart items later.
+
+        const rs = await db.execute({
+            sql: query,
+            args: [itemName]
+        });
+
+        if (rs.rows.length > 0) {
+            let suggestionsHtml = "<strong>Talvez você também goste de:</strong><ul>";
+            let suggestionsFound = 0;
+
+            for (const row of rs.rows) {
+                const suggestedItemName = row.item_name;
+                // Check if suggested item is already in cart
+                const isInCart = cart.some(cartItem => cartItem.nome === suggestedItemName);
+                // Check if suggested item is the item itself (should be excluded by query, but double check)
+                const isSelf = itemName === suggestedItemName;
+
+                if (!isInCart && !isSelf && suggestionsFound < 2) { // Show up to 2 suggestions
+                    // Find the full item object to allow adding to cart
+                    const fullSuggestedItem = allMenuItems.find(menuItem => menuItem.nome === suggestedItemName && menuItem.disponivel);
+                    if (fullSuggestedItem) {
+                        suggestionsHtml += `<li>${suggestedItemName} - <button class="suggest-add-to-cart-btn" data-itemname="${encodeURIComponent(suggestedItemName)}">Adicionar</button></li>`;
+                        suggestionsFound++;
+                    }
+                }
+            }
+            suggestionsHtml += "</ul>";
+
+            const suggestionsContainer = document.getElementById("item-suggestions-container");
+            if (suggestionsContainer && suggestionsFound > 0) {
+                suggestionsContainer.innerHTML = suggestionsHtml;
+                suggestionsContainer.style.display = "block";
+
+                // Add event listeners to new suggestion buttons
+                document.querySelectorAll(".suggest-add-to-cart-btn").forEach(button => {
+                    button.addEventListener("click", (e) => {
+                        const itemNameEncoded = e.target.getAttribute("data-itemname");
+                        const itemNameDecoded = decodeURIComponent(itemNameEncoded);
+                        const itemToAdd = allMenuItems.find(menuItem => menuItem.nome === itemNameDecoded);
+                        if (itemToAdd) {
+                            addItemToCart(itemToAdd);
+                            // Optionally hide suggestions after adding one
+                            // suggestionsContainer.style.display = "none";
+                        }
+                    });
+                });
+
+            } else if (suggestionsContainer) {
+                suggestionsContainer.innerHTML = ""; // Clear if no valid suggestions
+                suggestionsContainer.style.display = "none";
+            }
+        } else {
+            const suggestionsContainer = document.getElementById("item-suggestions-container");
+            if (suggestionsContainer) {
+                suggestionsContainer.innerHTML = "";
+                suggestionsContainer.style.display = "none";
+            }
+            console.log(`No co-ordering pattern found for ${itemName}.`);
+        }
+
+    } catch (error) {
+        console.error(`Error fetching suggestions for ${itemName}:`, error);
+        const suggestionsContainer = document.getElementById("item-suggestions-container");
+        if (suggestionsContainer) {
+            suggestionsContainer.innerHTML = "<p>Não foi possível carregar sugestões.</p>";
+            suggestionsContainer.style.display = "block"; // Show error
+        }
+    }
+}
+
 
 function updateCartDisplay() {
   const cartItemsContainer = document.getElementById("cart-items");
@@ -398,14 +608,27 @@ async function sendOrderToBackend(orderData) {
   try {
     const orderId = orderData.orderId;
     const totalAmount = orderData.items.reduce((sum, item) => sum + item.preco * item.quantity, 0);
-    const timestamp = new Date().toISOString(); // Use ISO string for consistent storage
+    const timestamp = new Date().toISOString();
+    const initialStatus = "Pending"; // Initial order status
+
+    const address = orderData.address || {}; // Get address from payload
 
     // Start a transaction
     await db.transaction(async tx => {
       // Insert into orders table
+      // Ensure your 'orders' table has columns for status and address components
       await tx.execute({
-        sql: "INSERT INTO orders (order_id, timestamp, customer_name, customer_phone, total_amount) VALUES (?, ?, ?, ?, ?)",
-        args: [orderId, timestamp, orderData.customerName || null, orderData.customerPhone || null, totalAmount]
+        sql: `INSERT INTO orders (
+                    order_id, timestamp, customer_name, customer_phone, total_amount, status,
+                    address_street, address_number, address_complement,
+                    address_neighborhood, address_city, address_cep
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [
+            orderId, timestamp, orderData.customerName || null, orderData.customerPhone || null,
+            totalAmount, initialStatus,
+            address.street || null, address.number || null, address.complement || null,
+            address.neighborhood || null, address.city || null, address.cep || null
+        ]
       });
 
       // Insert into order_items table for each item
@@ -434,11 +657,14 @@ function handleConfirmPayment() {
   console.log("Payment confirmed (simulated). Order details:", cart);
 
   const confirmedOrderItems = cart.map((item) => ({ ...item }));
+  const deliveryAddress = getSavedAddress(); // Get the saved address
+
   const orderPayload = {
     orderId: "TEMBIU-WEB-" + Date.now(),
     items: confirmedOrderItems,
-    customerName: "",
-    customerPhone: "",
+    customerName: "", // Placeholder - consider adding form fields for this
+    customerPhone: "", // Placeholder - consider adding form fields for this
+    address: deliveryAddress // Include the address in the payload
   };
 
   sendOrderToBackend(orderPayload)

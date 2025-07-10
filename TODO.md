@@ -1,143 +1,124 @@
 # TODO - Tembiu App
 
 This TODO list is derived from the project's `README.md` and aims to guide development.
+The application now uses **Turso** as its primary backend for menu, configuration, and order data, managed via a new **Admin Panel (`admin.html`)**.
 
-## Phase 1: Implement Core v1.0 Functionality (from README)
+## Phase 1: Core v1.0 Functionality (Mostly Complete, Evolved with Turso)
 
-- [~] **Task:** Basic responsive template and menu loading.
-  - **Details:** HTML structure, CSS styling, JavaScript for fetching, parsing, and displaying `menu.csv`. Interactive menu items with "add to cart" functionality. Basic cart display (items and total with quantity). Functional item removal from cart. CSS media queries added for improved responsiveness across screen sizes. **Header now dynamically displays `restaurantConfig.name`.**
-  - **Status:** Initial structure and functionality implemented. Cart quantity handling and item removal added. Responsiveness improved. Dynamic restaurant name in header. Further UI refinements may be needed.
-  - **Rationale:** Foundation for all other v1.0 features.
+- [x] **Task:** Basic responsive template and menu loading.
+  - **Details:** HTML structure, CSS styling. JavaScript now fetches menu from **Turso DB**. Interactive menu items with "add to cart" functionality. Basic cart display (items and total with quantity). Functional item removal from cart. CSS media queries for responsiveness. Header dynamically displays restaurant name from **Turso config**.
+  - **Status:** Core functionality implemented and stable. Menu and config are database-driven.
 - [x] **Task:** PIX Integration.
-  - **Details:** Implemented `gerarPixCopiaECola` and `generateAndDisplayPix` for BR Code compliant QR generation.
+  - **Details:** Implemented `gerarPixCopiaECola` and `generateAndDisplayPix` for BR Code compliant QR generation. Uses restaurant details from **Turso config**.
   - **Status:** PIX QR code and copia e cola seguem o padrão oficial BR Code.
-  - **Rationale:** Core payment method for the app.
 - [x] **Task:** Coleta de Endereço de Entrega.
-  - **Details:** Formulário simples em `index.html` salva o endereço em `localStorage` e é exigido antes do pagamento.
+  - **Details:** Formulário simples em `index.html` salva o endereço em `localStorage`. Endereço is included in order data sent to **Turso DB**.
   - **Status:** Endereço incluído no pedido e na mensagem do WhatsApp.
-  - **Rationale:** Essencial para pedidos de entrega.
-- [~] **Task:** WhatsApp Integration (Placeholder/Conceptual).
-  - **Details:** WhatsApp share button UI is in place. `handleWhatsAppShare` formats cart data and opens a `wa.me` link. **Client-side `restaurantConfig` (name, phone) added and used in message and `wa.me` link.**
-  - **Status:** JS logic for `wa.me` link and basic config implemented. Further enhancements could include UI for config.
-  - **Rationale:** Core communication method for orders.
+- [x] **Task:** WhatsApp Integration.
+  - **Details:** WhatsApp share button UI is in place. `handleWhatsAppShare` formats cart data (including address) and opens a `wa.me` link using phone number from **Turso config**.
+  - **Status:** Functional.
 - [x] **Task:** Basic PWA Features.
   - **Sub-Task:** [x] Create and link `manifest.json`.
   - **Sub-Task:** [x] Implement basic service worker for offline caching of static assets.
-  - **Rationale:** Improves user experience with app-like features and offline access, as per v1.0.
-- [x] **Task:** Smart History (Conceptual).
-  - **Details:** Orders are saved to LocalStorage after simulated payment (now with quantities). Past orders (with quantities) are displayed with a functional "Order Again" button that repopulates the cart. Cart is cleared after checkout.
-  - **Status:** Basic LocalStorage save/load and UI implemented. "Order Again" is functional.
-  - **Rationale:** Key usability feature for repeat customers.
-
+  - **Rationale:** Improves user experience with app-like features and offline access.
+- [x] **Task:** Smart History (Local).
+  - **Details:** Orders are saved to LocalStorage after simulated payment. Past orders are displayed with a functional "Order Again" button. Cart is cleared after checkout.
+  - **Status:** Functional for client-side history.
 - [x] **Task:** Set up Local Development Environment.
-  - **Details:** Documentation created in `docs/local_development_setup.md`. Documented and tested the steps for setting up a local development environment (as per `README.md`'s "Clone Local" option). Ensured it's easy for new contributors to get started.
+  - **Details:** Documentation created in `docs/local_development_setup.md`.
   - **Rationale:** Essential for any further development or contributions.
+- [x] **Task:** Security Hardening (Client-Side).
+  - **Details:** Added Content Security Policy (CSP) headers to `index.html` and `admin.html`. Refactored some DOM manipulation to prefer `textContent` over `innerHTML` where appropriate.
+  - **Status:** Basic CSP implemented. User needs to configure Turso hostname in CSP.
+- [x] **Task:** UI/UX Refinements for Admin Panel.
+  - **Details:** Implemented button disabling/text changes during async operations. Added loading states. Consolidated `DOMContentLoaded` logic. Added reset button to config form.
+  - **Status:** Completed for current scope.
 
-## Phase 2: Roadmap Implementation (Next Steps from README)
+## Phase 2: Backend, Admin Panel & Advanced Features (Turso-based)
 
-- [x] **Task:** Begin v1.1 - Google Apps Script Integration (Backend).
-  - **Sub-Task:** [x] Design basic Google Apps Script structure for backend logic (e.g., handling orders, analytics). (Implemented in `backend/google_apps_script_backend.gs.js` and `js/main.js` updated).
-  - **Sub-Task:** [x] Implement a function in GAS to log new orders to a Google Sheet. (Completed in `backend/google_apps_script_backend.gs.js`).
-  - **Sub-Task:** [x] Document how to set up and deploy this GAS backend. (Documentation created in `docs/google_apps_script_setup.md`).
-  - **Rationale:** This is the first unchecked major item in the `README.md` roadmap (v1.1) and adds significant value through data persistence and automation.
-- [ ] **Task:** Build Administrative Dashboard.
-  - **Details:** Use Google Apps Script or Google Data Studio to visualize orders and key metrics from the spreadsheet.
-  - **Rationale:** Gives restaurant owners real-time insights into sales.
-- [ ] **Task:** Implement Automated Email Notifications.
-  - **Details:** Configure GAS to send order confirmations or periodic summaries via email.
-  - **Rationale:** Streamlines communication with customers and staff.
-- [ ] **Task:** Generate Sales Reports.
-  - **Details:** Add GAS functions to compile daily or weekly sales reports from logged orders.
-  - **Rationale:** Facilitates performance tracking and inventory planning.
-- [ ] **Task:** Provide Webhook Endpoints for Integrations.
-  - **Details:** Expose simple GAS webhooks so external systems can receive new order data.
-  - **Rationale:** Enables integration with other services and automation tools.
+- [x] **Task:** Implement Turso Backend Integration.
+  - **Details:** Replaced CSV/GAS with Turso for menu, restaurant configuration, and order persistence. `js/main.js` and new `js/admin.js` interact directly with Turso.
+  - **Status:** Core integration complete.
+- [x] **Task:** Build Administrative Dashboard (`admin.html`).
+  - **Sub-Task:** [x] Menu Management (CRUD operations via Turso).
+  - **Sub-Task:** [x] Restaurant Configuration Management (edit settings stored in Turso).
+  - **Sub-Task:** [x] Order Management (View orders from Turso, filter by status/date, update order status).
+  - **Rationale:** Empowers restaurant owners with direct control over their digital menu and operations.
+- [x] **Task:** Generate Sales Reports (Admin Panel).
+  - **Details:** Implemented basic sales reports in `admin.html` (Sales Summary, Popular Items by Qty/Revenue, Sales by Category) querying Turso data.
+  - **Rationale:** Provides insights into sales performance.
+- [x] **Task:** Implement Shareable Order URLs.
+  - **Details:** Generated URLs (`index.html?order_id=<ID>`) display a read-only summary of a specific order fetched from Turso. Share button in admin panel.
+  - **Status:** Implemented.
+- [x] **Task:** Basic Smart Scheduling System - Phase 1 (Manual Config).
+  - **Details:** Restaurant open/close times and timezone configured via Admin Panel (Turso `restaurant_config`) and used by `js/main.js` to display "Open" / "Closed" status.
+  - **Status:** Implemented.
+- [~] **Task:** Smart Scheduling System - Phase 2 (Google Maps Integration - Conceptual).
+  - **Details:** Conceptual design for integrating Google Places API (via serverless proxy) to fetch real-time hours. Added `googlePlaceId` to admin config.
+  - **Status:** Documented in `docs/google_maps_scheduling_conceptual.md`. No live code.
+- [x] **Task:** Implement Basic Contextual Item Suggestions.
+  - **Details:** When an item is added to cart, `js/main.js` queries Turso for frequently co-ordered items and displays simple suggestions.
+  - **Status:** Implemented.
+- [~] **Task:** Implement Automated Email Notifications (Conceptual).
+  - **Details:** Conceptual design for using a serverless function and email service (e.g., Resend) for order confirmations and restaurant notifications. Added placeholder email fields.
+  - **Status:** Documented in `docs/automated_email_notifications_conceptual.md`. No live code.
+- [ ] **Task:** Provide Webhook Endpoints for Integrations (Conceptual for Turso).
+  - **Details:** (Future) Research how to trigger or expose data from Turso for external integrations, likely via serverless functions.
+  - **Rationale:** Enables integration with other services.
 - [ ] **Task:** Research Open Source Store Frameworks.
   - **Details:** Evaluate solutions like WooCommerce, Magento Open Source, PrestaShop, OpenCart e Odoo.
-  - **Rationale:** Identificar recursos que possamos reutilizar ou integrar mantendo o espírito open source.
+  - **Rationale:** Identificar recursos que possamos reutilizar ou integrar mantendo o espírito open source. (Low priority given current custom path).
 - [x] **Task:** Integrar Pagamento via Google Pay.
-  - **Details:** Adicionar botão Google Pay no front-end utilizando a API `google.payments.api`.
-  - **Rationale:** Oferecer uma alternativa de pagamento digital amplamente usada.
-- [~] **Task:** Refine `menu.csv` and `menu.json` examples and documentation.
-  - **Sub-Task:** [x] Main `README.md`'s `menu.csv` example refined and linked to detailed guide in `docs/README.md#configuration`.
-  - **Sub-Task:** [x] Provide a sample `menu.json` file in the repository (e.g., `menu_example.json`).
-  - **Sub-Task:** [x] Document the structure and usage of `menu.json` in `docs/README.md` (filling the placeholder).
+  - **Details:** Google Pay button integration present in `index.html` and `js/google_pay.js`.
+  - **Status:** Client-side integration exists. User configuration needed.
+- [~] **Task:** Refine Menu Data Structure (Now Database Schema).
+  - **Details:** Menu structure is now defined by the `menu_items` table in Turso (name, category, price, description, emoji, available).
+  - **Status:** Schema defined and used. Documentation on schema could be added.
+- [x] **Task:** Review and Enhance Documentation (`docs/`).
+  - **Sub-Task:** [x] `docs/local_development_setup.md` (Exists).
+  - **Sub-Task:** [x] `docs/google_apps_script_setup.md` (Exists, but less relevant now).
+  - **Sub-Task:** [x] `docs/admin_panel_guide.md` (NEW - How to use the new admin panel).
+  - **Sub-Task:** [x] `docs/manual_testing_checklist.md` (NEW - For testing current features).
+  - **Sub-Task:** [x] `docs/push_notifications_conceptual.md` (NEW - Conceptual design).
+  - **Sub-Task:** [x] `docs/google_maps_scheduling_conceptual.md` (NEW - Conceptual design).
+  - **Sub-Task:** [x] `docs/automated_email_notifications_conceptual.md` (NEW - Conceptual design).
+  - **Sub-Task:** [ ] Update main `docs/README.md` and other general docs to reflect Turso architecture.
+  - **Rationale:** Comprehensive and clear documentation is key.
 
-  - **Sub-Task:** [x] Implement or verify client-side logic in `js/main.js` to load and parse `menu.json` if `menu.csv` is not found or if a configuration points to JSON.
-
-  - **Rationale:** Crucial for new users to quickly understand how to configure their menus using either format.
-
-- [~] **Task:** Review and Enhance Documentation (`docs/`).
-  - **Sub-Task:** [x] Initial `docs/README.md` created. Menu (`menu.csv`) and basic Restaurant Settings configuration sections populated with details.
-  - **Sub-Task:** [x] Local development setup guide created (`docs/local_development_setup.md`).
-  - **Sub-Task:** [x] Google Apps Script setup guide created (`docs/google_apps_script_setup.md`).
-  - **Sub-Task:** [x] Populate placeholder sections in `docs/README.md`: "Getting Started," "Features" (detailing existing ones like PWA, PIX, WhatsApp, History), "Technical Architecture," "Contributing," and "Troubleshooting."
-  - **Sub-Task:** [x] Ensure all documentation links are correct and working.
-  - **Rationale:** Comprehensive and clear documentation is key for user adoption and contributions.
-
-- [x] **Task:** Refine UI/UX for Core Features.
-  - **Details:** Improve visual hierarchy and spacing of menu, cart, PIX display, and order history. Ensure better responsiveness. Add loading indicators. Design user-friendly quantity management in cart. **[Cart quantity handling implemented. CSS active styles for button feedback added. Placeholder 'Remover' buttons added to cart items, now fully functional. Dynamic display of restaurant name in header implemented.]**
-  - **Rationale:** Enhance usability and align with the "premium experience" goal from `README.md`.
+- [x] **Task:** Refine UI/UX for Core Features (Ongoing).
+  - **Details:** Ongoing improvements to main UI and admin panel.
 - [x] **Task:** Implement Real PIX QR Code Generation (Client-Side).
-  - **Details:** Integrated `qrcode.js` library (via CDN). `handleCheckout` now generates a real QR code image/canvas using a structured PIX data string (simulated BR Code: Phone, Order ID, Items, Location placeholder). CSS for QR display updated.
-  - **Rationale:** Move PIX feature from placeholder to a functional (client-side) state.
+  - **Status:** Functional.
 - [x] **Task:** Develop WhatsApp Web Intent Integration.
-  - **Details:** `handleWhatsAppShare` constructs and opens a `https://wa.me/` URL with the pre-filled order message (including quantities) for sharing.
-  - **Rationale:** Make WhatsApp sharing functional, improving restaurant communication.
+  - **Status:** Functional.
 - [x] **Task:** Enhance "Order Again" Functionality.
-  - **Details:** Modify `handleOrderAgain` to repopulate the current cart with items from a selected past order. Provide user feedback.
-  - **Rationale:** Make the "Smart History" feature more useful for re-ordering.
-
-## Phase 3: Feature Enhancements (Derived from README and Project Goals)
-
-- [ ] **Task:** Implement Shareable Order URLs (v1.x).
-  - **Sub-Task:** Design URL structure and data encoding/decoding mechanism (e.g., Base64 or JSON compressed in URL params).
-  - **Sub-Task:** Implement client-side logic in `js/main.js` to generate a shareable URL upon order completion/checkout.
-  - **Sub-Task:** Develop a mechanism or page (potentially reusing `index.html` with specific URL params) to display a read-only summary of an order when accessed via a shareable URL.
-  - **Sub-Task:** Add UI elements for copying/sharing the generated URL.
-  - **Rationale:** Key unique feature mentioned in README, enhances professionalism and sharing.
-- [~] **Task:** Basic Smart Scheduling System - Phase 1 (v1.x).
-  - **Sub-Task:** [x] Add restaurant open/close times and timezone to `restaurantConfig` in `js/main.js`.
-  - **Sub-Task:** [x] Implement logic in `js/main.js` to display a simple "Open" / "Closed" status based on current time and configured hours.
-  - **Sub-Task:** (Future) Consider disabling "Add to Cart" or "Checkout" if closed, or allow pre-orders.
-  - **Rationale:** First step towards "Sistema de Horários Inteligente" from README. Full Google Maps integration is a larger future phase.
-- [ ] **Task:** Implement Basic Contextual Item Suggestions (v1.x).
-  - **Sub-Task:** When an item is added to cart, check order history (localStorage) for frequently co-ordered items.
-  - **Sub-Task:** If a pattern is found (e.g., "Pizza often ordered with Coke"), display a simple non-intrusive suggestion (e.g., a toast message or a small section below cart).
-  - **Sub-Task:** Ensure this is lightweight and doesn't overly complicate the UI.
-  - **Rationale:** Initial step for "Sugestões por IA" from README.
-- [x] **Task:** Implement Dark/Light Mode Theme Toggle (v1.x).
-  - **Sub-Task:** [x] Define CSS variables for color schemes (light and dark).
-  - **Sub-Task:** [x] Add a UI toggle (e.g., in the header or footer).
-  - **Sub-Task:** [x] Implement JS to switch themes and save user preference in localStorage.
-  - **Rationale:** UI/UX enhancement listed in README.
-- [x] **Task:** Implement "Clear Order History" Button (v1.x).
-  - **Sub-Task:** Add a "Clear History" button to the order history section in `index.html`.
-  - **Sub-Task:** Implement `handleClearHistory()` function in `js/main.js` to remove `tembiuOrderHistory` from localStorage and update the UI.
-  - **Sub-Task:** Add a confirmation prompt before clearing.
-  - **Rationale:** Fulfills "Direito ao esquecimento" mentioned in README.
-- [x] **Task:** Display Basic Client-Side Analytics (v1.x).
-  - **Sub-Task:** Create a new section/modal in `index.html` for analytics.
-  - **Sub-Task:** In `js/main.js`, add functions to calculate and display simple metrics from `localStorage` order history:
-    - Total number of orders made.
-    - Average order value.
-    - List of most frequently ordered items.
-  - **Sub-Task:** Ensure this data is presented clearly.
-  - **Rationale:** Provides insights for the restaurant owner as per README.
-
+  - **Status:** Functional.
+- [x] **Task:** Implement Dark/Light Mode Theme Toggle.
+  - **Status:** Functional.
+- [x] **Task:** Implement "Clear Order History" Button.
+  - **Status:** Functional.
+- [x] **Task:** Display Basic Client-Side Analytics.
+  - **Status:** Functional (based on localStorage history).
 - [x] **Task:** Implement Client-Side Menu Search Functionality.
-  - **Details:** Wire up the search input (`#menu-search`) to filter items conforme o usuário digita.
-  - **Rationale:** Facilita encontrar pratos rapidamente.
+  - **Status:** Functional.
 - [x] **Task:** Implement Client-Side Category Filtering.
-  - **Details:** Permitir filtragem por categoria usando botões gerados do cardápio.
-  - **Rationale:** Melhora a navegação entre diferentes tipos de itens.
+  - **Status:** Functional.
 
-## Future Phases (High-Level from README Roadmap)
+## Phase 3: Future Enhancements (High-Level from README Roadmap)
 
-- [ ] Implement v1.2 - PWA Avançado (Push notifications, advanced offline, geolocation, A11Y).
-- [ ] Implement v1.3 - Pagamentos Híbridos (Advanced PIX, card machine, loyalty points).
-- [ ] Explore v2.0 - Marketplace (Premium templates, plugins).
-- [ ] Develop v2.1 - IA Avançada (Chatbot, ML recommendations).
-- [ ] Build v3.0 - Ecossistema (Multi-restaurant, API, delivery integration).
+- [~] **Task:** Implement v1.2 - PWA Avançado.
+  - **Sub-Task:** [~] Push notifications (Conceptual design done).
+  - **Sub-Task:** [ ] Advanced offline (e.g., queue orders offline, sync when online).
+  - **Sub-Task:** [ ] Geolocation (e.g., for delivery fee calculation or finding nearby stores if multi-restaurant).
+  - **Sub-Task:** [ ] A11Y (Accessibility Review - basic pass planned).
+- [ ] **Task:** Implement v1.3 - Pagamentos Híbridos.
+  - **Sub-Task:** [ ] PIX avançado com comprovante (e.g., webhook confirmation from payment gateway).
+  - **Sub-Task:** [ ] Cartão via maquininha (e.g., integration with POS or payment terminal APIs).
+  - **Sub-Task:** [ ] Sistema de pontos/fidelidade.
+- [ ] **Task:** Explore v2.0 - Marketplace (Premium templates, plugins).
+- [ ] **Task:** Develop v2.1 - IA Avançada (Chatbot, ML recommendations beyond current basic).
+- [ ] **Task:** Build v3.0 - Ecossistema (Multi-restaurant, API, delivery integration).
 
-**Note on `[~]`:** Indicates task is partially complete or in progress.
+**Note on `[~]`:** Indicates task is partially complete, in progress, or conceptually designed.
+**Note on `[x]`:** Indicates task is considered complete for its current scope.
+**Note on `[ ]`:** Indicates task is not yet started or significantly implemented.

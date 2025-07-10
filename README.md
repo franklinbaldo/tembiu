@@ -127,15 +127,21 @@ googlePlaceId: "ChIJN1t_tDeuEmsRUsoyG83frY4"
 - ✅ **WhatsApp Business** - pedidos formatados automaticamente
 - ✅ **Coleta de Endereço** - formulário simples de entrega integrado
 - ✅ **PWA Instalável** - funciona como app nativo
-- ✅ **Histórico Inteligente** - "pedir novamente" com 1 clique
-- ✅ **Sugestões por IA** - baseadas no comportamento do cliente
-- ✅ **URLs Compartilháveis** - links únicos para cada pedido 🆕
-- ✅ **Horários Google Maps** - sincronização automática
-- ✅ **Status em Tempo Real** - aberto/fechado automático
-- ✅ **Dark/Light Mode (Modo Escuro/Claro)** - experiência premium com tema adaptável 🌓
-- ✅ **Busca e Filtros de Cardápio** - encontre itens por nome ou categoria
-- ✅ **Offline-First** - funciona sem internet
-- ✅ **LGPD Compliant** - dados locais, privacidade total
+- ✅ **Histórico Inteligente (Local)** - "pedir novamente" com 1 clique (pedidos salvos no navegador).
+- ✅ **Sugestões Contextuais de Itens** - sugere itens com base no histórico de pedidos (requer dados no Turso).
+- ✅ **URLs Compartilháveis de Pedidos** - links únicos para cada pedido, visualizáveis por qualquer pessoa.
+- ✅ **Sistema de Horários (Manual + Conceito Google Maps)** - status Aberto/Fechado com base em horários manuais; design conceitual para integração com Google Maps.
+- ✅ **Status em Tempo Real (Manual)** - aberto/fechado automático com base nos horários configurados.
+- ✅ **Dark/Light Mode (Modo Escuro/Claro)** - experiência premium com tema adaptável 🌓.
+- ✅ **Busca e Filtros de Cardápio** - encontre itens por nome ou categoria.
+- ✅ **Offline-First (Cache de Assets)** - PWA armazena assets estáticos para acesso offline.
+- ✅ **LGPD Compliant (Dados Locais)** - dados de pedidos locais e configurações de tema no navegador; dados de pedidos e cardápio centralizados no Turso (requer atenção do usuário à LGPD e termos do Turso).
+- ✅ **Painel Administrativo (`admin.html`)** 🆕:
+    - **Gerenciamento de Cardápio Completo (CRUD)**: Adicione, edite e remova itens do cardápio diretamente no banco de dados Turso.
+    - **Configuração do Restaurante**: Altere nome, telefone, horários, taxas, e outras configurações armazenadas no Turso.
+    - **Gerenciamento de Pedidos**: Visualize todos os pedidos recebidos, filtre por status ou data, e atualize o status dos pedidos (ex: Pendente -> Confirmado -> Em Preparo).
+    - **Relatórios de Vendas**: Gere relatórios básicos de vendas, itens populares e vendas por categoria.
+- ✅ **Segurança Aprimorada (CSP)** - Headers de Content Security Policy para maior proteção.
 
 ### 🔎 **Busca e Filtragem**
 
@@ -167,11 +173,26 @@ Clique em **Todos** para remover o filtro de categoria.
 
 ### **Opção 2: Fork Tradicional**
 
-1. **Fork** este repositório
-2. **Edite** `index.html` - seção `CONFIG` (nome, telefone, emoji)
-3. **Crie** arquivo `menu.csv` com seus pratos
-4. **Ative** GitHub Pages (Settings → Pages → Source: main)
-5. **Acesse** `seuusuario.github.io/tembiu`
+1.  **Fork** este repositório.
+2.  **Configure o Turso**:
+    *   Crie uma conta gratuita no [Turso](https://turso.tech/).
+    *   Instale o CLI do Turso: `brew install tursodatabase/tap/turso` (macOS/Linux) ou veja outras opções na [documentação do Turso](https://docs.turso.tech/quickstart#install-turso-cli).
+    *   Crie um novo banco de dados: `turso db create nome-do-seu-banco`.
+    *   Obtenha a URL do banco: `turso db show nome-do-seu-banco --url`.
+    *   Crie um token de autenticação: `turso db tokens create nome-do-seu-banco`.
+    *   **Execute o schema SQL inicial** no seu banco Turso. Você pode encontrar o schema em `docs/schema_turso.sql` (este arquivo precisará ser criado com as tabelas: `menu_items`, `restaurant_config`, `orders`, `order_items`).
+3.  **Edite `js/main.js` e `js/admin.js`**:
+    *   Substitua `YOUR_TURSO_DATABASE_URL_HERE` pela URL do seu banco Turso.
+    *   Substitua `YOUR_TURSO_AUTH_TOKEN_HERE` pelo token de autenticação gerado.
+    *   **Importante**: O token de autenticação ficará exposto no lado do cliente. Para produção, considere um backend proxy ou regras de segurança mais rígidas no Turso se disponíveis para tokens de leitura/escrita limitados.
+4.  **Edite `index.html` e `admin.html` (CSP)**:
+    *   Substitua `YOUR_TURSO_DATABASE_HOSTNAME_HERE` no `Content-Security-Policy` pela hostname do seu banco Turso (ex: `meu-banco.turso.io`).
+5.  **Popule o Cardápio e Configurações Iniciais**:
+    *   Acesse `admin.html` no seu ambiente local (após servir os arquivos estáticos).
+    *   Use a seção "Gerenciar Cardápio" para adicionar seus itens.
+    *   Use a seção "Configurações do Restaurante" para definir os detalhes do seu restaurante.
+6.  **Ative** GitHub Pages (Settings → Pages → Source: main) ou faça deploy em outra plataforma de hospedagem estática.
+7.  **Acesse** seu cardápio online!
 
 ### **Opção 3: Clone Local**
 
@@ -186,55 +207,32 @@ cd tembiu
 
 ## 📋 **Configuração do Cardápio**
 
-### **CSV Simples (Recomendado)**
+### **Gerenciamento via Painel Administrativo (Recomendado)**
 
-Crie `menu.csv` editável no Excel/Google Sheets:
+Com a integração do Turso, o cardápio e as configurações do restaurante são gerenciados diretamente através do **Painel Administrativo (`admin.html`)**.
 
-```csv
-nome,categoria,preco,descricao,emoji,disponivel
-Pizza Margherita,pizzas,26.90,Molho de tomate fresco, mussarela de búfala, manjericão.,🍕,true
-Spaghetti Carbonara,massas,32.50,Massa fresca com ovos, pancetta, queijo Pecorino Romano e pimenta preta.,🍝,true
-Coca-Cola,bebidas,5.00,Lata 350ml.,🥤,true
-Suco de Laranja Natural,bebidas,8.00,Feito com laranjas frescas, 500ml.,🍊,true
-Brownie com Sorvete,sobremesas,18.00,Brownie de chocolate meio amargo com uma bola de sorvete de creme.,🍰,false
-```
+1.  **Acesse `admin.html`** no seu navegador (após configurar o Turso e servir os arquivos).
+2.  Use a seção **"Gerenciar Cardápio"** para adicionar, editar ou excluir itens.
+3.  Use a seção **"Configurações do Restaurante"** para definir nome, telefone, horários, etc.
 
-Para informações mais detalhadas sobre a estrutura do `menu.csv` e outras opções de configuração, consulte nosso [Guia de Configuração](docs/README.md#configuration).
+Consulte o [Guia do Painel Administrativo](docs/admin_panel_guide.md) para instruções detalhadas.
 
-### **JSON Avançado**
+### **Estrutura de Dados (Informativo - Gerenciado pelo Admin Panel)**
 
-Crie `menu.json` para máxima flexibilidade:
+As informações do cardápio são armazenadas na tabela `menu_items` no Turso com colunas como: `nome`, `categoria`, `preco`, `descricao`, `emoji`, `disponivel`.
 
-```json
-[
-  {
-    "name": "Pizza Margherita",
-    "category": "pizzas",
-    "price": 26.9,
-    "description": "Molho de tomate, mussarela de búfala, manjericão fresco",
-    "emoji": "🍕",
-    "available": true
-  }
-]
-```
+As configurações do restaurante são armazenadas na tabela `restaurant_config` no Turso como pares chave-valor (ex: `name: "Nome do Restaurante"`).
 
-### **Configurações do Restaurante**
+### **Configuração Inicial do Turso (Essencial)**
 
-Edite no `index.html`:
+Antes de usar o Painel Administrativo, você **precisa**:
+1.  Configurar seu banco de dados Turso (URL e Token) nos arquivos `js/main.js` e `js/admin.js`.
+2.  Configurar o hostname do Turso nas políticas CSP em `index.html` e `admin.html`.
+3.  Criar as tabelas necessárias no seu banco Turso usando um schema SQL. Um exemplo de schema (`docs/schema_turso.sql`) deve ser criado e fornecido no repositório para facilitar este passo. (Nota: Este arquivo precisa ser criado).
 
-```javascript
-const CONFIG = {
-  restaurant: {
-    name: "Seu Restaurante",
-    phone: "5511999999999", // WhatsApp
-    deliveryFee: 5.0,
-    emoji: "🍽️",
-  },
-};
-```
-
-📖 **[Guia Completo de Configuração](docs/configuration.md)**
-📖 **[Google Pay Setup](docs/google_pay_setup.md)**
+📖 **[Guia do Painel Administrativo](docs/admin_panel_guide.md)**
+📖 **[Google Pay Setup](docs/google_pay_setup.md)** (Permanece relevante para o cliente)
+📖 **[Configuração do Turso (Ver Instalação Rápida)](README.md#opção-2-fork-tradicional)**
 
 ---
 
@@ -275,18 +273,27 @@ const CONFIG = {
 ├── 🎨 CSS3 + Variáveis CSS
 ├── ⚡ Vanilla JavaScript (ES6+)
 ├── 📱 PWA com Service Worker
-└── 🔄 LocalStorage para dados
+├── 📦 Gerenciador de Pacotes (NPM/Yarn, se aplicável para dependências como @libsql/client)
+└── 🔄 LocalStorage para dados do cliente (carrinho, histórico local, tema)
 ```
 
-### **Backend Opcional (Google Apps Script)**
+### **Backend (Turso Database + Serverless Functions Conceituais)**
 
 ```
-├── 📊 Google Sheets como banco
-├── 🔄 Automações via GAS
-├── 📧 Emails automáticos
-├── 📈 Dashboard de vendas
-└── 🔗 Webhooks para integração
+├── 💾 Turso (SQLite distribuído) como Banco de Dados Principal para:
+│   ├── 🍕 Cardápio (menu_items)
+│   ├── ⚙️ Configurações do Restaurante (restaurant_config)
+│   └── 🛒 Pedidos (orders, order_items)
+├── ⚡ Acesso direto ao Turso via cliente JavaScript (@libsql/client) em:
+│   ├── `js/main.js` (leitura de cardápio/config, escrita de pedidos)
+│   └── `js/admin.js` (CRUD completo para cardápio, config, pedidos)
+├── ☁️ Funções Serverless (Conceitual - para funcionalidades avançadas):
+│   ├── 📧 Notificações por Email (via provedor como Resend)
+│   ├── 🔔 Notificações Push (via Firebase Cloud Messaging ou similar)
+│   └── 🗺️ Integração Google Maps (proxy para API Places)
+└── 🔑 Gerenciamento de Chaves de API (seguro em ambiente serverless)
 ```
+**Nota sobre Segurança:** O acesso direto ao Turso pelo cliente JavaScript com um token de longa duração é uma simplificação. Para ambientes de produção robustos, um backend intermediário (API) é geralmente recomendado para gerenciar permissões e lógica de negócios de forma mais segura. As funções serverless conceituais são um passo nessa direção para funcionalidades específicas.
 
 ### **Infraestrutura**
 
@@ -378,74 +385,82 @@ Toast: "💡 Que tal uma Coca-Cola? +1"
 
 ## 🛡️ **Privacidade e Segurança**
 
-### **LGPD Compliant**
+### **LGPD Compliant (Dados Locais e Turso)**
 
-- 🔒 **Dados locais** - localStorage do navegador
-- 🚫 **Zero tracking** - sem cookies de terceiros
-- 🗑️ **Direito ao esquecimento** - botão "Limpar Histórico"
-- 👁️ **Transparência total** - usuário vê todos os dados
+- 🔒 **Dados do Usuário no Navegador**: O histórico de pedidos local, preferências de tema e endereço de entrega são armazenados no `localStorage` do navegador do usuário.
+- 🗑️ **Direito ao Esquecimento (Local)**: O botão "Limpar Histórico" remove o histórico de pedidos do `localStorage`.
+- 📦 **Dados no Turso**: O cardápio, configurações do restaurante e detalhes dos pedidos (incluindo endereço de entrega e, se coletado, email do cliente) são armazenados no banco de dados Turso configurado pelo proprietário do restaurante.
+    - **Responsabilidade do Proprietário**: O proprietário do restaurante é responsável por garantir a conformidade com a LGPD em relação aos dados armazenados no Turso e informar seus clientes sobre o uso desses dados.
+- 🚫 **Zero Tracking de Terceiros**: O projeto base não inclui cookies de rastreamento de terceiros para o cliente final.
 
 ### **Segurança**
 
-- 🔐 **HTTPS nativo** - GitHub Pages
-- 🛡️ **CSP Headers** - proteção XSS
-- 🔒 **Sem backend** - zero vazamentos de dados
-- 🧹 **Sanitização** - inputs seguros
+- 🔐 **HTTPS**: Requerido para PWA e Google Pay. Use com GitHub Pages ou outra plataforma de hospedagem que forneça SSL.
+- 🛡️ **Content Security Policy (CSP)**: Implementada em `index.html` e `admin.html` para mitigar ataques XSS. **Requer configuração do hostname do Turso pelo usuário.**
+- 🔑 **Acesso ao Banco de Dados (Turso Token)**:
+    - **ALERTA DE SEGURANÇA**: O token de autenticação do Turso (`TURSO_AUTH_TOKEN`) é atualmente configurado diretamente nos arquivos JavaScript do cliente (`js/main.js`, `js/admin.js`) e, portanto, **exposto no navegador**.
+    - **Recomendação para Produção**: Para um ambiente de produção, esta abordagem não é segura. Considere:
+        1.  Usar um backend proxy (API) que gerencia o acesso ao Turso. O cliente se comunica com sua API, e a API interage com o Turso.
+        2.  Investigar se o Turso oferece tokens com escopo altamente restrito (apenas leitura para certas tabelas para `main.js`, e regras mais granulares se possível).
+        3.  As funcionalidades conceituais (email, push, Google Maps) já propõem o uso de serverless functions, que é uma forma de backend proxy.
+- 🧹 **Sanitização de Inputs (Client-Side)**: A renderização de dados do banco (ex: nomes de itens, descrições) no HTML prioriza o uso de `textContent` para evitar XSS. A validação de formulários no admin panel é básica.
 
 ---
 
 ## 📊 **Analytics e Insights**
 
-### **Para o Restaurante**
+### **Para o Cliente (Local)**
 
-```javascript
-// Dados disponíveis via localStorage:
-{
-  "totalPedidos": 127,
-  "ticketMedio": 34.50,
-  "pratosMaisVendidos": ["Pizza Margherita", "Coca-Cola"],
-  "horarioPico": "19:00-21:00",
-  "clientesFrequentes": ["11999999999", "11888888888"]
-}
-```
+- 📊 **Estatísticas na Página (`index.html`)**: A seção "Estatísticas" exibe o total de pedidos, ticket médio e itens mais populares, calculados a partir do histórico de pedidos salvo localmente no navegador do cliente.
 
-- 📊 **Estatísticas na página** - seção "Estatísticas" exibe o total de pedidos,
-  ticket médio e itens mais populares.
+### **Para o Restaurante (Painel Administrativo - `admin.html`)**
 
-### **Relatórios Automáticos** (com GAS)
-
-- 📈 **Vendas por período**
-- 🍕 **Ranking de pratos**
-- ⏰ **Análise de horários**
-- 💰 **Projeção de receita**
-- 👥 **Segmentação de clientes**
+- 📈 **Relatórios de Vendas**: O Painel Administrativo possui uma seção de "Relatórios" que consulta diretamente o banco de dados Turso.
+    - **Sumário de Vendas**: Total de pedidos (não cancelados), receita total, ticket médio para o período selecionado.
+    - **Itens Mais Vendidos**: Ranking dos 10 itens mais vendidos por quantidade e por receita gerada no período.
+    - **Vendas por Categoria**: Receita total agrupada por categoria de item no período.
+    - **Filtros**: Os relatórios podem ser filtrados por intervalo de datas.
 
 ---
 
-## 🌍 **Roadmap 2025-2026**
+## 🌍 **Roadmap (Pós-Integração Turso)**
 
-### **🚀 v1.0 - Core MVP** (Julho 2025) ✅
+O roadmap original foi significativamente impactado pela mudança para Turso e a implementação do Admin Panel.
 
-- [x] Template responsivo
-- [x] PIX + WhatsApp
-- [x] PWA básico
-- [x] Histórico inteligente
+### **🚀 v1.0 - Core com Turso & Admin Panel** (Estado Atual)
+- [x] Template responsivo e PWA básico.
+- [x] PIX + WhatsApp (configuráveis via Admin Panel).
+- [x] Histórico de pedidos local e "Pedir Novamente".
+- [x] **Backend de Dados**: Turso para cardápio, configurações e pedidos.
+- [x] **Painel Administrativo (`admin.html`)**:
+    - [x] Gerenciamento CRUD de Cardápio.
+    - [x] Gerenciamento de Configurações do Restaurante.
+    - [x] Visualização e Gerenciamento de Status de Pedidos.
+    - [x] Relatórios de Vendas básicos.
+- [x] URLs Compartilháveis de Pedidos.
+- [x] Sugestões Contextuais de Itens (baseado em pedidos no Turso).
+- [x] Sistema de Horários (manual, via Admin Panel).
+- [x] Segurança básica (CSP, DOM sanitization).
 
-### **📈 v1.1 - Google Apps Script** (Agosto 2025)
+### **📈 v1.1 - Funcionalidades Avançadas (Conceitual / Próximos Passos)**
+- [~] **Notificações por Email Automatizadas** (Design conceitual com Serverless Functions pronto).
+    - [ ] Implementar serverless function e integração com serviço de email.
+    - [ ] Coletar e salvar email do cliente no fluxo de pedido.
+- [~] **Sistema de Horários Inteligente com Google Maps** (Design conceitual com Serverless Proxy pronto).
+    - [ ] Implementar serverless function para proxy da API Google Places.
+    - [ ] Atualizar `js/main.js` para usar dados do Google Maps com fallback para manual.
+- [~] **PWA Avançado: Notificações Push** (Design conceitual com Serverless Functions pronto).
+    - [ ] Implementar fluxo de subscrição, service worker para push, e serverless function para enviar pushes.
+- [ ] **PWA Avançado: Offline Orders** (Pedidos offline com fila para sincronização).
+- [ ] **Acessibilidade (A11Y)**: Revisão e melhorias de acessibilidade.
 
-- [ ] Backend gratuito via GAS
-- [ ] Dashboard administrativo
-- [ ] Automações de email
-- [ ] Relatórios de vendas
+### **🔥 v1.2 - Melhorias e Expansão**
+- [ ] **Segurança do Backend**: Implementar API Gateway/Backend Proxy para proteger acesso direto ao Turso (mitigar risco do token no cliente).
+- [ ] Testes automatizados (Unit, Integration).
+- [ ] Interface de usuário mais rica para relatórios (gráficos).
+- [ ] Internacionalização (i18n).
 
-### **🔥 v1.2 - PWA Avançado** (Setembro 2025)
-
-- [ ] Push notifications
-- [ ] Modo offline avançado
-- [ ] Geolocalização
-- [ ] Acessibilidade A11Y
-
-### **💳 v1.3 - Pagamentos Híbridos** (Outubro 2025)
+### **💳 v1.3 - Pagamentos Híbridos (Expansão)**
 
 - [ ] PIX avançado com comprovante
 - [ ] Cartão via maquininha
